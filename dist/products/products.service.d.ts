@@ -11,17 +11,17 @@ export declare class ProductsService {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
-    }>;
+    } | undefined>;
     findAll(): Prisma.PrismaPromise<{
         name: string;
         id: number;
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }[]>;
@@ -31,7 +31,7 @@ export declare class ProductsService {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -41,7 +41,7 @@ export declare class ProductsService {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -51,7 +51,7 @@ export declare class ProductsService {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

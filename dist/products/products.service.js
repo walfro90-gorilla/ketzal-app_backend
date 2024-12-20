@@ -24,10 +24,11 @@ let ProductsService = class ProductsService {
             });
         }
         catch (error) {
-            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new common_1.ConflictException(`Product with name ${createProductDto.name} already exists`);
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    throw new common_1.ConflictException(`Product with name ${createProductDto.name} already exists`);
+                }
             }
-            throw new common_1.InternalServerErrorException();
         }
     }
     findAll() {
@@ -57,15 +58,15 @@ let ProductsService = class ProductsService {
         return productFound;
     }
     async remove(id) {
-        const deletedProuct = await this.prismaService.product.delete({
+        const deleteProduct = await this.prismaService.product.delete({
             where: {
                 id: id
             }
         });
-        if (!deletedProuct) {
+        if (!deleteProduct) {
             throw new common_1.NotFoundException(`Product with id ${id} not found`);
         }
-        return deletedProuct;
+        return deleteProduct;
     }
 };
 exports.ProductsService = ProductsService;

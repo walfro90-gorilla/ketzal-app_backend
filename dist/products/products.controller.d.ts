@@ -10,17 +10,17 @@ export declare class ProductsController {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
-    }>;
+    } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         name: string;
         id: number;
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }[]>;
@@ -30,7 +30,7 @@ export declare class ProductsController {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -40,7 +40,7 @@ export declare class ProductsController {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -50,7 +50,7 @@ export declare class ProductsController {
         description: string | null;
         price: number;
         stock: number;
-        image: string | null;
+        image: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

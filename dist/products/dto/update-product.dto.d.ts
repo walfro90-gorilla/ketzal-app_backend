@@ -1,2 +1,2 @@
-import { CreateProductDto } from "./create-product.dto";
+import { CreateProductDto } from './create-product.dto';
 export type UpdateProductDto = Partial<CreateProductDto>;

@@ -47,7 +47,7 @@ __decorate([
 ], ProductsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all products' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'List all products' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
