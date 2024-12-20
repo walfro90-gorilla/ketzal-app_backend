@@ -454,9 +454,9 @@
   "devDependencies": {},
   "scripts": {
     "start:dev": "nest start --watch",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "nest build",
+    "start": "nest start",
+    "lint": "nest lint"
   },
   "author": "",
   "license": "ISC"
