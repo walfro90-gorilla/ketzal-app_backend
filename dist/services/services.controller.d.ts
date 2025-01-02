@@ -10,8 +10,8 @@ export declare class ServicesController {
         description: string | null;
         price: number;
         createdAt: Date;
-        location: string | null;
         supplierId: number;
+        location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
@@ -21,8 +21,8 @@ export declare class ServicesController {
         description: string | null;
         price: number;
         createdAt: Date;
-        location: string | null;
         supplierId: number;
+        location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
     }[]>;
@@ -32,8 +32,8 @@ export declare class ServicesController {
         description: string | null;
         price: number;
         createdAt: Date;
-        location: string | null;
         supplierId: number;
+        location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
     }>;
@@ -43,8 +43,8 @@ export declare class ServicesController {
         description: string | null;
         price: number;
         createdAt: Date;
-        location: string | null;
         supplierId: number;
+        location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
     }>;
@@ -54,8 +54,8 @@ export declare class ServicesController {
         description: string | null;
         price: number;
         createdAt: Date;
-        location: string | null;
         supplierId: number;
+        location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
     }>;
