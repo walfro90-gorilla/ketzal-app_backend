@@ -6,10 +6,11 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     create(createUserDto: CreateUserDto): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -17,10 +18,11 @@ export declare class UsersController {
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -28,10 +30,11 @@ export declare class UsersController {
     }[]>;
     findOne(id: string): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -39,10 +42,11 @@ export declare class UsersController {
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -50,10 +54,11 @@ export declare class UsersController {
     }>;
     remove(id: string): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;

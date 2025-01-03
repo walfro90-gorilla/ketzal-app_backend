@@ -15,7 +15,7 @@ enum Role {
 }
 
 model User {
-    id            Int    @id @default(autoincrement())
+    id            String    @id @default(cuid())
     name          String?
     email         String    @unique
     password      String?
@@ -24,14 +24,15 @@ model User {
     role          Role      @default(admin)
     accounts      Account[]
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    Booking   Booking[]
-    Review    Review[]
+    supplierId    Int?
+    supplier      Supplier? @relation(fields: [supplierId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Account {
-    userId            Int
+    userId            String
     type              String
     provider          String
     providerAccountId String
@@ -70,6 +71,7 @@ model Product {
     updatedAt   DateTime @updatedAt
 }
 
+
 model Supplier {
     id           Int      @id @default(autoincrement())
     name         String   @unique
@@ -81,6 +83,7 @@ model Supplier {
     createdAt    DateTime @default(now())
 
     services Service[]
+    users    User[]
 }
 
 model Service {
@@ -95,31 +98,7 @@ model Service {
     createdAt     DateTime  @default(now())
 
     supplier Supplier  @relation(fields: [supplierId], references: [id])
-    bookings Booking[]
-    reviews  Review[]
+    // bookings Booking[]
+    // reviews  Review[]
 }
 
-model Booking {
-    id          Int      @id @default(autoincrement())
-    userId      Int
-    serviceId   Int
-    bookingDate DateTime @default(now())
-    status      String
-    totalPrice  Float
-    createdAt   DateTime @default(now())
-
-    user    User    @relation(fields: [userId], references: [id])
-    service Service @relation(fields: [serviceId], references: [id])
-}
-
-model Review {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    serviceId Int
-    rating    Int
-    comment   String?
-    createdAt DateTime @default(now())
-
-    user    User    @relation(fields: [userId], references: [id])
-    service Service @relation(fields: [serviceId], references: [id])
-}

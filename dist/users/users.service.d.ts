@@ -7,10 +7,11 @@ export declare class UsersService {
     constructor(prismaService: PrismaService);
     create(createUserDto: CreateUserDto): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -18,10 +19,11 @@ export declare class UsersService {
     } | undefined>;
     findAll(): Prisma.PrismaPromise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -29,10 +31,11 @@ export declare class UsersService {
     }[]>;
     findOne(id: number): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -40,10 +43,11 @@ export declare class UsersService {
     }>;
     update(id: number, updateUserDto: UpdateUserDto): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -51,10 +55,11 @@ export declare class UsersService {
     }>;
     remove(id: number): Promise<{
         name: string | null;
-        id: number;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
