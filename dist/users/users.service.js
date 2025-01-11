@@ -36,7 +36,7 @@ let UsersService = class UsersService {
     }
     async findOne(id) {
         const userFound = await this.prismaService.user.findUnique({
-            where: { id: id }
+            where: { id: id.toString() }
         });
         if (!userFound) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
@@ -45,7 +45,7 @@ let UsersService = class UsersService {
     }
     async update(id, updateUserDto) {
         const userFound = await this.prismaService.user.update({
-            where: { id: id },
+            where: { id: id.toString() },
             data: updateUserDto
         });
         if (!userFound) {
@@ -56,7 +56,7 @@ let UsersService = class UsersService {
     async remove(id) {
         const deletedUser = await this.prismaService.user.delete({
             where: {
-                id: id
+                id: id.toString()
             }
         });
         if (!deletedUser) {
