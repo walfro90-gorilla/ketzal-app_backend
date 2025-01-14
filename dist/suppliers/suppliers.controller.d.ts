@@ -13,7 +13,6 @@ export declare class SuppliersController {
         phoneNumber: string | null;
         address: string | null;
         imgLogo: string | null;
-        type: string | null;
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         name: string;
@@ -24,7 +23,6 @@ export declare class SuppliersController {
         phoneNumber: string | null;
         address: string | null;
         imgLogo: string | null;
-        type: string | null;
     }[]>;
     findOne(id: string): Promise<{
         name: string;
@@ -35,7 +33,6 @@ export declare class SuppliersController {
         phoneNumber: string | null;
         address: string | null;
         imgLogo: string | null;
-        type: string | null;
     }>;
     update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<{
         name: string;
@@ -46,7 +43,6 @@ export declare class SuppliersController {
         phoneNumber: string | null;
         address: string | null;
         imgLogo: string | null;
-        type: string | null;
     }>;
     remove(id: string): Promise<{
         name: string;
@@ -57,6 +53,5 @@ export declare class SuppliersController {
         phoneNumber: string | null;
         address: string | null;
         imgLogo: string | null;
-        type: string | null;
     }>;
 }
