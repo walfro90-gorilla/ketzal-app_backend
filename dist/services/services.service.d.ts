@@ -5,58 +5,63 @@ export declare class ServicesService {
     private prismaService;
     constructor(prismaService: PrismaService);
     create(createServiceDto: CreateServiceDto): import(".prisma/client").Prisma.Prisma__ServiceClient<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
-        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
-        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
     }[]>;
     findOne(id: number): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
-        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
     }>;
     update(id: number, updateServiceDto: UpdateServiceDto): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
-        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
     }>;
     remove(id: number): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
-        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
     }>;
 }

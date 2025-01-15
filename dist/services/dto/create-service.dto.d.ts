@@ -1,2 +1,4 @@
-import { Service } from '@prisma/client';
-export type CreateServiceDto = Omit<Service, 'id' | 'createdAt' | 'updatedAt'>;
+import { Prisma } from '@prisma/client';
+export type CreateServiceDto = Omit<Prisma.ServiceCreateInput, 'id' | 'createdAt' | 'updatedAt'> & {
+    packs: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue;
+};

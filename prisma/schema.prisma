@@ -96,6 +96,8 @@ model Service {
     availableFrom DateTime?
     availableTo   DateTime?
     createdAt     DateTime  @default(now())
+  
+
 
     supplier Supplier  @relation(fields: [supplierId], references: [id])
     // bookings Booking[]
