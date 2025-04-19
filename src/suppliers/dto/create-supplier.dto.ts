@@ -1,4 +1,6 @@
-// export class CreateSupplierDto {}
-import{Supplier} from '@prisma/client'
+import { Prisma } from '@prisma/client';
 
-export type CreateSupplierDto = Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateSupplierDto = Omit<
+  Prisma.SupplierCreateInput,
+  'id' | 'createdAt' | 'users' | 'services'
+>;
