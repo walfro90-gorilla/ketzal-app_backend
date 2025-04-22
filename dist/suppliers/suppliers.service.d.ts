@@ -6,11 +6,11 @@ export declare class SuppliersService {
     private prismaService;
     constructor(prismaService: PrismaService);
     create(createSupplierDto: CreateSupplierDto): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: Prisma.JsonValue | null;
+        id: number;
+        createdAt: Date;
+        name: string;
+        description: string | null;
         location: Prisma.JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -21,11 +21,11 @@ export declare class SuppliersService {
         extras: Prisma.JsonValue | null;
     } | undefined>;
     findAll(): Prisma.PrismaPromise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: Prisma.JsonValue | null;
+        id: number;
+        createdAt: Date;
+        name: string;
+        description: string | null;
         location: Prisma.JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -36,11 +36,11 @@ export declare class SuppliersService {
         extras: Prisma.JsonValue | null;
     }[]>;
     findOne(id: number): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: Prisma.JsonValue | null;
+        id: number;
+        createdAt: Date;
+        name: string;
+        description: string | null;
         location: Prisma.JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -51,11 +51,11 @@ export declare class SuppliersService {
         extras: Prisma.JsonValue | null;
     }>;
     update(id: number, updateSupplierDto: UpdateSupplierDto): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: Prisma.JsonValue | null;
+        id: number;
+        createdAt: Date;
+        name: string;
+        description: string | null;
         location: Prisma.JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -66,11 +66,11 @@ export declare class SuppliersService {
         extras: Prisma.JsonValue | null;
     }>;
     remove(id: number): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: Prisma.JsonValue | null;
+        id: number;
+        createdAt: Date;
+        name: string;
+        description: string | null;
         location: Prisma.JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;

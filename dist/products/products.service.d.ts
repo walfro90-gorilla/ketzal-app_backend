@@ -6,53 +6,53 @@ export declare class ProductsService {
     private prismaService;
     constructor(prismaService: PrismaService);
     create(createProductDto: CreateProductDto): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
+        image: string;
+        updatedAt: Date;
         description: string | null;
         price: number;
         stock: number;
-        image: string;
-        createdAt: Date;
-        updatedAt: Date;
     } | undefined>;
     findAll(): Prisma.PrismaPromise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
+        image: string;
+        updatedAt: Date;
         description: string | null;
         price: number;
         stock: number;
-        image: string;
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     findOne(id: number): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
+        image: string;
+        updatedAt: Date;
         description: string | null;
         price: number;
         stock: number;
-        image: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(id: number, updateProductDto: UpdateProductDto): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
+        image: string;
+        updatedAt: Date;
         description: string | null;
         price: number;
         stock: number;
-        image: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     remove(id: number): Promise<{
-        name: string;
         id: number;
+        createdAt: Date;
+        name: string;
+        image: string;
+        updatedAt: Date;
         description: string | null;
         price: number;
         stock: number;
-        image: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }
