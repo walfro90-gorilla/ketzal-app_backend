@@ -5,12 +5,11 @@ export declare class ServicesController {
     private readonly servicesService;
     constructor(servicesService: ServicesService);
     create(createServiceDto: CreateServiceDto): import(".prisma/client").Prisma.Prisma__ServiceClient<{
-        id: number;
-        createdAt: Date;
         name: string;
-        supplierId: number;
+        id: number;
         description: string | null;
         price: number;
+        createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
         location: string | null;
         availableFrom: Date | null;
@@ -28,16 +27,16 @@ export declare class ServicesController {
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         transportProviderID: number | null;
         hotelProviderID: number | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        createdAt: Date;
         name: string;
-        supplierId: number;
+        id: number;
         description: string | null;
         price: number;
+        createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
         location: string | null;
         availableFrom: Date | null;
@@ -55,16 +54,16 @@ export declare class ServicesController {
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         transportProviderID: number | null;
         hotelProviderID: number | null;
     }[]>;
     findOne(id: string): Promise<{
-        id: number;
-        createdAt: Date;
         name: string;
-        supplierId: number;
+        id: number;
         description: string | null;
         price: number;
+        createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
         location: string | null;
         availableFrom: Date | null;
@@ -82,16 +81,16 @@ export declare class ServicesController {
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         transportProviderID: number | null;
         hotelProviderID: number | null;
     }>;
     update(id: string, updateServiceDto: UpdateServiceDto): Promise<{
-        id: number;
-        createdAt: Date;
         name: string;
-        supplierId: number;
+        id: number;
         description: string | null;
         price: number;
+        createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
         location: string | null;
         availableFrom: Date | null;
@@ -109,16 +108,16 @@ export declare class ServicesController {
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         transportProviderID: number | null;
         hotelProviderID: number | null;
     }>;
     remove(id: string): Promise<{
-        id: number;
-        createdAt: Date;
         name: string;
-        supplierId: number;
+        id: number;
         description: string | null;
         price: number;
+        createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
         location: string | null;
         availableFrom: Date | null;
@@ -136,6 +135,7 @@ export declare class ServicesController {
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         transportProviderID: number | null;
         hotelProviderID: number | null;
     }>;

@@ -9,48 +9,48 @@ export declare class ReviewsController {
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }[]>;
     findOne(id: string): Promise<{
         id: number;
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto): Promise<{
         id: number;
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }>;
     remove(id: string): Promise<{
         id: number;
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }>;
     getReviews(serviceId: string): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }[]>;
     createReview(serviceId: string, body: {
         rating: number;
@@ -61,7 +61,7 @@ export declare class ReviewsController {
         createdAt: Date;
         rating: number;
         comment: string;
-        serviceId: number;
         userId: string;
+        serviceId: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
 }
