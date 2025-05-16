@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +18,7 @@ export class UsersService {
         data: createUserDto
       })
     } catch (error) {
-      if(error instanceof PrismaClientKnownRequestError) {
+      if(error instanceof Prisma.PrismaClientKnownRequestError) {
         if(error.code === 'P2002') {
           throw new ConflictException(`User with email ${createUserDto.email} already exists`)
         }

@@ -15,16 +15,14 @@ const suppliers_module_1 = require("./suppliers/suppliers.module");
 const users_module_1 = require("./users/users.module");
 const reviews_module_1 = require("./reviews/reviews.module");
 const categories_module_1 = require("./categories/categories.module");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [products_module_1.ProductsModule, services_module_1.ServicesModule, suppliers_module_1.SuppliersModule, users_module_1.UsersModule, reviews_module_1.ReviewsModule, categories_module_1.CategoriesModule],
-        controllers: [app_controller_1.AppController],
-        providers: [prisma_service_1.PrismaService, app_service_1.AppService],
+        controllers: [],
+        providers: [prisma_service_1.PrismaService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
