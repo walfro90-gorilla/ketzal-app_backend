@@ -15,7 +15,7 @@ async function bootstrap() {
   server = serverlessExpress(expressApp);
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (!server) {
     await bootstrap();
   }
