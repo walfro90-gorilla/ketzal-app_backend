@@ -23,6 +23,9 @@ let ServicesService = class ServicesService {
         return this.prismaService.service.findMany();
     }
     async findOne(id) {
+        if (typeof id !== 'number' || isNaN(id)) {
+            throw new common_1.NotFoundException('A valid service id must be provided');
+        }
         const serviceFound = await this.prismaService.service.findUnique({
             where: { id }
         });

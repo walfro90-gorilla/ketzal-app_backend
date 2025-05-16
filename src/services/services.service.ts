@@ -23,7 +23,9 @@ export class ServicesService {
 
   // Find one service
   async findOne(id: number) {
-
+    if (typeof id !== 'number' || isNaN(id)) {
+      throw new NotFoundException('A valid service id must be provided');
+    }
     const serviceFound = await this.prismaService.service.findUnique({
       where: { id }
     })
