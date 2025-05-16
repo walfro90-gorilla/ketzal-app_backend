@@ -457,7 +457,8 @@
     "start:dev": "nest start --watch",
     "build": "nest build",
     "start": "node dit/main",
-    "lint": "nest lint"
+    "lint": "nest lint",
+    "postinstall": "npm run build"
   },
   "author": "",
   "license": "ISC",
