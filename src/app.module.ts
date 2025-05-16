@@ -6,12 +6,10 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CategoriesModule } from './categories/categories.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
     imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule],
-    controllers: [AppController],
-    providers: [PrismaService, AppService],
+    controllers: [],
+    providers: [PrismaService],
 })
 export class AppModule {}

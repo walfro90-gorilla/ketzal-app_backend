@@ -1,6 +1,7 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 export declare class UsersService {
     private prismaService;
     constructor(prismaService: PrismaService);
@@ -16,7 +17,7 @@ export declare class UsersService {
         emailVerified: Date | null;
         role: import(".prisma/client").$Enums.Role;
     } | undefined>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+    findAll(): Prisma.PrismaPromise<{
         id: string;
         name: string | null;
         image: string | null;

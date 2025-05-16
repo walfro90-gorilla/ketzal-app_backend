@@ -1,6 +1,7 @@
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 export declare class ProductsService {
     private prismaService;
     constructor(prismaService: PrismaService);
@@ -14,7 +15,7 @@ export declare class ProductsService {
         price: number;
         stock: number;
     } | undefined>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+    findAll(): Prisma.PrismaPromise<{
         id: number;
         name: string;
         image: string;
