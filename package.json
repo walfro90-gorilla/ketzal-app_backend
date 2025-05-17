@@ -456,7 +456,7 @@
   "scripts": {
     "start:dev": "nest start --watch",
     "build": "nest build",
-    "start": "node dit/main",
+    "start": "node dist/main",
     "lint": "nest lint",
     "postinstall": "npm run build"
   },
