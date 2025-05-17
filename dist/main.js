@@ -15,7 +15,8 @@ async function bootstrap() {
     const documentFactory = () => swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, documentFactory);
     app.enableCors();
-    await app.listen(4000);
+    app.getHttpAdapter().getInstance().get('/health', (req, res) => res.send('ok'));
+    await app.listen(process.env.PORT || 4000);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
