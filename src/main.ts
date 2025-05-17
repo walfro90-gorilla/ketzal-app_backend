@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { Request, Response } from "express";
 
 async function bootstrap() {
 
@@ -17,8 +18,12 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, documentFactory);
 
     app.enableCors();
+    // Add health check endpoint using Express instance with proper types
+    app.getHttpAdapter().getInstance().get('/health', (req: Request, res: Response) => res.send('ok')
+    );
 
-    await app.listen(4000);
+
+    await app.listen(process.env.PORT || 4000);
 }
 
 bootstrap()
