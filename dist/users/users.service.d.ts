@@ -6,8 +6,8 @@ export declare class UsersService {
     private prismaService;
     constructor(prismaService: PrismaService);
     create(createUserDto: CreateUserDto): Promise<{
-        id: string;
         name: string | null;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -18,8 +18,8 @@ export declare class UsersService {
         role: import(".prisma/client").$Enums.Role;
     } | undefined>;
     findAll(): Prisma.PrismaPromise<{
-        id: string;
         name: string | null;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -30,8 +30,8 @@ export declare class UsersService {
         role: import(".prisma/client").$Enums.Role;
     }[]>;
     findOne(id: number): Promise<{
-        id: string;
         name: string | null;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -42,8 +42,8 @@ export declare class UsersService {
         role: import(".prisma/client").$Enums.Role;
     }>;
     update(id: number, updateUserDto: UpdateUserDto): Promise<{
-        id: string;
         name: string | null;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -54,8 +54,8 @@ export declare class UsersService {
         role: import(".prisma/client").$Enums.Role;
     }>;
     remove(id: number): Promise<{
-        id: string;
         name: string | null;
+        id: string;
         image: string | null;
         createdAt: Date;
         updatedAt: Date;

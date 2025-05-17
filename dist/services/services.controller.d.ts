@@ -5,16 +5,16 @@ export declare class ServicesController {
     private readonly servicesService;
     constructor(servicesService: ServicesService);
     create(createServiceDto: CreateServiceDto): import(".prisma/client").Prisma.Prisma__ServiceClient<{
-        id: number;
         name: string;
+        id: number;
         description: string | null;
+        price: number;
         createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
-        packs: import("@prisma/client/runtime/library").JsonValue | null;
-        price: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
@@ -32,16 +32,16 @@ export declare class ServicesController {
         hotelProviderID: number | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
         name: string;
+        id: number;
         description: string | null;
+        price: number;
         createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
-        packs: import("@prisma/client/runtime/library").JsonValue | null;
-        price: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
@@ -59,16 +59,16 @@ export declare class ServicesController {
         hotelProviderID: number | null;
     }[]>;
     findOne(id: string): Promise<{
-        id: number;
         name: string;
+        id: number;
         description: string | null;
+        price: number;
         createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
-        packs: import("@prisma/client/runtime/library").JsonValue | null;
-        price: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
@@ -86,16 +86,16 @@ export declare class ServicesController {
         hotelProviderID: number | null;
     }>;
     update(id: string, updateServiceDto: UpdateServiceDto): Promise<{
-        id: number;
         name: string;
+        id: number;
         description: string | null;
+        price: number;
         createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
-        packs: import("@prisma/client/runtime/library").JsonValue | null;
-        price: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
@@ -113,16 +113,16 @@ export declare class ServicesController {
         hotelProviderID: number | null;
     }>;
     remove(id: string): Promise<{
-        id: number;
         name: string;
+        id: number;
         description: string | null;
+        price: number;
         createdAt: Date;
         includes: import("@prisma/client/runtime/library").JsonValue | null;
-        packs: import("@prisma/client/runtime/library").JsonValue | null;
-        price: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
