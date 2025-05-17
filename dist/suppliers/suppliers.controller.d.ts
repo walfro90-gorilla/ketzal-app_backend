@@ -5,12 +5,12 @@ export declare class SuppliersController {
     private readonly suppliersService;
     constructor(suppliersService: SuppliersService);
     create(createSupplierDto: CreateSupplierDto): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: import("@prisma/client/runtime/library").JsonValue | null;
+        id: number;
+        name: string;
+        description: string | null;
         location: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -21,12 +21,12 @@ export declare class SuppliersController {
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: import("@prisma/client/runtime/library").JsonValue | null;
+        id: number;
+        name: string;
+        description: string | null;
         location: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -37,12 +37,12 @@ export declare class SuppliersController {
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
     findOne(id: string): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: import("@prisma/client/runtime/library").JsonValue | null;
+        id: number;
+        name: string;
+        description: string | null;
         location: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -53,12 +53,12 @@ export declare class SuppliersController {
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: import("@prisma/client/runtime/library").JsonValue | null;
+        id: number;
+        name: string;
+        description: string | null;
         location: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -69,12 +69,12 @@ export declare class SuppliersController {
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     remove(id: string): Promise<{
-        name: string;
-        id: number;
-        description: string | null;
-        createdAt: Date;
         info: import("@prisma/client/runtime/library").JsonValue | null;
+        id: number;
+        name: string;
+        description: string | null;
         location: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;

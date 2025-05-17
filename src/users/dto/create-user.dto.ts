@@ -1,3 +1,7 @@
-import {User} from '@prisma/client'
+import { User } from '@prisma/client';
 
-export type CreateUserDto = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+export class CreateUserDto {
+  name?: string;
+  email!: string;
+  password?: string;
+}

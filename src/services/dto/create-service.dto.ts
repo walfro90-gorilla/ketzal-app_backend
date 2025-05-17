@@ -1,9 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-// Define el tipo CreateServiceDto basado en el modelo Service
-export type CreateServiceDto = Omit<
-  Prisma.ServiceCreateInput, // Usa el tipo generado por Prisma
-  'id' | 'createdAt' | 'updatedAt'
-> & {
-  packs: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue ; // Permitir JSON o null
-};
+export class CreateServiceDto {
+  name!: string;
+  price!: number;
+  supplierId!: number;
+  description?: string;
+  packs?: any;
+  // Add other fields as needed
+}

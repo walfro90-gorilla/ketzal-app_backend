@@ -12,20 +12,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const client_1 = require("@prisma/client");
+const library_1 = require("@prisma/client/runtime/library");
 let ProductsService = class ProductsService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
     async create(createProductDto) {
+        var _a;
         try {
             return await this.prismaService.product.create({
-                data: createProductDto
+                data: {
+                    name: createProductDto.name,
+                    description: createProductDto.description,
+                    price: createProductDto.price,
+                    stock: createProductDto.stock,
+                    image: (_a = createProductDto.image) !== null && _a !== void 0 ? _a : '',
+                }
             });
         }
         catch (error) {
-            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2002') {
+            if (error instanceof library_1.PrismaClientKnownRequestError) {
+                const prismaError = error;
+                if (prismaError.code === 'P2002') {
                     throw new common_1.ConflictException(`Product with name ${createProductDto.name} already exists`);
                 }
             }

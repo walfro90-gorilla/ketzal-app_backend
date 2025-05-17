@@ -1,2 +1,8 @@
-import { Prisma } from '@prisma/client';
-export type CreateSupplierDto = Omit<Prisma.SupplierCreateInput, 'id' | 'createdAt' | 'users' | 'services'>;
+export declare class CreateSupplierDto {
+    name: string;
+    contactEmail: string;
+    phoneNumber?: string;
+    address?: string;
+    description?: string;
+    imgLogo?: string;
+}

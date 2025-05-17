@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductsService {
@@ -13,13 +13,20 @@ export class ProductsService {
   // CREATE METHOD 
   async create(createProductDto: CreateProductDto) {
     try {
-
       return await this.prismaService.product.create({
-        data: createProductDto
+        data: {
+          name: createProductDto.name,
+          description: createProductDto.description,
+          price: createProductDto.price,
+          stock: createProductDto.stock,
+          image: createProductDto.image ?? '',
+          // Add other fields as needed
+        }
       })
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
+      if (error instanceof PrismaClientKnownRequestError) {
+        const prismaError = error as PrismaClientKnownRequestError;
+        if (prismaError.code === 'P2002') {
           throw new ConflictException(`Product with name ${createProductDto.name} already exists`)
         }
       }

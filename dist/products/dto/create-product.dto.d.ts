@@ -1,2 +1,7 @@
-import { Product } from '@prisma/client';
-export type CreateProductDto = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
+export declare class CreateProductDto {
+    name: string;
+    description?: string;
+    price: number;
+    stock: number;
+    image?: string;
+}
