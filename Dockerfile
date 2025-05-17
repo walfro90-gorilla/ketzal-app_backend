@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instala TODAS las dependencias (incluyendo dev) para poder construir
-RUN npm ci
+RUN npm install
 
 # Copia el resto del código
 COPY . .
@@ -20,7 +20,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Expone el puerto (ajusta si usas otro)
-EXPOSE 3000
+EXPOSE 4000
 
 # Comando para iniciar la app
 CMD ["npm", "start"]
