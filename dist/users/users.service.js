@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const client_1 = require("@prisma/client");
+const library_1 = require("@prisma/client/runtime/library");
 let UsersService = class UsersService {
     constructor(prismaService) {
         this.prismaService = prismaService;
@@ -20,12 +20,17 @@ let UsersService = class UsersService {
     async create(createUserDto) {
         try {
             return await this.prismaService.user.create({
-                data: createUserDto
+                data: {
+                    name: createUserDto.name,
+                    email: createUserDto.email,
+                    password: createUserDto.password,
+                }
             });
         }
         catch (error) {
-            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2002') {
+            if (error instanceof library_1.PrismaClientKnownRequestError) {
+                const prismaError = error;
+                if (prismaError.code === 'P2002') {
                     throw new common_1.ConflictException(`User with email ${createUserDto.email} already exists`);
                 }
             }

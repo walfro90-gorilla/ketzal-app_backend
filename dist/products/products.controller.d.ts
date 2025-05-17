@@ -5,8 +5,8 @@ export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
     create(createProductDto: CreateProductDto): Promise<{
-        name: string;
         id: number;
+        name: string;
         description: string | null;
         price: number;
         stock: number;
@@ -15,8 +15,8 @@ export declare class ProductsController {
         updatedAt: Date;
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        name: string;
         id: number;
+        name: string;
         description: string | null;
         price: number;
         stock: number;
@@ -25,8 +25,8 @@ export declare class ProductsController {
         updatedAt: Date;
     }[]>;
     findOne(id: string): Promise<{
-        name: string;
         id: number;
+        name: string;
         description: string | null;
         price: number;
         stock: number;
@@ -35,8 +35,8 @@ export declare class ProductsController {
         updatedAt: Date;
     }>;
     update(id: string, updateProductDto: UpdateProductDto): Promise<{
-        name: string;
         id: number;
+        name: string;
         description: string | null;
         price: number;
         stock: number;
@@ -45,8 +45,8 @@ export declare class ProductsController {
         updatedAt: Date;
     }>;
     remove(id: string): Promise<{
-        name: string;
         id: number;
+        name: string;
         description: string | null;
         price: number;
         stock: number;

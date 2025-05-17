@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class SuppliersService {
@@ -18,9 +18,10 @@ export class SuppliersService {
         data: createSupplierDto
       })
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException (`Supplier with name ${createSupplierDto.name} already exists`)
+      if (error instanceof PrismaClientKnownRequestError) {
+        const prismaError = error as PrismaClientKnownRequestError;
+        if (prismaError.code === 'P2002') {
+          throw new ConflictException(`Supplier with name ${createSupplierDto.name} already exists`)
         }
       }
     }
