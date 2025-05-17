@@ -462,6 +462,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@nestjs/cli": "^11.0.7",
     "@nestjs/testing": "^10.4.15",
     "@types/aws-lambda": "^8.10.149",
     "@types/jest": "^29.5.14",
