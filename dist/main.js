@@ -16,7 +16,10 @@ async function bootstrap() {
     swagger_1.SwaggerModule.setup('api', app, documentFactory);
     app.enableCors();
     app.getHttpAdapter().getInstance().get('/health', (req, res) => res.send('ok'));
+    app.getHttpAdapter().getInstance().get('/', (req, res) => res.send('ok'));
+    console.log('Antes de app.listen');
     await app.listen(process.env.PORT || 4000, '0.0.0.0');
+    console.log('Después de app.listen');
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
