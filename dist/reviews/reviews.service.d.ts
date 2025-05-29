@@ -6,58 +6,58 @@ export declare class ReviewsService {
     constructor(prismaService: PrismaService);
     create(createReviewDto: CreateReviewDto): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     update(id: number, updateReviewDto: UpdateReviewDto): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     remove(id: number): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     getReviewsByService(serviceId: number): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }[]>;
     createReview(serviceId: number, userId: string, rating: number, comment: string): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
 }

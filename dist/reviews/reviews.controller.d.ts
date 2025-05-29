@@ -6,51 +6,51 @@ export declare class ReviewsController {
     constructor(reviewsService: ReviewsService);
     create(createReviewDto: CreateReviewDto): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }[]>;
     findOne(id: string): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     remove(id: string): Promise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }>;
     getReviews(serviceId: string): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }[]>;
     createReview(serviceId: string, body: {
         rating: number;
@@ -58,10 +58,10 @@ export declare class ReviewsController {
         userId: number;
     }, req: any): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         id: number;
+        createdAt: Date;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-        createdAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
 }
