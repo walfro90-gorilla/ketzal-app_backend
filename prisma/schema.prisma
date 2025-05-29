@@ -133,8 +133,7 @@ model Service {
   
     reviews  Review[]
 
-    
-    // bookings Booking[]
+    dates            Json? // [{ availableFrom: DateTime, availableTo: DateTime }]
 }
 
 model Review {

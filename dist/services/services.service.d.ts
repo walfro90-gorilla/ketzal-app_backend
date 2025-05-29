@@ -30,6 +30,7 @@ export declare class ServicesService {
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
         transportProviderID: number | null;
         hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
@@ -57,6 +58,7 @@ export declare class ServicesService {
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
         transportProviderID: number | null;
         hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
@@ -84,6 +86,7 @@ export declare class ServicesService {
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
         transportProviderID: number | null;
         hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: number, updateServiceDto: UpdateServiceDto): Promise<{
         id: number;
@@ -111,6 +114,7 @@ export declare class ServicesService {
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
         transportProviderID: number | null;
         hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     remove(id: number): Promise<{
         id: number;
@@ -138,5 +142,6 @@ export declare class ServicesService {
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
         transportProviderID: number | null;
         hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }
