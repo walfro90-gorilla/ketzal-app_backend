@@ -6,11 +6,11 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     create(createUserDto: CreateUserDto): Promise<{
         id: string;
-        supplierId: number | null;
         name: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -18,11 +18,11 @@ export declare class UsersController {
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: string;
-        supplierId: number | null;
         name: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -30,11 +30,11 @@ export declare class UsersController {
     }[]>;
     findOne(id: string): Promise<{
         id: string;
-        supplierId: number | null;
         name: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -42,11 +42,11 @@ export declare class UsersController {
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         id: string;
-        supplierId: number | null;
         name: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
@@ -54,11 +54,11 @@ export declare class UsersController {
     }>;
     remove(id: string): Promise<{
         id: string;
-        supplierId: number | null;
         name: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;

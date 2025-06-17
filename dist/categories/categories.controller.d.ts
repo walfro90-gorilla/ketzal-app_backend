@@ -8,40 +8,40 @@ export declare class CategoriesController {
         id: number;
         name: string;
         description: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
         name: string;
         description: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
     }[]>;
     findOne(id: string): Promise<{
         id: number;
         name: string;
         description: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
     }>;
     update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<{
         id: number;
         name: string;
         description: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
     }>;
     remove(id: string): Promise<{
         id: number;
         name: string;
         description: string | null;
-        createdAt: Date;
         image: string | null;
+        createdAt: Date;
         updatedAt: Date;
     }>;
 }

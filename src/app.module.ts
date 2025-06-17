@@ -6,9 +6,10 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CategoriesModule } from './categories/categories.module';
+import { GlobalLocationsModule } from './locations/global-locations.module';
 
 @Module({
-    imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule],
+    imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule, GlobalLocationsModule],
     controllers: [],
     providers: [PrismaService],
 })

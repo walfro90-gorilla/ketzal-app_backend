@@ -6,14 +6,15 @@ export declare class ServicesService {
     constructor(prismaService: PrismaService);
     create(createServiceDto: CreateServiceDto): import(".prisma/client").Prisma.Prisma__ServiceClient<{
         id: number;
-        supplierId: number;
         name: string;
         description: string | null;
         price: number;
+        createdAt: Date;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
-        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
@@ -24,7 +25,6 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -34,14 +34,15 @@ export declare class ServicesService {
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
-        supplierId: number;
         name: string;
         description: string | null;
         price: number;
+        createdAt: Date;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
-        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
@@ -52,7 +53,6 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -62,14 +62,15 @@ export declare class ServicesService {
     }[]>;
     findOne(id: number): Promise<{
         id: number;
-        supplierId: number;
         name: string;
         description: string | null;
         price: number;
+        createdAt: Date;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
-        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
@@ -80,7 +81,6 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -90,14 +90,15 @@ export declare class ServicesService {
     }>;
     update(id: number, updateServiceDto: UpdateServiceDto): Promise<{
         id: number;
-        supplierId: number;
         name: string;
         description: string | null;
         price: number;
+        createdAt: Date;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
-        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
@@ -108,7 +109,6 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -118,14 +118,15 @@ export declare class ServicesService {
     }>;
     remove(id: number): Promise<{
         id: number;
-        supplierId: number;
         name: string;
         description: string | null;
         price: number;
+        createdAt: Date;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
-        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
         images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
@@ -136,7 +137,6 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;

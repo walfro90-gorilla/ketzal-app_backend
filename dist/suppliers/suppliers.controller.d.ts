@@ -9,8 +9,8 @@ export declare class SuppliersController {
         id: number;
         name: string;
         description: string | null;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         createdAt: Date;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -25,8 +25,8 @@ export declare class SuppliersController {
         id: number;
         name: string;
         description: string | null;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         createdAt: Date;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -41,8 +41,8 @@ export declare class SuppliersController {
         id: number;
         name: string;
         description: string | null;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         createdAt: Date;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -57,8 +57,8 @@ export declare class SuppliersController {
         id: number;
         name: string;
         description: string | null;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         createdAt: Date;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -73,8 +73,8 @@ export declare class SuppliersController {
         id: number;
         name: string;
         description: string | null;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         createdAt: Date;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
