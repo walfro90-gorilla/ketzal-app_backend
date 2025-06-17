@@ -158,3 +158,10 @@ model Categories {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 }
+
+model global_locations {
+  id      Int    @id @default(autoincrement())
+  country String
+  state   String
+  city    String
+}

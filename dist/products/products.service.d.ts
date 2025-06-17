@@ -9,9 +9,9 @@ export declare class ProductsService {
         name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
         stock: number;
         image: string;
+        createdAt: Date;
         updatedAt: Date;
     } | undefined>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
@@ -19,9 +19,9 @@ export declare class ProductsService {
         name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
         stock: number;
         image: string;
+        createdAt: Date;
         updatedAt: Date;
     }[]>;
     findOne(id: number): Promise<{
@@ -29,9 +29,9 @@ export declare class ProductsService {
         name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
         stock: number;
         image: string;
+        createdAt: Date;
         updatedAt: Date;
     }>;
     update(id: number, updateProductDto: UpdateProductDto): Promise<{
@@ -39,9 +39,9 @@ export declare class ProductsService {
         name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
         stock: number;
         image: string;
+        createdAt: Date;
         updatedAt: Date;
     }>;
     remove(id: number): Promise<{
@@ -49,9 +49,9 @@ export declare class ProductsService {
         name: string;
         description: string | null;
         price: number;
-        createdAt: Date;
         stock: number;
         image: string;
+        createdAt: Date;
         updatedAt: Date;
     }>;
 }
