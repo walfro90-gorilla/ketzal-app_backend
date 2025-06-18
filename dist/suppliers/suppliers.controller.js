@@ -26,6 +26,12 @@ let SuppliersController = class SuppliersController {
     findAll() {
         return this.suppliersService.findAll();
     }
+    search(name, email) {
+        return this.suppliersService.search(name, email);
+    }
+    checkDependencies(id) {
+        return this.suppliersService.checkDependencies(+id);
+    }
     findOne(id) {
         return this.suppliersService.findOne(+id);
     }
@@ -50,6 +56,21 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Query)('name')),
+    __param(1, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(':id/dependencies'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "checkDependencies", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

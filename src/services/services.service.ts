@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -46,15 +46,50 @@ export class ServicesService {
     }
     return updatedService
   }
-
   // Remove a service
   async remove(id: number) {
-    const deletedService = await this.prismaService.service.delete({
-      where: { id }
-    })
-    if (!deletedService) {
+    // First verify the service exists
+    await this.findOne(id);
+
+    // Check for dependencies before deletion
+    const dependencies = await this.checkServiceDependencies(id);
+    if (dependencies.hasReviews) {
+      throw new ConflictException(
+        `Cannot delete service. It has ${dependencies.reviewsCount} review(s) associated. Please remove the reviews first.`
+      );
+    }
+
+    // If we get here, it's safe to delete
+    try {
+      const deletedService = await this.prismaService.service.delete({
+        where: { id }
+      });
+      console.log(`Service ${id} deleted successfully`);
+      return deletedService;
+    } catch (error) {
+      console.error(`Error deleting service ${id}:`, error);
       throw new NotFoundException(`Service #${id} not found`);
     }
-    return deletedService
+  }
+
+  // Check dependencies for a service
+  async checkServiceDependencies(id: number) {
+    const reviews = await this.prismaService.review.findMany({
+      where: { serviceId: id }
+    });
+
+    return {
+      hasReviews: reviews.length > 0,
+      reviewsCount: reviews.length,
+      dependencies: [
+        ...(reviews.length > 0 ? [`${reviews.length} review(s)`] : [])
+      ]
+    };
+  }
+
+  // Get service dependencies endpoint
+  async getServiceDependencies(id: number) {
+    await this.findOne(id); // Verify service exists
+    return this.checkServiceDependencies(id);
   }
 }

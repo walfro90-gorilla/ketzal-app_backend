@@ -18,22 +18,162 @@ let SuppliersService = class SuppliersService {
         this.prismaService = prismaService;
     }
     async create(createSupplierDto) {
+        var _a;
         try {
-            return await this.prismaService.supplier.create({
-                data: createSupplierDto
+            console.log('=== SUPPLIER CREATION ATTEMPT ===');
+            console.log('Received data:', JSON.stringify(createSupplierDto, null, 2));
+            const existingByName = await this.prismaService.supplier.findFirst({
+                where: {
+                    name: {
+                        equals: createSupplierDto.name,
+                        mode: 'insensitive'
+                    }
+                }
             });
+            if (existingByName) {
+                console.log('Found existing supplier by name:', existingByName);
+                throw new common_1.ConflictException(`Supplier with name "${createSupplierDto.name}" already exists`);
+            }
+            const existingByEmail = await this.prismaService.supplier.findFirst({
+                where: {
+                    contactEmail: {
+                        equals: createSupplierDto.contactEmail,
+                        mode: 'insensitive'
+                    }
+                }
+            });
+            if (existingByEmail) {
+                console.log('Found existing supplier by email:', existingByEmail);
+                throw new common_1.ConflictException(`Supplier with email "${createSupplierDto.contactEmail}" already exists`);
+            }
+            console.log('No existing suppliers found, proceeding with creation...');
+            const cleanData = Object.assign(Object.assign(Object.assign(Object.assign({ name: createSupplierDto.name.trim(), contactEmail: createSupplierDto.contactEmail.trim().toLowerCase() }, (createSupplierDto.phoneNumber && { phoneNumber: createSupplierDto.phoneNumber.trim() })), (createSupplierDto.address && { address: createSupplierDto.address.trim() })), (createSupplierDto.description && { description: createSupplierDto.description.trim() })), (createSupplierDto.imgLogo && { imgLogo: createSupplierDto.imgLogo.trim() }));
+            console.log('Clean data for creation:', JSON.stringify(cleanData, null, 2));
+            const newSupplier = await this.prismaService.supplier.create({
+                data: cleanData,
+                select: {
+                    id: true,
+                    name: true,
+                    contactEmail: true,
+                    phoneNumber: true,
+                    address: true,
+                    description: true,
+                    imgLogo: true,
+                    createdAt: true,
+                }
+            });
+            console.log('Successfully created supplier:', newSupplier);
+            return newSupplier;
         }
         catch (error) {
+            console.log('=== ERROR IN SUPPLIER CREATION ===');
+            if (typeof error === 'object' && error !== null && 'constructor' in error) {
+                console.log('Error type:', error.constructor.name);
+            }
+            else {
+                console.log('Error type: unknown');
+            }
+            console.log('Error message:', error === null || error === void 0 ? void 0 : error.message);
+            if (error instanceof common_1.ConflictException) {
+                throw error;
+            }
             if (error instanceof library_1.PrismaClientKnownRequestError) {
                 const prismaError = error;
+                console.log('Prisma error code:', prismaError.code);
+                console.log('Prisma error meta:', prismaError.meta);
                 if (prismaError.code === 'P2002') {
-                    throw new common_1.ConflictException(`Supplier with name ${createSupplierDto.name} already exists`);
+                    const target = (_a = prismaError.meta) === null || _a === void 0 ? void 0 : _a.target;
+                    console.log('Unique constraint violation on fields:', target);
+                    if (target && target.includes('name')) {
+                        throw new common_1.ConflictException(`Supplier with name "${createSupplierDto.name}" already exists`);
+                    }
+                    else if (target && target.includes('contactEmail')) {
+                        throw new common_1.ConflictException(`Supplier with email "${createSupplierDto.contactEmail}" already exists`);
+                    }
+                    else {
+                        throw new common_1.ConflictException(`Supplier with this information already exists. Constraint violated on: ${target === null || target === void 0 ? void 0 : target.join(', ')}`);
+                    }
                 }
             }
+            console.error('Unexpected error creating supplier:', error);
+            throw error;
         }
     }
     findAll() {
         return this.prismaService.supplier.findMany();
+    }
+    async search(name, email) {
+        const where = {};
+        if (name) {
+            where.name = {
+                contains: name,
+                mode: 'insensitive'
+            };
+        }
+        if (email) {
+            where.contactEmail = {
+                contains: email,
+                mode: 'insensitive'
+            };
+        }
+        const suppliers = await this.prismaService.supplier.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                contactEmail: true,
+                createdAt: true
+            }
+        });
+        console.log(`Search results for name="${name}", email="${email}":`, suppliers);
+        return suppliers;
+    }
+    async checkDependencies(id) {
+        try {
+            const supplier = await this.prismaService.supplier.findUnique({
+                where: { id },
+                include: {
+                    services: {
+                        select: { id: true, name: true }
+                    },
+                    users: {
+                        select: { id: true, name: true, email: true }
+                    },
+                    transportServices: {
+                        select: { id: true, name: true }
+                    },
+                    hotelServices: {
+                        select: { id: true, name: true }
+                    },
+                }
+            });
+            if (!supplier) {
+                throw new Error(`Supplier with id ${id} not found`);
+            }
+            const dependencies = {
+                supplier: {
+                    id: supplier.id,
+                    name: supplier.name
+                },
+                services: supplier.services,
+                users: supplier.users,
+                transportServices: supplier.transportServices,
+                hotelServices: supplier.hotelServices,
+                canDelete: (supplier.services.length === 0 &&
+                    supplier.users.length === 0 &&
+                    supplier.transportServices.length === 0 &&
+                    supplier.hotelServices.length === 0),
+                totalDependencies: (supplier.services.length +
+                    supplier.users.length +
+                    supplier.transportServices.length +
+                    supplier.hotelServices.length)
+            };
+            return dependencies;
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(`Failed to check dependencies: ${errorMessage}`);
+        }
     }
     async findOne(id) {
         const supplierFound = await this.prismaService.supplier.findUnique({
@@ -59,15 +199,74 @@ let SuppliersService = class SuppliersService {
         return productFound;
     }
     async remove(id) {
-        const deletedSupplier = await this.prismaService.supplier.delete({
-            where: {
-                id: id
+        try {
+            console.log(`=== ATTEMPTING TO DELETE SUPPLIER ${id} ===`);
+            const supplier = await this.prismaService.supplier.findUnique({
+                where: { id },
+                include: {
+                    services: true,
+                    users: true,
+                    transportServices: true,
+                    hotelServices: true,
+                }
+            });
+            if (!supplier) {
+                throw new Error(`Supplier with id ${id} not found`);
             }
-        });
-        if (!deletedSupplier) {
-            throw new Error(`Supplier with id ${id} not found`);
+            console.log('Supplier found:', {
+                id: supplier.id,
+                name: supplier.name,
+                servicesCount: supplier.services.length,
+                usersCount: supplier.users.length,
+                transportServicesCount: supplier.transportServices.length,
+                hotelServicesCount: supplier.hotelServices.length,
+            });
+            const totalDependencies = supplier.services.length +
+                supplier.users.length +
+                supplier.transportServices.length +
+                supplier.hotelServices.length;
+            if (totalDependencies > 0) {
+                const errorMessage = `Cannot delete supplier "${supplier.name}". It has dependencies: ${supplier.services.length} services, ${supplier.users.length} users, ${supplier.transportServices.length} transport services, ${supplier.hotelServices.length} hotel services`;
+                console.error(errorMessage);
+                throw new common_1.ConflictException(errorMessage);
+            }
+            const deletedSupplier = await this.prismaService.supplier.delete({
+                where: { id }
+            });
+            console.log('✅ Supplier deleted successfully:', deletedSupplier.name);
+            return {
+                success: true,
+                message: `Supplier "${deletedSupplier.name}" deleted successfully`,
+                deletedSupplier
+            };
         }
-        return deletedSupplier;
+        catch (error) {
+            console.error('Error deleting supplier:', error);
+            if (error instanceof common_1.ConflictException) {
+                throw error;
+            }
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(`Failed to delete supplier with id ${id}: ${errorMessage}`);
+        }
+    }
+    async softDelete(id) {
+        try {
+            const supplier = await this.prismaService.supplier.findUnique({
+                where: { id }
+            });
+            if (!supplier) {
+                throw new Error(`Supplier with id ${id} not found`);
+            }
+            return {
+                success: true,
+                message: `Supplier "${supplier.name}" marked as inactive`,
+                supplier
+            };
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(`Failed to soft delete supplier: ${errorMessage}`);
+        }
     }
 };
 exports.SuppliersService = SuppliersService;

@@ -26,6 +26,10 @@ export class ServicesController {
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.servicesService.update(+id, updateServiceDto);
   }
+  @Get(':id/dependencies')
+  getServiceDependencies(@Param('id') id: string) {
+    return this.servicesService.getServiceDependencies(+id);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

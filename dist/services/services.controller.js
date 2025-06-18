@@ -32,6 +32,9 @@ let ServicesController = class ServicesController {
     update(id, updateServiceDto) {
         return this.servicesService.update(+id, updateServiceDto);
     }
+    getServiceDependencies(id) {
+        return this.servicesService.getServiceDependencies(+id);
+    }
     remove(id) {
         return this.servicesService.remove(+id);
     }
@@ -65,6 +68,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "update", null);
+__decorate([
+    (0, common_1.Get)(':id/dependencies'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ServicesController.prototype, "getServiceDependencies", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

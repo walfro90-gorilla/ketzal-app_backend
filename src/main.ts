@@ -2,15 +2,24 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { Request, Response } from "express";
+import { ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api');    // Enable global validation
+    app.useGlobalPipes(new ValidationPipe({
+        whitelist: true, // Remove properties that are not defined in the DTO
+        forbidNonWhitelisted: false, // Don't throw error, just remove them
+        transform: true, // Automatically transform payloads to DTO instances
+        transformOptions: {
+            enableImplicitConversion: true,
+        },
+    }));
 
     const config = new DocumentBuilder()
-        .setTitle('Cats example')
-        .setDescription('The cats API description')
+        .setTitle('Ketzal app API')
+        .setDescription('The Ketzal app API description')
         .setVersion('1.0')
         .addTag('cats')
         .build();

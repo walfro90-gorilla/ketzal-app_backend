@@ -45,13 +45,38 @@ let ServicesService = class ServicesService {
         return updatedService;
     }
     async remove(id) {
-        const deletedService = await this.prismaService.service.delete({
-            where: { id }
-        });
-        if (!deletedService) {
+        await this.findOne(id);
+        const dependencies = await this.checkServiceDependencies(id);
+        if (dependencies.hasReviews) {
+            throw new common_1.ConflictException(`Cannot delete service. It has ${dependencies.reviewsCount} review(s) associated. Please remove the reviews first.`);
+        }
+        try {
+            const deletedService = await this.prismaService.service.delete({
+                where: { id }
+            });
+            console.log(`Service ${id} deleted successfully`);
+            return deletedService;
+        }
+        catch (error) {
+            console.error(`Error deleting service ${id}:`, error);
             throw new common_1.NotFoundException(`Service #${id} not found`);
         }
-        return deletedService;
+    }
+    async checkServiceDependencies(id) {
+        const reviews = await this.prismaService.review.findMany({
+            where: { serviceId: id }
+        });
+        return {
+            hasReviews: reviews.length > 0,
+            reviewsCount: reviews.length,
+            dependencies: [
+                ...(reviews.length > 0 ? [`${reviews.length} review(s)`] : [])
+            ]
+        };
+    }
+    async getServiceDependencies(id) {
+        await this.findOne(id);
+        return this.checkServiceDependencies(id);
     }
 };
 exports.ServicesService = ServicesService;

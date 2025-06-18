@@ -5,50 +5,75 @@ export declare class SuppliersController {
     private readonly suppliersService;
     constructor(suppliersService: SuppliersService);
     create(createSupplierDto: CreateSupplierDto): Promise<{
-        info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
-        description: string | null;
-        createdAt: Date;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
+        description: string | null;
         imgLogo: string | null;
-        supplierType: string | null;
-        supplierSubType: string | null;
-        photos: import("@prisma/client/runtime/library").JsonValue | null;
-        extras: import("@prisma/client/runtime/library").JsonValue | null;
-    } | undefined>;
+        createdAt: Date;
+    }>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
-        description: string | null;
-        createdAt: Date;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
+        description: string | null;
         imgLogo: string | null;
+        createdAt: Date;
         supplierType: string | null;
         supplierSubType: string | null;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
+    search(name?: string, email?: string): Promise<{
+        id: number;
+        name: string;
+        contactEmail: string;
+        createdAt: Date;
+    }[]>;
+    checkDependencies(id: string): Promise<{
+        supplier: {
+            id: number;
+            name: string;
+        };
+        services: {
+            id: number;
+            name: string;
+        }[];
+        users: {
+            id: string;
+            name: string | null;
+            email: string;
+        }[];
+        transportServices: {
+            id: number;
+            name: string;
+        }[];
+        hotelServices: {
+            id: number;
+            name: string;
+        }[];
+        canDelete: boolean;
+        totalDependencies: number;
+    }>;
     findOne(id: string): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
-        description: string | null;
-        createdAt: Date;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
+        description: string | null;
         imgLogo: string | null;
+        createdAt: Date;
         supplierType: string | null;
         supplierSubType: string | null;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
@@ -56,32 +81,36 @@ export declare class SuppliersController {
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
-        description: string | null;
-        createdAt: Date;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
+        description: string | null;
         imgLogo: string | null;
+        createdAt: Date;
         supplierType: string | null;
         supplierSubType: string | null;
+        location: import("@prisma/client/runtime/library").JsonValue | null;
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     remove(id: string): Promise<{
-        info: import("@prisma/client/runtime/library").JsonValue | null;
-        id: number;
-        name: string;
-        description: string | null;
-        createdAt: Date;
-        location: import("@prisma/client/runtime/library").JsonValue | null;
-        contactEmail: string;
-        phoneNumber: string | null;
-        address: string | null;
-        imgLogo: string | null;
-        supplierType: string | null;
-        supplierSubType: string | null;
-        photos: import("@prisma/client/runtime/library").JsonValue | null;
-        extras: import("@prisma/client/runtime/library").JsonValue | null;
+        success: boolean;
+        message: string;
+        deletedSupplier: {
+            info: import("@prisma/client/runtime/library").JsonValue | null;
+            id: number;
+            name: string;
+            contactEmail: string;
+            phoneNumber: string | null;
+            address: string | null;
+            description: string | null;
+            imgLogo: string | null;
+            createdAt: Date;
+            supplierType: string | null;
+            supplierSubType: string | null;
+            location: import("@prisma/client/runtime/library").JsonValue | null;
+            photos: import("@prisma/client/runtime/library").JsonValue | null;
+            extras: import("@prisma/client/runtime/library").JsonValue | null;
+        };
     }>;
 }
