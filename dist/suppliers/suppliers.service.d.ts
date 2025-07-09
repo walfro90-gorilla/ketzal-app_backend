@@ -13,6 +13,7 @@ export declare class SuppliersService {
         description: string | null;
         imgLogo: string | null;
         createdAt: Date;
+        supplierType: string | null;
     }>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
@@ -36,6 +37,11 @@ export declare class SuppliersService {
         contactEmail: string;
         createdAt: Date;
     }[]>;
+    checkDuplicate(name?: string, email?: string, excludeId?: number): Promise<{
+        nameExists: boolean;
+        emailExists: boolean;
+        existingSuppliers: any[];
+    }>;
     checkDependencies(id: number): Promise<{
         supplier: {
             id: number;

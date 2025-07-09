@@ -41,6 +41,12 @@ __decorate([
 ], CreateSupplierDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['agencia_tours', 'agencia_local', 'traslados', 'guia', 'hotel']),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSupplierDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateSupplierDto.prototype, "imgLogo", void 0);

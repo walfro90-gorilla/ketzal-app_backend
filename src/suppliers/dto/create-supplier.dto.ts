@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsNotEmpty, IsIn } from 'class-validator';
 
 export class CreateSupplierDto {
   @IsNotEmpty()
@@ -20,6 +20,11 @@ export class CreateSupplierDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsIn(['agencia_tours', 'agencia_local', 'traslados', 'guia', 'hotel'])
+  @IsString()
+  type?: string;
 
   @IsOptional()
   @IsString()

@@ -46,8 +46,7 @@ export class SuppliersService {
         throw new ConflictException(`Supplier with email "${createSupplierDto.contactEmail}" already exists`);
       }
         console.log('No existing suppliers found, proceeding with creation...');
-      
-      // Clean the data to ensure no undefined/null values cause issues
+        // Clean the data to ensure no undefined/null values cause issues
       // EXPLICITLY only include the fields we want to create
       const cleanData = {
         name: createSupplierDto.name.trim(),
@@ -55,12 +54,12 @@ export class SuppliersService {
         ...(createSupplierDto.phoneNumber && { phoneNumber: createSupplierDto.phoneNumber.trim() }),
         ...(createSupplierDto.address && { address: createSupplierDto.address.trim() }),
         ...(createSupplierDto.description && { description: createSupplierDto.description.trim() }),
+        ...(createSupplierDto.type && { supplierType: createSupplierDto.type.trim() }),
         ...(createSupplierDto.imgLogo && { imgLogo: createSupplierDto.imgLogo.trim() }),
       };
       
       console.log('Clean data for creation:', JSON.stringify(cleanData, null, 2));
-      
-      // IMPORTANT: Do not include id field - let Prisma auto-generate it
+        // IMPORTANT: Do not include id field - let Prisma auto-generate it
       const newSupplier = await this.prismaService.supplier.create({
         data: cleanData,
         select: {
@@ -70,6 +69,7 @@ export class SuppliersService {
           phoneNumber: true,
           address: true,
           description: true,
+          supplierType: true,
           imgLogo: true,
           createdAt: true,
         }
@@ -149,9 +149,55 @@ export class SuppliersService {
         contactEmail: true,
         createdAt: true
       }
-    });
-      console.log(`Search results for name="${name}", email="${email}":`, suppliers);
+    });      console.log(`Search results for name="${name}", email="${email}":`, suppliers);
     return suppliers;
+  }
+
+  // Check for duplicate suppliers
+  async checkDuplicate(name?: string, email?: string, excludeId?: number) {
+    const result = {
+      nameExists: false,
+      emailExists: false,
+      existingSuppliers: [] as any[]
+    };
+
+    if (name) {
+      const nameExists = await this.prismaService.supplier.findFirst({
+        where: {
+          name: {
+            equals: name,
+            mode: 'insensitive'
+          },
+          ...(excludeId && { id: { not: excludeId } })
+        },
+        select: { id: true, name: true, contactEmail: true }
+      });
+
+      if (nameExists) {
+        result.nameExists = true;
+        result.existingSuppliers.push(nameExists);
+      }
+    }
+
+    if (email) {
+      const emailExists = await this.prismaService.supplier.findFirst({
+        where: {
+          contactEmail: {
+            equals: email,
+            mode: 'insensitive'
+          },
+          ...(excludeId && { id: { not: excludeId } })
+        },
+        select: { id: true, name: true, contactEmail: true }
+      });
+
+      if (emailExists && !result.existingSuppliers.find(s => s.id === emailExists.id)) {
+        result.emailExists = true;
+        result.existingSuppliers.push(emailExists);
+      }
+    }
+
+    return result;
   }
 
   // Check dependencies before deletion

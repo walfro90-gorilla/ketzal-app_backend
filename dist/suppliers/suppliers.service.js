@@ -47,7 +47,7 @@ let SuppliersService = class SuppliersService {
                 throw new common_1.ConflictException(`Supplier with email "${createSupplierDto.contactEmail}" already exists`);
             }
             console.log('No existing suppliers found, proceeding with creation...');
-            const cleanData = Object.assign(Object.assign(Object.assign(Object.assign({ name: createSupplierDto.name.trim(), contactEmail: createSupplierDto.contactEmail.trim().toLowerCase() }, (createSupplierDto.phoneNumber && { phoneNumber: createSupplierDto.phoneNumber.trim() })), (createSupplierDto.address && { address: createSupplierDto.address.trim() })), (createSupplierDto.description && { description: createSupplierDto.description.trim() })), (createSupplierDto.imgLogo && { imgLogo: createSupplierDto.imgLogo.trim() }));
+            const cleanData = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ name: createSupplierDto.name.trim(), contactEmail: createSupplierDto.contactEmail.trim().toLowerCase() }, (createSupplierDto.phoneNumber && { phoneNumber: createSupplierDto.phoneNumber.trim() })), (createSupplierDto.address && { address: createSupplierDto.address.trim() })), (createSupplierDto.description && { description: createSupplierDto.description.trim() })), (createSupplierDto.type && { supplierType: createSupplierDto.type.trim() })), (createSupplierDto.imgLogo && { imgLogo: createSupplierDto.imgLogo.trim() }));
             console.log('Clean data for creation:', JSON.stringify(cleanData, null, 2));
             const newSupplier = await this.prismaService.supplier.create({
                 data: cleanData,
@@ -58,6 +58,7 @@ let SuppliersService = class SuppliersService {
                     phoneNumber: true,
                     address: true,
                     description: true,
+                    supplierType: true,
                     imgLogo: true,
                     createdAt: true,
                 }
@@ -127,6 +128,40 @@ let SuppliersService = class SuppliersService {
         });
         console.log(`Search results for name="${name}", email="${email}":`, suppliers);
         return suppliers;
+    }
+    async checkDuplicate(name, email, excludeId) {
+        const result = {
+            nameExists: false,
+            emailExists: false,
+            existingSuppliers: []
+        };
+        if (name) {
+            const nameExists = await this.prismaService.supplier.findFirst({
+                where: Object.assign({ name: {
+                        equals: name,
+                        mode: 'insensitive'
+                    } }, (excludeId && { id: { not: excludeId } })),
+                select: { id: true, name: true, contactEmail: true }
+            });
+            if (nameExists) {
+                result.nameExists = true;
+                result.existingSuppliers.push(nameExists);
+            }
+        }
+        if (email) {
+            const emailExists = await this.prismaService.supplier.findFirst({
+                where: Object.assign({ contactEmail: {
+                        equals: email,
+                        mode: 'insensitive'
+                    } }, (excludeId && { id: { not: excludeId } })),
+                select: { id: true, name: true, contactEmail: true }
+            });
+            if (emailExists && !result.existingSuppliers.find(s => s.id === emailExists.id)) {
+                result.emailExists = true;
+                result.existingSuppliers.push(emailExists);
+            }
+        }
+        return result;
     }
     async checkDependencies(id) {
         try {
