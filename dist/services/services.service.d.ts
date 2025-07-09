@@ -60,6 +60,36 @@ export declare class ServicesService {
         hotelProviderID: number | null;
         dates: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
+    findAllWithReviewStats(): Promise<{
+        rating: number;
+        reviewCount: number;
+        id: number;
+        supplierId: number;
+        name: string;
+        description: string | null;
+        price: number;
+        location: string | null;
+        availableFrom: Date | null;
+        availableTo: Date | null;
+        createdAt: Date;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
+        ytLink: string | null;
+        sizeTour: number | null;
+        serviceType: string | null;
+        serviceCategory: string | null;
+        stateFrom: string | null;
+        cityFrom: string | null;
+        stateTo: string | null;
+        cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        excludes: import("@prisma/client/runtime/library").JsonValue | null;
+        faqs: import("@prisma/client/runtime/library").JsonValue | null;
+        itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        transportProviderID: number | null;
+        hotelProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
+    }[]>;
     findOne(id: number): Promise<{
         id: number;
         supplierId: number;

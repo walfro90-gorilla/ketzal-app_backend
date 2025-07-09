@@ -38,6 +38,11 @@ export class ReviewsController {
     return this.reviewsService.getReviewsByService(Number(serviceId));
   }
 
+  @Get('/service/:serviceId/stats')
+  getReviewStats(@Param('serviceId') serviceId: string) {
+    return this.reviewsService.getReviewStatsForService(Number(serviceId));
+  }
+
   @Post('/service/:serviceId')
   createReview(
     @Param('serviceId') serviceId: string,

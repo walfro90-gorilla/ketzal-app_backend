@@ -38,6 +38,9 @@ let ReviewsController = class ReviewsController {
     getReviews(serviceId) {
         return this.reviewsService.getReviewsByService(Number(serviceId));
     }
+    getReviewStats(serviceId) {
+        return this.reviewsService.getReviewStatsForService(Number(serviceId));
+    }
     createReview(serviceId, body, req) {
         var _a;
         const userId = body.userId || ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
@@ -87,6 +90,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ReviewsController.prototype, "getReviews", null);
+__decorate([
+    (0, common_1.Get)('/service/:serviceId/stats'),
+    __param(0, (0, common_1.Param)('serviceId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ReviewsController.prototype, "getReviewStats", null);
 __decorate([
     (0, common_1.Post)('/service/:serviceId'),
     __param(0, (0, common_1.Param)('serviceId')),

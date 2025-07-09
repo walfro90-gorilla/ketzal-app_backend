@@ -22,6 +22,21 @@ let ServicesService = class ServicesService {
     findAll() {
         return this.prismaService.service.findMany();
     }
+    async findAllWithReviewStats() {
+        const services = await this.prismaService.service.findMany();
+        const servicesWithStats = await Promise.all(services.map(async (service) => {
+            const reviews = await this.prismaService.review.findMany({
+                where: { serviceId: service.id },
+                select: { rating: true }
+            });
+            const totalReviews = reviews.length;
+            const averageRating = totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+                : 0;
+            return Object.assign(Object.assign({}, service), { rating: Math.round(averageRating * 10) / 10, reviewCount: totalReviews });
+        }));
+        return servicesWithStats;
+    }
     async findOne(id) {
         if (typeof id !== 'number' || isNaN(id)) {
             throw new common_1.NotFoundException('A valid service id must be provided');

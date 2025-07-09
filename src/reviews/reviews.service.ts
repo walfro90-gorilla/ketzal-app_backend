@@ -9,7 +9,36 @@ export class ReviewsService {
 
   // Crear review
   create(createReviewDto: CreateReviewDto) {
-    return this.prismaService.review.create({ data: createReviewDto });
+    // Validar que todos los campos requeridos estén presentes
+    const { rating, comment, serviceId, userId } = createReviewDto;
+    
+    if (!rating || !comment || !serviceId || !userId) {
+      throw new Error('Missing required fields: rating, comment, serviceId, userId');
+    }
+
+    return this.prismaService.review.create({ 
+      data: {
+        rating: Number(rating),
+        comment,
+        serviceId: Number(serviceId),
+        userId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true
+          }
+        },
+        service: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
   }
 
   // Obtener todas las reviews
@@ -40,7 +69,39 @@ export class ReviewsService {
 
   // Obtener reviews por servicio (ya existente)
   getReviewsByService(serviceId: number) {
-    return this.prismaService.review.findMany({ where: { serviceId } });
+    return this.prismaService.review.findMany({ 
+      where: { serviceId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true
+          }
+        }
+      }
+    });
+  }
+
+  // Obtener estadísticas de reviews por servicio
+  async getReviewStatsForService(serviceId: number) {
+    const reviews = await this.prismaService.review.findMany({ 
+      where: { serviceId },
+      select: {
+        rating: true
+      }
+    });
+    
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0 
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
+      : 0;
+    
+    return {
+      totalReviews,
+      averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+      serviceId
+    };
   }
 
   // Crear review para un servicio y usuario (ya existente)

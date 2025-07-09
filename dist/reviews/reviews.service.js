@@ -17,7 +17,33 @@ let ReviewsService = class ReviewsService {
         this.prismaService = prismaService;
     }
     create(createReviewDto) {
-        return this.prismaService.review.create({ data: createReviewDto });
+        const { rating, comment, serviceId, userId } = createReviewDto;
+        if (!rating || !comment || !serviceId || !userId) {
+            throw new Error('Missing required fields: rating, comment, serviceId, userId');
+        }
+        return this.prismaService.review.create({
+            data: {
+                rating: Number(rating),
+                comment,
+                serviceId: Number(serviceId),
+                userId
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true
+                    }
+                },
+                service: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        });
     }
     findAll() {
         return this.prismaService.review.findMany();
@@ -41,7 +67,35 @@ let ReviewsService = class ReviewsService {
         return deleted;
     }
     getReviewsByService(serviceId) {
-        return this.prismaService.review.findMany({ where: { serviceId } });
+        return this.prismaService.review.findMany({
+            where: { serviceId },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true
+                    }
+                }
+            }
+        });
+    }
+    async getReviewStatsForService(serviceId) {
+        const reviews = await this.prismaService.review.findMany({
+            where: { serviceId },
+            select: {
+                rating: true
+            }
+        });
+        const totalReviews = reviews.length;
+        const averageRating = totalReviews > 0
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+            : 0;
+        return {
+            totalReviews,
+            averageRating: Math.round(averageRating * 10) / 10,
+            serviceId
+        };
     }
     createReview(serviceId, userId, rating, comment) {
         return this.prismaService.review.create({
