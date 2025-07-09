@@ -11,11 +11,20 @@ export class SuppliersController {
   create(@Body() createSupplierDto: CreateSupplierDto) {
     return this.suppliersService.create(createSupplierDto);
   }
-
   @Get()
   findAll() {
     return this.suppliersService.findAll();
   }
+
+  @Get('check-duplicate')
+  checkDuplicate(
+    @Query('name') name?: string, 
+    @Query('email') email?: string,
+    @Query('excludeId') excludeId?: string
+  ) {
+    return this.suppliersService.checkDuplicate(name, email, excludeId ? +excludeId : undefined);
+  }
+
   @Get('search')
   search(@Query('name') name?: string, @Query('email') email?: string) {
     return this.suppliersService.search(name, email);

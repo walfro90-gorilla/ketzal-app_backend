@@ -7,61 +7,91 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<{
         id: string;
         name: string | null;
-        image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
+        image: string | null;
         role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
+        createdAt: Date;
+        updatedAt: Date;
     } | undefined>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+    findAll(): import(".prisma/client").Prisma.PrismaPromise<({
+        supplier: {
+            id: number;
+            name: string;
+            contactEmail: string;
+        } | null;
+    } & {
         id: string;
         name: string | null;
-        image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
-        role: import(".prisma/client").$Enums.Role;
-    }[]>;
-    findOne(id: number): Promise<{
-        id: string;
-        name: string | null;
         image: string | null;
+        role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        supplierId: number | null;
+    })[]>;
+    findOne(id: string): Promise<{
+        supplier: {
+            id: number;
+            name: string;
+            contactEmail: string;
+        } | null;
+    } & {
+        id: string;
+        name: string | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
+        image: string | null;
         role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
-    update(id: number, updateUserDto: UpdateUserDto): Promise<{
+    update(id: string, updateUserDto: UpdateUserDto): Promise<{
         id: string;
         name: string | null;
-        image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        supplierId: number | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
-        role: import(".prisma/client").$Enums.Role;
-    }>;
-    remove(id: number): Promise<{
-        id: string;
-        name: string | null;
         image: string | null;
+        role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        supplierId: number | null;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        name: string | null;
         email: string;
         password: string | null;
         emailVerified: Date | null;
+        image: string | null;
         role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
+    searchUsers(name?: string, email?: string): Promise<({
+        supplier: {
+            id: number;
+            name: string;
+            contactEmail: string;
+        } | null;
+    } & {
+        id: string;
+        name: string | null;
+        email: string;
+        password: string | null;
+        emailVerified: Date | null;
+        image: string | null;
+        role: import(".prisma/client").$Enums.Role;
+        supplierId: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+    })[]>;
 }

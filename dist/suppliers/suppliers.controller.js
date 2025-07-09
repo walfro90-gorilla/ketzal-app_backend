@@ -26,6 +26,9 @@ let SuppliersController = class SuppliersController {
     findAll() {
         return this.suppliersService.findAll();
     }
+    checkDuplicate(name, email, excludeId) {
+        return this.suppliersService.checkDuplicate(name, email, excludeId ? +excludeId : undefined);
+    }
     search(name, email) {
         return this.suppliersService.search(name, email);
     }
@@ -56,6 +59,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('check-duplicate'),
+    __param(0, (0, common_1.Query)('name')),
+    __param(1, (0, common_1.Query)('email')),
+    __param(2, (0, common_1.Query)('excludeId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "checkDuplicate", null);
 __decorate([
     (0, common_1.Get)('search'),
     __param(0, (0, common_1.Query)('name')),

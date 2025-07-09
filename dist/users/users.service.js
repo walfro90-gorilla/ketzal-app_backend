@@ -37,11 +37,33 @@ let UsersService = class UsersService {
         }
     }
     findAll() {
-        return this.prismaService.user.findMany();
+        return this.prismaService.user.findMany({
+            include: {
+                supplier: {
+                    select: {
+                        id: true,
+                        name: true,
+                        contactEmail: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
     }
     async findOne(id) {
         const userFound = await this.prismaService.user.findUnique({
-            where: { id: id.toString() }
+            where: { id: id },
+            include: {
+                supplier: {
+                    select: {
+                        id: true,
+                        name: true,
+                        contactEmail: true
+                    }
+                }
+            }
         });
         if (!userFound) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
@@ -50,7 +72,7 @@ let UsersService = class UsersService {
     }
     async update(id, updateUserDto) {
         const userFound = await this.prismaService.user.update({
-            where: { id: id.toString() },
+            where: { id: id },
             data: updateUserDto
         });
         if (!userFound) {
@@ -61,13 +83,50 @@ let UsersService = class UsersService {
     async remove(id) {
         const deletedUser = await this.prismaService.user.delete({
             where: {
-                id: id.toString()
+                id: id
             }
         });
         if (!deletedUser) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
         return deletedUser;
+    }
+    async searchUsers(name, email) {
+        const where = {};
+        if (name || email) {
+            where.OR = [];
+            if (name) {
+                where.OR.push({
+                    name: {
+                        contains: name,
+                        mode: 'insensitive'
+                    }
+                });
+            }
+            if (email) {
+                where.OR.push({
+                    email: {
+                        contains: email,
+                        mode: 'insensitive'
+                    }
+                });
+            }
+        }
+        return this.prismaService.user.findMany({
+            where,
+            include: {
+                supplier: {
+                    select: {
+                        id: true,
+                        name: true,
+                        contactEmail: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
     }
 };
 exports.UsersService = UsersService;
