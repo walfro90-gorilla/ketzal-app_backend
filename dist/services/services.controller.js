@@ -26,6 +26,9 @@ let ServicesController = class ServicesController {
     findAll() {
         return this.servicesService.findAll();
     }
+    findAllWithReviewStats() {
+        return this.servicesService.findAllWithReviewStats();
+    }
     findOne(id) {
         return this.servicesService.findOne(+id);
     }
@@ -53,6 +56,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('with-reviews'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ServicesController.prototype, "findAllWithReviewStats", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

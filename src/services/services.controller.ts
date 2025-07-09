@@ -17,6 +17,11 @@ export class ServicesController {
     return this.servicesService.findAll();
   }
 
+  @Get('with-reviews')
+  findAllWithReviewStats() {
+    return this.servicesService.findAllWithReviewStats();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.servicesService.findOne(+id);
