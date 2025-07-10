@@ -6,42 +6,42 @@ export declare class CategoriesService {
     constructor(prismaService: PrismaService);
     create(createCategoryDto: CreateCategoryDto): import(".prisma/client").Prisma.Prisma__CategoriesClient<{
         id: number;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<{
         id: number;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     remove(id: number): Promise<{
         id: number;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         image: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }

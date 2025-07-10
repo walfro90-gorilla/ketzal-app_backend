@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+  superadmin
+}
+
+// Nuevos enums para el marketplace
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  COMPLETED
+  REFUNDED
+}
+
+enum PlannerStatus {
+  PLANNING
+  RESERVED
+  CONFIRMED
+  TRAVELLING
+  COMPLETED
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  PURCHASE
+  REFUND
+  TRANSFER_SENT
+  TRANSFER_RECEIVED
+  REWARD
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(admin)
+  supplierId    Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Nuevos campos para el marketplace (opcionales para evitar conflictos)
+  axoCoinsEarned Float?    @default(50)
+  referralCode   String?   @unique @default(cuid())
+  
+  // Relaciones existentes
+  accounts      Account[]
+  reviews       Review[]
+  supplier      Supplier? @relation(fields: [supplierId], references: [id])
+  
+  // Nuevas relaciones
+  wallet        Wallet?
+  planners      TravelPlanner[]
+  wishlists     Wishlist[]
+  payments      Payment[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String   @id @unique
+  token      String
+  expires    DateTime
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  price       Float
+  stock       Int
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Nuevos campos para el marketplace
+  priceAxo      Float?
+  category      String?
+  tags          Json?
+  images        Json?
+  specifications Json?
+  
+  // Nuevas relaciones
+  plannerItems  PlannerItem[]
+  wishlistItems WishlistItem[]
+}
+
+model Supplier {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  contactEmail        String    @unique
+  phoneNumber         String?
+  address             String?
+  description         String?
+  imgLogo             String?
+  createdAt           DateTime  @default(now())
+  supplierType        String?
+  supplierSubType     String?
+  location            Json?
+  photos              Json?
+  extras              Json?
+  info                Json?
+  services            Service[]
+  users               User[]
+  transportServices   Service[] @relation("TransportSupplier")
+  hotelServices       Service[] @relation("HotelSupplier")
+}
+
+model Service {
+  id                  Int       @id @default(autoincrement())
+  supplierId          Int
+  name                String
+  description         String?
+  price               Float
+  location            String?
+  availableFrom       DateTime?
+  availableTo         DateTime?
+  createdAt           DateTime  @default(now())
+  packs               Json?
+  images              Json?
+  ytLink              String?
+  sizeTour            Float?
+  serviceType         String?
+  serviceCategory     String?
+  stateFrom           String?
+  cityFrom            String?
+  stateTo             String?
+  cityTo              String?
+  includes            Json?
+  excludes            Json?
+  faqs                Json?
+  itinerary           Json?
+  hotelProviderID     Int?
+  transportProviderID Int?
+  dates               Json?
+  
+  // Nuevos campos para el marketplace
+  maxCapacity     Int?
+  currentBookings Int?           @default(0)
+  priceAxo        Float?
+  seasonalPrices  Json?          // {high: 1500, low: 1000}
+  addOns          Json?          // servicios adicionales
+  
+  // Relaciones existentes
+  reviews             Review[]
+  supplierHotel       Supplier? @relation("HotelSupplier", fields: [hotelProviderID], references: [id])
+  supplier            Supplier  @relation(fields: [supplierId], references: [id])
+  supplierTransport   Supplier? @relation("TransportSupplier", fields: [transportProviderID], references: [id])
+  
+  // Nuevas relaciones
+  plannerItems    PlannerItem[]
+  wishlistItems   WishlistItem[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  serviceId Int
+  userId    String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  service   Service  @relation(fields: [serviceId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Categories {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  image       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model global_locations {
+  id      BigInt @id @default(autoincrement())
+  country String
+  state   String
+  city    String
+}
+
+// ========================================
+// NUEVOS MODELOS PARA MARKETPLACE KETZAL
+// ========================================
+
+// Monedero Digital
+model Wallet {
+  id           String  @id @default(cuid())
+  userId       String  @unique
+  balanceMXN   Float   @default(0)
+  balanceAxo   Float   @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id           String               @id @default(cuid())
+  walletId     String
+  type         WalletTransactionType
+  amountMXN    Float?
+  amountAxo    Float?
+  description  String
+  reference    String?
+  createdAt    DateTime             @default(now())
+  
+  wallet       Wallet               @relation(fields: [walletId], references: [id], onDelete: Cascade)
+}
+
+// Planner de Viaje (reemplaza carrito tradicional)
+model TravelPlanner {
+  id          String         @id @default(cuid())
+  userId      String
+  name        String
+  destination String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      PlannerStatus  @default(PLANNING)
+  totalMXN    Float          @default(0)
+  totalAxo    Float          @default(0)
+  isPublic    Boolean        @default(false)
+  shareCode   String?        @unique
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       PlannerItem[]
+  payments    Payment[]
+}
+
+model PlannerItem {
+  id           String        @id @default(cuid())
+  plannerId    String
+  serviceId    Int?
+  productId    Int?
+  quantity     Int           @default(1)
+  priceMXN     Float
+  priceAxo     Float?
+  selectedDate DateTime?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  
+  planner      TravelPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+  service      Service?      @relation(fields: [serviceId], references: [id])
+  product      Product?      @relation(fields: [productId], references: [id])
+}
+
+// Wishlist Inteligente
+model Wishlist {
+  id          String     @id @default(cuid())
+  userId      String
+  name        String     @default("Mi Lista de Deseos")
+  isPublic    Boolean    @default(false)
+  shareCode   String?    @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       WishlistItem[]
+}
+
+model WishlistItem {
+  id          String    @id @default(cuid())
+  wishlistId  String
+  serviceId   Int?
+  productId   Int?
+  priceAlert  Float?
+  createdAt   DateTime  @default(now())
+  
+  wishlist    Wishlist  @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  service     Service?  @relation(fields: [serviceId], references: [id])
+  product     Product?  @relation(fields: [productId], references: [id])
+}
+
+// Sistema de Pagos
+model Payment {
+  id                 String        @id @default(cuid())
+  plannerId          String?
+  userId             String
+  amountMXN          Float
+  amountAxo          Float?
+  status             PaymentStatus @default(PENDING)
+  installments       Int           @default(1)
+  currentInstallment Int           @default(1)
+  dueDate            DateTime?
+  paidAt             DateTime?
+  paymentMethod      String?
+  transactionId      String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  
+  planner            TravelPlanner? @relation(fields: [plannerId], references: [id])
+  user               User          @relation(fields: [userId], references: [id])
+}

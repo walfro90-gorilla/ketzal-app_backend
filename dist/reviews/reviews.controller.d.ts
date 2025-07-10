@@ -5,52 +5,52 @@ export declare class ReviewsController {
     private readonly reviewsService;
     constructor(reviewsService: ReviewsService);
     create(createReviewDto: CreateReviewDto): import(".prisma/client").Prisma.Prisma__ReviewClient<{
-        service: {
-            id: number;
-            name: string;
-        };
         user: {
             id: string;
             name: string | null;
             image: string | null;
         };
+        service: {
+            id: number;
+            name: string;
+        };
     } & {
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }[]>;
     findOne(id: string): Promise<{
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto): Promise<{
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }>;
     remove(id: string): Promise<{
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }>;
@@ -62,9 +62,9 @@ export declare class ReviewsController {
         };
     } & {
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     })[]>;
@@ -79,9 +79,9 @@ export declare class ReviewsController {
         userId: number;
     }, req: any): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         id: number;
+        userId: string;
         createdAt: Date;
         serviceId: number;
-        userId: string;
         rating: number;
         comment: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
