@@ -5,31 +5,31 @@ export declare class GlobalLocationsService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createDto: CreateGlobalLocationDto): import(".prisma/client").Prisma.Prisma__global_locationsClient<{
-        id: number;
+        id: bigint;
         country: string;
         state: string;
         city: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
+        id: bigint;
         country: string;
         state: string;
         city: string;
     }[]>;
     findOne(id: number): Promise<{
-        id: number;
+        id: bigint;
         country: string;
         state: string;
         city: string;
     }>;
     update(id: number, updateDto: UpdateGlobalLocationDto): Promise<{
-        id: number;
+        id: bigint;
         country: string;
         state: string;
         city: string;
     }>;
     remove(id: number): Promise<{
-        id: number;
+        id: bigint;
         country: string;
         state: string;
         city: string;

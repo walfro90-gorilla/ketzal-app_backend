@@ -7,9 +7,11 @@ import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CategoriesModule } from './categories/categories.module';
 import { GlobalLocationsModule } from './locations/global-locations.module';
+import { WalletModule } from './wallet/wallet.module';
+import { TestModule } from './test/test.module';
 
 @Module({
-    imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule, GlobalLocationsModule],
+    imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule, GlobalLocationsModule, WalletModule, TestModule],
     controllers: [],
     providers: [PrismaService],
 })

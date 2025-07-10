@@ -6,6 +6,8 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     create(createUserDto: CreateUserDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -13,8 +15,8 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     } | undefined>;
     searchUsers(name?: string, email?: string): Promise<({
         supplier: {
@@ -24,6 +26,8 @@ export declare class UsersController {
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -31,8 +35,8 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     })[]>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<({
         supplier: {
@@ -42,6 +46,8 @@ export declare class UsersController {
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -49,8 +55,8 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     })[]>;
     findOne(id: string): Promise<{
         supplier: {
@@ -60,6 +66,8 @@ export declare class UsersController {
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -67,11 +75,13 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -79,11 +89,13 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string | null;
         email: string;
         password: string | null;
@@ -91,7 +103,7 @@ export declare class UsersController {
         image: string | null;
         role: import(".prisma/client").$Enums.Role;
         supplierId: number | null;
-        createdAt: Date;
-        updatedAt: Date;
+        axoCoinsEarned: number | null;
+        referralCode: string | null;
     }>;
 }
