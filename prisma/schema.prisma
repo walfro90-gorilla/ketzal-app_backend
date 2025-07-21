@@ -154,7 +154,7 @@ model Categories {
 }
 
 model global_locations {
-  id      BigInt @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   country String
   state   String
   city    String

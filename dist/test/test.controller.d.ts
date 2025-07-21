@@ -7,14 +7,14 @@ export declare class TestController {
         user: {
             id: string;
             name: string | null;
+            image: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            supplierId: number | null;
             email: string;
             password: string | null;
             emailVerified: Date | null;
-            image: string | null;
             role: import(".prisma/client").$Enums.Role;
-            supplierId: number | null;
-            createdAt: Date;
-            updatedAt: Date;
             axoCoinsEarned: number | null;
             referralCode: string | null;
         };
@@ -28,39 +28,39 @@ export declare class TestController {
         };
         transactions: [{
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }, {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }, {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }, {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }];
         message: string;
@@ -88,12 +88,12 @@ export declare class TestController {
             };
             transactions: {
                 id: string;
+                description: string;
                 createdAt: Date;
-                walletId: string;
                 type: import(".prisma/client").$Enums.WalletTransactionType;
+                walletId: string;
                 amountMXN: number | null;
                 amountAxo: number | null;
-                description: string;
                 reference: string | null;
             }[];
         } & {

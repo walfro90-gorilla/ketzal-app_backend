@@ -6,18 +6,16 @@ export declare class ServicesService {
     constructor(prismaService: PrismaService);
     create(createServiceDto: CreateServiceDto): import(".prisma/client").Prisma.Prisma__ServiceClient<{
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -26,6 +24,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -35,22 +34,21 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -59,6 +57,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -68,24 +67,23 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
     findAllWithReviewStats(): Promise<{
         rating: number;
         reviewCount: number;
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -94,6 +92,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -103,22 +102,21 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -127,6 +125,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -136,22 +135,21 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: number, updateServiceDto: UpdateServiceDto): Promise<{
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -160,6 +158,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -169,22 +168,21 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     remove(id: number): Promise<{
         id: number;
-        createdAt: Date;
-        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        supplierId: number;
         name: string;
         description: string | null;
-        supplierId: number;
         price: number;
-        images: import("@prisma/client/runtime/library").JsonValue | null;
-        priceAxo: number | null;
         location: string | null;
         availableFrom: Date | null;
         availableTo: Date | null;
+        createdAt: Date;
         packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
         ytLink: string | null;
         sizeTour: number | null;
         serviceType: string | null;
@@ -193,6 +191,7 @@ export declare class ServicesService {
         cityFrom: string | null;
         stateTo: string | null;
         cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
         excludes: import("@prisma/client/runtime/library").JsonValue | null;
         faqs: import("@prisma/client/runtime/library").JsonValue | null;
         itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -202,16 +201,81 @@ export declare class ServicesService {
         addOns: import("@prisma/client/runtime/library").JsonValue | null;
         currentBookings: number | null;
         maxCapacity: number | null;
+        priceAxo: number | null;
         seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
-    checkServiceDependencies(id: number): Promise<{
+    private checkServiceDependencies;
+    getServiceDependencies(serviceId: number): Promise<{
         hasReviews: boolean;
         reviewsCount: number;
-        dependencies: string[];
     }>;
-    getServiceDependencies(id: number): Promise<{
-        hasReviews: boolean;
-        reviewsCount: number;
-        dependencies: string[];
+    findAllWithBusInfo(filters: {
+        page: number;
+        limit: number;
+        search?: string;
+        hasTransport?: boolean;
+    }): Promise<{
+        services: {
+            id: number;
+            name: string;
+            description: string | null;
+            createdAt: Date;
+        }[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+            hasNext: boolean;
+            hasPrev: boolean;
+        };
+        stats: {
+            total: number;
+            withTransport: number;
+            withoutTransport: number;
+        };
+    }>;
+    getBusTransportConfig(id: number): Promise<{
+        hasBusTransport: boolean;
+        busLayout: null;
+        seatPricing: null;
+        message: string;
+        id?: number | undefined;
+        name?: string | undefined;
+        description?: string | null | undefined;
+    }>;
+    updateBusTransportConfig(id: number, updateData: any): Promise<{
+        message: string;
+        id: number;
+        supplierId: number;
+        name: string;
+        description: string | null;
+        price: number;
+        location: string | null;
+        availableFrom: Date | null;
+        availableTo: Date | null;
+        createdAt: Date;
+        packs: import("@prisma/client/runtime/library").JsonValue | null;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
+        ytLink: string | null;
+        sizeTour: number | null;
+        serviceType: string | null;
+        serviceCategory: string | null;
+        stateFrom: string | null;
+        cityFrom: string | null;
+        stateTo: string | null;
+        cityTo: string | null;
+        includes: import("@prisma/client/runtime/library").JsonValue | null;
+        excludes: import("@prisma/client/runtime/library").JsonValue | null;
+        faqs: import("@prisma/client/runtime/library").JsonValue | null;
+        itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelProviderID: number | null;
+        transportProviderID: number | null;
+        dates: import("@prisma/client/runtime/library").JsonValue | null;
+        addOns: import("@prisma/client/runtime/library").JsonValue | null;
+        currentBookings: number | null;
+        maxCapacity: number | null;
+        priceAxo: number | null;
+        seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }

@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                                 String     @id @default(cuid())
+  name                               String?
+  email                              String     @unique
+  password                           String?
+  emailVerified                      DateTime?
+  image                              String?
+  role                               Role       @default(user)
+  supplierId                         Int?
+  createdAt                          DateTime   @default(now())
+  updatedAt                          DateTime   @updatedAt
+  adminRequest                       Boolean?   @default(false)
+  approvedAt                         DateTime?
+  approvedBy                         String?
+  city                               String?
+  company                            String?
+  documentation                      String?
+  rejectedAt                         DateTime?
+  rejectionReason                    String?
+  serviceType                        String?
+  status                             UserStatus @default(PENDING_EMAIL_VERIFICATION)
+  accounts                           Account[]
+  reviews                            Review[]
+  Supplier_Supplier_approvedByToUser Supplier[] @relation("Supplier_approvedByToUser")
+  Supplier_Supplier_userIdToUser     Supplier[] @relation("Supplier_userIdToUser")
+  supplier                           Supplier?  @relation(fields: [supplierId], references: [id])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String   @id @unique
+  token      String
+  expires    DateTime
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  price       Float
+  stock       Int
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Supplier {
+  id                             Int       @id @default(autoincrement())
+  name                           String    @unique
+  contactEmail                   String    @unique
+  phoneNumber                    String?
+  address                        String?
+  description                    String?
+  imgLogo                        String?
+  createdAt                      DateTime  @default(now())
+  supplierType                   String?
+  location                       Json?
+  photos                         Json?
+  extras                         Json?
+  info                           Json?
+  supplierSubType                String?
+  approvedAt                     DateTime?
+  approvedBy                     String?
+  isApproved                     Boolean   @default(false)
+  isPending                      Boolean   @default(true)
+  rejectedAt                     DateTime?
+  rejectionReason                String?
+  userId                         String?
+  hotelServices                  Service[] @relation("HotelSupplier")
+  services                       Service[]
+  transportServices              Service[] @relation("TransportSupplier")
+  User_Supplier_approvedByToUser User?     @relation("Supplier_approvedByToUser", fields: [approvedBy], references: [id])
+  User_Supplier_userIdToUser     User?     @relation("Supplier_userIdToUser", fields: [userId], references: [id])
+  users                          User[]
+}
+
+model Service {
+  id                  Int       @id @default(autoincrement())
+  supplierId          Int
+  name                String
+  description         String?
+  price               Float
+  location            String?
+  availableFrom       DateTime?
+  availableTo         DateTime?
+  createdAt           DateTime  @default(now())
+  packs               Json?
+  images              Json?
+  ytLink              String?
+  sizeTour            Float?
+  serviceType         String?
+  serviceCategory     String?
+  stateFrom           String?
+  cityFrom            String?
+  stateTo             String?
+  cityTo              String?
+  includes            Json?
+  excludes            Json?
+  faqs                Json?
+  itinerary           Json?
+  transportProviderID Int?
+  dates               Json?
+  hotelProviderID     Int?
+  reviews             Review[]
+  supplierHotel       Supplier? @relation("HotelSupplier", fields: [hotelProviderID], references: [id])
+  supplier            Supplier  @relation(fields: [supplierId], references: [id])
+  supplierTransport   Supplier? @relation("TransportSupplier", fields: [transportProviderID], references: [id])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  serviceId Int
+  userId    String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  service   Service  @relation(fields: [serviceId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Categories {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  image       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model global_locations {
+  id      BigInt @id @default(autoincrement())
+  country String
+  state   String
+  city    String
+}
+
+enum Role {
+  user
+  admin
+  superadmin
+}
+
+enum UserStatus {
+  PENDING_EMAIL_VERIFICATION
+  ACTIVE
+  PENDING_ADMIN_APPROVAL
+  ADMIN_APPROVED
+  ADMIN_REJECTED
+  SUSPENDED
+}

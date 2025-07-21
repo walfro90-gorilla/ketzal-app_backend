@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -19,6 +19,18 @@ export class ProductsController {
   @ApiResponse({ status: 200, description: 'List all products' })
   findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get('category/:category')
+  @ApiOperation({ summary: 'Get products by category' })
+  findByCategory(@Param('category') category: string) {
+    return this.productsService.findByCategory(category);
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Search products' })
+  searchProducts(@Query('q') query: string, @Query('category') category?: string) {
+    return this.productsService.searchProducts(query, category);
   }
 
   @Get(':id')
