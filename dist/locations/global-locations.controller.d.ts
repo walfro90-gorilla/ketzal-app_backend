@@ -9,7 +9,7 @@ export declare class GlobalLocationsController {
     findOne(id: string): Promise<any>;
     update(id: string, updateDto: UpdateGlobalLocationDto): Promise<any>;
     remove(id: string): Promise<{
-        id: bigint;
+        id: number;
         country: string;
         state: string;
         city: string;

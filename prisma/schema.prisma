@@ -54,6 +54,12 @@ model VerificationToken {
   expires    DateTime
 }
 
+model PasswordResetToken {
+  identifier String   @id @unique
+  token      String
+  expires    DateTime
+}
+
 model Product {
   id             Int            @id @default(autoincrement())
   name           String         @unique

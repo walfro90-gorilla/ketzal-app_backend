@@ -10,7 +10,7 @@ export declare class GlobalLocationsService {
     findOne(id: number): Promise<any>;
     update(id: number, updateDto: UpdateGlobalLocationDto): Promise<any>;
     remove(id: number): Promise<{
-        id: bigint;
+        id: number;
         country: string;
         state: string;
         city: string;
