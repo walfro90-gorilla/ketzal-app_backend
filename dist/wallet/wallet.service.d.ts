@@ -5,47 +5,47 @@ export declare class WalletService {
     getOrCreateWallet(userId: string): Promise<{
         transactions: {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         userId: string;
         balanceMXN: number;
         balanceAxo: number;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     addFunds(userId: string, amountMXN: number, amountAxo: number, description?: string, paymentMethod?: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         userId: string;
         balanceMXN: number;
         balanceAxo: number;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     transferFunds(userId: string, recipientEmail: string, amountMXN: number, amountAxo: number, description?: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         userId: string;
         balanceMXN: number;
         balanceAxo: number;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getTransactions(userId: string, limit: number, offset: number): Promise<{
         transactions: {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }[];
         pagination: {
@@ -58,11 +58,11 @@ export declare class WalletService {
     convertCurrency(userId: string, fromCurrency: 'MXN' | 'AXO', toCurrency: 'MXN' | 'AXO', amount: number): Promise<{
         wallet: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             balanceMXN: number;
             balanceAxo: number;
-            createdAt: Date;
-            updatedAt: Date;
         };
         conversion: {
             from: {

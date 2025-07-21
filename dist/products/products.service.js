@@ -25,8 +25,13 @@ let ProductsService = class ProductsService {
                     name: createProductDto.name,
                     description: createProductDto.description,
                     price: createProductDto.price,
+                    priceAxo: createProductDto.priceAxo,
                     stock: createProductDto.stock,
                     image: (_a = createProductDto.image) !== null && _a !== void 0 ? _a : '',
+                    category: createProductDto.category,
+                    images: createProductDto.images ? createProductDto.images : undefined,
+                    specifications: createProductDto.specifications ? createProductDto.specifications : undefined,
+                    tags: createProductDto.tags ? createProductDto.tags : undefined,
                 }
             });
         }
@@ -39,8 +44,9 @@ let ProductsService = class ProductsService {
             }
         }
     }
-    findAll() {
-        return this.prismaService.product.findMany();
+    async findAll() {
+        const products = await this.prismaService.product.findMany();
+        return products.map(product => this.parseProductJson(product));
     }
     async findOne(id) {
         const productFound = await this.prismaService.product.findUnique({
@@ -51,14 +57,24 @@ let ProductsService = class ProductsService {
         if (!productFound) {
             throw new common_1.NotFoundException(`Product with id ${id} not found`);
         }
-        return productFound;
+        return this.parseProductJson(productFound);
     }
     async update(id, updateProductDto) {
+        const updateData = Object.assign({}, updateProductDto);
+        if (updateProductDto.images !== undefined) {
+            updateData.images = updateProductDto.images ? updateProductDto.images : undefined;
+        }
+        if (updateProductDto.specifications !== undefined) {
+            updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications : undefined;
+        }
+        if (updateProductDto.tags !== undefined) {
+            updateData.tags = updateProductDto.tags ? updateProductDto.tags : undefined;
+        }
         const productFound = await this.prismaService.product.update({
             where: {
                 id: id
             },
-            data: updateProductDto
+            data: updateData
         });
         if (!productFound) {
             throw new common_1.NotFoundException(`Product with id ${id} not found`);
@@ -75,6 +91,33 @@ let ProductsService = class ProductsService {
             throw new common_1.NotFoundException(`Product with id ${id} not found`);
         }
         return deleteProduct;
+    }
+    async findByCategory(category) {
+        const products = await this.prismaService.product.findMany({
+            where: {
+                category: category
+            }
+        });
+        return products.map(product => this.parseProductJson(product));
+    }
+    async searchProducts(query, category) {
+        const products = await this.prismaService.product.findMany({
+            where: {
+                AND: [
+                    {
+                        OR: [
+                            { name: { contains: query } },
+                            { description: { contains: query } }
+                        ]
+                    },
+                    category ? { category: category } : {}
+                ]
+            }
+        });
+        return products.map(product => this.parseProductJson(product));
+    }
+    parseProductJson(product) {
+        return Object.assign(Object.assign({}, product), { images: product.images ? JSON.parse(product.images) : [], specifications: product.specifications ? JSON.parse(product.specifications) : {}, tags: product.tags ? JSON.parse(product.tags) : [] });
     }
 };
 exports.ProductsService = ProductsService;

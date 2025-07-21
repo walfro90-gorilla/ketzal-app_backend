@@ -112,11 +112,6 @@ export class ServicesService {
     };
   }
 
-  // Public method to get service dependencies (used by controller)
-  async getServiceDependencies(serviceId: number) {
-    return this.checkServiceDependencies(serviceId);
-  }
-
   // Find all services with bus info (temporarily simplified)
   async findAllWithBusInfo(filters: {
     page: number;

@@ -9,6 +9,8 @@ export class ServicesService {
   // Inject PrismaService
   constructor(private prismaService: PrismaService) { }
 
+
+
   // Create a new service
   create(createServiceDto: CreateServiceDto) {
     return this.prismaService.service.create({ data: createServiceDto })
@@ -72,7 +74,6 @@ export class ServicesService {
     }
     return updatedService
   }
-
   // Remove a service
   async remove(id: number) {
     // First verify the service exists
@@ -99,32 +100,35 @@ export class ServicesService {
     }
   }
 
-  // Check dependencies before service deletion
-  private async checkServiceDependencies(serviceId: number) {
+  // Check dependencies for a service
+  async checkServiceDependencies(id: number) {
     const reviews = await this.prismaService.review.findMany({
-      where: { serviceId },
-      select: { id: true }
+      where: { serviceId: id }
     });
 
     return {
       hasReviews: reviews.length > 0,
-      reviewsCount: reviews.length
+      reviewsCount: reviews.length,
+      dependencies: [
+        ...(reviews.length > 0 ? [`${reviews.length} review(s)`] : [])
+      ]
     };
   }
 
-  // Public method to get service dependencies (used by controller)
-  async getServiceDependencies(serviceId: number) {
-    return this.checkServiceDependencies(serviceId);
+  // Get service dependencies endpoint
+  async getServiceDependencies(id: number) {
+    await this.findOne(id); // Verify service exists
+    return this.checkServiceDependencies(id);
   }
 
-  // Find all services with bus info (temporarily simplified)
+  // Find all services with bus transport information (for admin panel)
   async findAllWithBusInfo(filters: {
     page: number;
     limit: number;
     search?: string;
     hasTransport?: boolean;
   }) {
-    const { page, limit, search } = filters;
+    const { page, limit, search, hasTransport } = filters;
     const skip = (page - 1) * limit;
 
     // Construir filtros
@@ -137,10 +141,9 @@ export class ServicesService {
       ];
     }
 
-    // Transport filtering temporarily disabled until schema is updated
-    // if (hasTransport !== undefined) {
-    //   where.hasBusTransport = hasTransport;
-    // }
+    if (hasTransport !== undefined) {
+      where.hasBusTransport = hasTransport;
+    }
 
     // Obtener servicios con paginación
     const [services, total] = await Promise.all([
@@ -150,6 +153,9 @@ export class ServicesService {
           id: true,
           name: true,
           description: true,
+          // hasBusTransport: true, // TODO: fix schema
+          // busLayout: true,
+          // seatPricing: true,
           createdAt: true,
         },
         orderBy: { createdAt: 'desc' },
@@ -159,11 +165,18 @@ export class ServicesService {
       this.prismaService.service.count({ where })
     ]);
 
-    // Temporary stats without transport functionality
+    // Calcular estadísticas
+    const stats = await this.prismaService.service.groupBy({
+      by: ['hasBusTransport'],
+      _count: {
+        hasBusTransport: true
+      }
+    });
+
     const statsFormatted = {
       total,
-      withTransport: 0, // Temporarily disabled
-      withoutTransport: total, // All services considered without transport for now
+      withTransport: stats.find(s => s.hasBusTransport === true)?._count.hasBusTransport || 0,
+      withoutTransport: stats.find(s => s.hasBusTransport === false)?._count.hasBusTransport || 0,
     };
 
     return {
@@ -180,7 +193,7 @@ export class ServicesService {
     };
   }
 
-  // Temporary placeholder methods for transport functionality
+  // Get bus transport configuration for a service
   async getBusTransportConfig(id: number) {
     const service = await this.prismaService.service.findUnique({
       where: { id },
@@ -188,25 +201,81 @@ export class ServicesService {
         id: true,
         name: true,
         description: true,
+        hasBusTransport: true,
+        busLayout: true,
+        seatPricing: true,
       }
     });
 
-    return {
-      ...service,
-      hasBusTransport: false, // Temporarily hardcoded
-      busLayout: null,
-      seatPricing: null,
-      message: 'Transport configuration temporarily disabled'
-    };
+    return service;
   }
 
-  // Temporary placeholder for transport config updates
-  async updateBusTransportConfig(id: number, updateData: any) {
-    // Just return the service without transport updates for now
-    const service = await this.findOne(id);
-    return {
-      ...service,
-      message: 'Transport configuration update temporarily disabled'
-    };
+  // Update bus transport configuration for a service
+  async updateBusTransportConfig(
+    id: number,
+    updateData: {
+      hasBusTransport?: boolean;
+      busLayout?: any;
+      seatPricing?: any;
+    }
+  ) {
+    const { hasBusTransport, busLayout, seatPricing } = updateData;
+
+    // Validar estructura de busLayout si está presente
+    if (busLayout) {
+      const requiredFields = ['totalRows', 'seatsPerRow', 'aislePositions'];
+      const missingFields = requiredFields.filter(field => !(field in busLayout));
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Campos faltantes en busLayout: ${missingFields.join(', ')}`);
+      }
+
+      if (busLayout.totalRows < 1 || busLayout.totalRows > 50) {
+        throw new Error('El número de filas debe estar entre 1 y 50');
+      }
+
+      if (busLayout.seatsPerRow < 2 || busLayout.seatsPerRow > 6) {
+        throw new Error('El número de asientos por fila debe estar entre 2 y 6');
+      }
+    }
+
+    // Validar estructura de seatPricing si está presente
+    if (seatPricing) {
+      const allowedPriceTypes = ['standard', 'front', 'table'];
+      const invalidTypes = Object.keys(seatPricing).filter(
+        type => !allowedPriceTypes.includes(type)
+      );
+      
+      if (invalidTypes.length > 0) {
+        throw new Error(`Tipos de precio inválidos: ${invalidTypes.join(', ')}`);
+      }
+
+      // Validar que los precios sean números positivos
+      for (const [type, price] of Object.entries(seatPricing)) {
+        if (typeof price !== 'number' || price < 0) {
+          throw new Error(`El precio para ${type} debe ser un número positivo`);
+        }
+      }
+    }
+
+    // Actualizar el servicio
+    const updatedService = await this.prismaService.service.update({
+      where: { id },
+      data: {
+        ...(hasBusTransport !== undefined && { hasBusTransport }),
+        ...(busLayout && { busLayout }),
+        ...(seatPricing && { seatPricing }),
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        hasBusTransport: true,
+        busLayout: true,
+        seatPricing: true,
+      }
+    });
+
+    return updatedService;
   }
 }

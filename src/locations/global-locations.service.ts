@@ -7,24 +7,33 @@ import { UpdateGlobalLocationDto } from './dto/update-global-location.dto';
 export class GlobalLocationsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createDto: CreateGlobalLocationDto) {
-    return this.prisma.global_locations.create({ data: createDto });
+  // Helper function to convert BigInt to number
+  private transformBigInt(obj: any): any {
+    if (obj && typeof obj.id === 'bigint') {
+      return { ...obj, id: Number(obj.id) };
+    }
+    return obj;
   }
 
-  findAll() {
-    return this.prisma.global_locations.findMany();
+  create(createDto: CreateGlobalLocationDto) {
+    return this.prisma.global_locations.create({ data: createDto }).then(this.transformBigInt);
+  }
+
+  async findAll() {
+    const locations = await this.prisma.global_locations.findMany();
+    return locations.map(location => this.transformBigInt(location));
   }
 
   async findOne(id: number) {
     const location = await this.prisma.global_locations.findUnique({ where: { id } });
     if (!location) throw new NotFoundException(`Location #${id} not found`);
-    return location;
+    return this.transformBigInt(location);
   }
 
   async update(id: number, updateDto: UpdateGlobalLocationDto) {
     const updated = await this.prisma.global_locations.update({ where: { id }, data: updateDto });
     if (!updated) throw new NotFoundException(`Location #${id} not found`);
-    return updated;
+    return this.transformBigInt(updated);
   }
 
   async remove(id: number) {

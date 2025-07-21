@@ -6,9 +6,9 @@ export declare class SuppliersService {
     constructor(prismaService: PrismaService);
     create(createSupplierDto: CreateSupplierDto): Promise<{
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -18,9 +18,9 @@ export declare class SuppliersService {
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -33,8 +33,8 @@ export declare class SuppliersService {
     }[]>;
     search(name?: string, email?: string): Promise<{
         id: number;
-        createdAt: Date;
         name: string;
+        createdAt: Date;
         contactEmail: string;
     }[]>;
     checkDuplicate(name?: string, email?: string, excludeId?: number): Promise<{
@@ -70,9 +70,9 @@ export declare class SuppliersService {
     findOne(id: number): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -86,9 +86,9 @@ export declare class SuppliersService {
     update(id: number, updateSupplierDto: UpdateSupplierDto): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -105,9 +105,9 @@ export declare class SuppliersService {
         deletedSupplier: {
             info: import("@prisma/client/runtime/library").JsonValue | null;
             id: number;
-            createdAt: Date;
             name: string;
             description: string | null;
+            createdAt: Date;
             location: import("@prisma/client/runtime/library").JsonValue | null;
             contactEmail: string;
             phoneNumber: string | null;
@@ -125,9 +125,9 @@ export declare class SuppliersService {
         supplier: {
             info: import("@prisma/client/runtime/library").JsonValue | null;
             id: number;
-            createdAt: Date;
             name: string;
             description: string | null;
+            createdAt: Date;
             location: import("@prisma/client/runtime/library").JsonValue | null;
             contactEmail: string;
             phoneNumber: string | null;

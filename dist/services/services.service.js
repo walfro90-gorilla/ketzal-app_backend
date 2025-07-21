@@ -77,21 +77,76 @@ let ServicesService = class ServicesService {
             throw new common_1.NotFoundException(`Service #${id} not found`);
         }
     }
-    async checkServiceDependencies(id) {
+    async checkServiceDependencies(serviceId) {
         const reviews = await this.prismaService.review.findMany({
-            where: { serviceId: id }
+            where: { serviceId },
+            select: { id: true }
         });
         return {
             hasReviews: reviews.length > 0,
-            reviewsCount: reviews.length,
-            dependencies: [
-                ...(reviews.length > 0 ? [`${reviews.length} review(s)`] : [])
-            ]
+            reviewsCount: reviews.length
         };
     }
-    async getServiceDependencies(id) {
-        await this.findOne(id);
-        return this.checkServiceDependencies(id);
+    async getServiceDependencies(serviceId) {
+        return this.checkServiceDependencies(serviceId);
+    }
+    async findAllWithBusInfo(filters) {
+        const { page, limit, search } = filters;
+        const skip = (page - 1) * limit;
+        const where = {};
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+        const [services, total] = await Promise.all([
+            this.prismaService.service.findMany({
+                where,
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    createdAt: true,
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit,
+            }),
+            this.prismaService.service.count({ where })
+        ]);
+        const statsFormatted = {
+            total,
+            withTransport: 0,
+            withoutTransport: total,
+        };
+        return {
+            services,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+                hasNext: page * limit < total,
+                hasPrev: page > 1,
+            },
+            stats: statsFormatted
+        };
+    }
+    async getBusTransportConfig(id) {
+        const service = await this.prismaService.service.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                description: true,
+            }
+        });
+        return Object.assign(Object.assign({}, service), { hasBusTransport: false, busLayout: null, seatPricing: null, message: 'Transport configuration temporarily disabled' });
+    }
+    async updateBusTransportConfig(id, updateData) {
+        const service = await this.findOne(id);
+        return Object.assign(Object.assign({}, service), { message: 'Transport configuration update temporarily disabled' });
     }
 };
 exports.ServicesService = ServicesService;

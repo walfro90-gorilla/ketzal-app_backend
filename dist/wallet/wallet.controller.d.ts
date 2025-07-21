@@ -24,32 +24,32 @@ export declare class WalletController {
         wallet: {
             transactions: {
                 id: string;
+                description: string;
                 createdAt: Date;
-                walletId: string;
                 type: import(".prisma/client").$Enums.WalletTransactionType;
+                walletId: string;
                 amountMXN: number | null;
                 amountAxo: number | null;
-                description: string;
                 reference: string | null;
             }[];
         } & {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             balanceMXN: number;
             balanceAxo: number;
-            createdAt: Date;
-            updatedAt: Date;
         };
     }>;
     addFunds(userId: string, addFundsDto: AddFundsDto): Promise<{
         success: boolean;
         wallet: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             balanceMXN: number;
             balanceAxo: number;
-            createdAt: Date;
-            updatedAt: Date;
         };
         message: string;
     }>;
@@ -57,23 +57,23 @@ export declare class WalletController {
         success: boolean;
         wallet: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             balanceMXN: number;
             balanceAxo: number;
-            createdAt: Date;
-            updatedAt: Date;
         };
         message: string;
     }>;
     getTransactions(userId: string, limit?: string, offset?: string): Promise<{
         transactions: {
             id: string;
+            description: string;
             createdAt: Date;
-            walletId: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
+            walletId: string;
             amountMXN: number | null;
             amountAxo: number | null;
-            description: string;
             reference: string | null;
         }[];
         pagination: {
@@ -88,11 +88,11 @@ export declare class WalletController {
         message: string;
         wallet: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             balanceMXN: number;
             balanceAxo: number;
-            createdAt: Date;
-            updatedAt: Date;
         };
         conversion: {
             from: {

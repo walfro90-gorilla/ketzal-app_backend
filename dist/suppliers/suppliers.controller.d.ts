@@ -6,9 +6,9 @@ export declare class SuppliersController {
     constructor(suppliersService: SuppliersService);
     create(createSupplierDto: CreateSupplierDto): Promise<{
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         contactEmail: string;
         phoneNumber: string | null;
         address: string | null;
@@ -18,9 +18,9 @@ export declare class SuppliersController {
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -38,8 +38,8 @@ export declare class SuppliersController {
     }>;
     search(name?: string, email?: string): Promise<{
         id: number;
-        createdAt: Date;
         name: string;
+        createdAt: Date;
         contactEmail: string;
     }[]>;
     checkDependencies(id: string): Promise<{
@@ -70,9 +70,9 @@ export declare class SuppliersController {
     findOne(id: string): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -86,9 +86,9 @@ export declare class SuppliersController {
     update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
-        createdAt: Date;
         name: string;
         description: string | null;
+        createdAt: Date;
         location: import("@prisma/client/runtime/library").JsonValue | null;
         contactEmail: string;
         phoneNumber: string | null;
@@ -105,9 +105,9 @@ export declare class SuppliersController {
         deletedSupplier: {
             info: import("@prisma/client/runtime/library").JsonValue | null;
             id: number;
-            createdAt: Date;
             name: string;
             description: string | null;
+            createdAt: Date;
             location: import("@prisma/client/runtime/library").JsonValue | null;
             contactEmail: string;
             phoneNumber: string | null;

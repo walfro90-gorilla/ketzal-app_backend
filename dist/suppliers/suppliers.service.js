@@ -25,8 +25,7 @@ let SuppliersService = class SuppliersService {
             const existingByName = await this.prismaService.supplier.findFirst({
                 where: {
                     name: {
-                        equals: createSupplierDto.name,
-                        mode: 'insensitive'
+                        equals: createSupplierDto.name
                     }
                 }
             });
@@ -37,8 +36,7 @@ let SuppliersService = class SuppliersService {
             const existingByEmail = await this.prismaService.supplier.findFirst({
                 where: {
                     contactEmail: {
-                        equals: createSupplierDto.contactEmail,
-                        mode: 'insensitive'
+                        equals: createSupplierDto.contactEmail
                     }
                 }
             });
@@ -138,8 +136,7 @@ let SuppliersService = class SuppliersService {
         if (name) {
             const nameExists = await this.prismaService.supplier.findFirst({
                 where: Object.assign({ name: {
-                        equals: name,
-                        mode: 'insensitive'
+                        equals: name
                     } }, (excludeId && { id: { not: excludeId } })),
                 select: { id: true, name: true, contactEmail: true }
             });
@@ -151,8 +148,7 @@ let SuppliersService = class SuppliersService {
         if (email) {
             const emailExists = await this.prismaService.supplier.findFirst({
                 where: Object.assign({ contactEmail: {
-                        equals: email,
-                        mode: 'insensitive'
+                        equals: email
                     } }, (excludeId && { id: { not: excludeId } })),
                 select: { id: true, name: true, contactEmail: true }
             });

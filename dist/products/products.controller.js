@@ -27,6 +27,12 @@ let ProductsController = class ProductsController {
     findAll() {
         return this.productsService.findAll();
     }
+    findByCategory(category) {
+        return this.productsService.findByCategory(category);
+    }
+    searchProducts(query, category) {
+        return this.productsService.searchProducts(query, category);
+    }
     findOne(id) {
         return this.productsService.findOne(+id);
     }
@@ -53,6 +59,23 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('category/:category'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get products by category' }),
+    __param(0, (0, common_1.Param)('category')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "findByCategory", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search products' }),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('category')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "searchProducts", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
