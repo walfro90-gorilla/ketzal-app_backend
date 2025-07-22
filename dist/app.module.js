@@ -18,12 +18,13 @@ const categories_module_1 = require("./categories/categories.module");
 const global_locations_module_1 = require("./locations/global-locations.module");
 const wallet_module_1 = require("./wallet/wallet.module");
 const test_module_1 = require("./test/test.module");
+const notifications_module_1 = require("./notifications/notifications.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [products_module_1.ProductsModule, services_module_1.ServicesModule, suppliers_module_1.SuppliersModule, users_module_1.UsersModule, reviews_module_1.ReviewsModule, categories_module_1.CategoriesModule, global_locations_module_1.GlobalLocationsModule, wallet_module_1.WalletModule, test_module_1.TestModule],
+        imports: [products_module_1.ProductsModule, services_module_1.ServicesModule, suppliers_module_1.SuppliersModule, users_module_1.UsersModule, reviews_module_1.ReviewsModule, categories_module_1.CategoriesModule, global_locations_module_1.GlobalLocationsModule, wallet_module_1.WalletModule, test_module_1.TestModule, notifications_module_1.NotificationsModule],
         controllers: [],
         providers: [prisma_service_1.PrismaService],
     })
