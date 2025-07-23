@@ -20,6 +20,9 @@ let SuppliersController = class SuppliersController {
     constructor(suppliersService) {
         this.suppliersService = suppliersService;
     }
+    async getStats() {
+        return this.suppliersService.getSupplierStats();
+    }
     create(createSupplierDto) {
         return this.suppliersService.create(createSupplierDto);
     }
@@ -46,6 +49,12 @@ let SuppliersController = class SuppliersController {
     }
 };
 exports.SuppliersController = SuppliersController;
+__decorate([
+    (0, common_1.Get)('stats'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
