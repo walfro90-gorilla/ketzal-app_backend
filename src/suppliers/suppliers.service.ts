@@ -9,6 +9,27 @@ export class SuppliersService {
 
   // inject PrismaService
   constructor(private prismaService: PrismaService) { }
+
+  // Estadísticas generales de suppliers
+  async getSupplierStats() {
+    // Total de suppliers
+    const totalSuppliers = await this.prismaService.supplier.count();
+    // Total de servicios
+    const totalServices = await this.prismaService.service.count();
+    // Total de usuarios asociados a suppliers
+    const totalSupplierUsers = await this.prismaService.user.count({ where: { supplierId: { not: null } } });
+    // Total de hotelServices y transportServices
+    const totalHotelServices = await this.prismaService.service.count({ where: { serviceCategory: 'hotel' } });
+    const totalTransportServices = await this.prismaService.service.count({ where: { serviceCategory: 'transport' } });
+
+    return {
+      totalSuppliers,
+      totalServices,
+      totalSupplierUsers,
+      totalHotelServices,
+      totalTransportServices,
+    };
+  }
   // Create method
   async create(createSupplierDto: CreateSupplierDto) {
     try {

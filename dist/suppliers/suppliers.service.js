@@ -17,6 +17,20 @@ let SuppliersService = class SuppliersService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
+    async getSupplierStats() {
+        const totalSuppliers = await this.prismaService.supplier.count();
+        const totalServices = await this.prismaService.service.count();
+        const totalSupplierUsers = await this.prismaService.user.count({ where: { supplierId: { not: null } } });
+        const totalHotelServices = await this.prismaService.service.count({ where: { serviceCategory: 'hotel' } });
+        const totalTransportServices = await this.prismaService.service.count({ where: { serviceCategory: 'transport' } });
+        return {
+            totalSuppliers,
+            totalServices,
+            totalSupplierUsers,
+            totalHotelServices,
+            totalTransportServices,
+        };
+    }
     async create(createSupplierDto) {
         var _a;
         try {
