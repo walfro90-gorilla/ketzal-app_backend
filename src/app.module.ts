@@ -10,9 +10,22 @@ import { GlobalLocationsModule } from './locations/global-locations.module';
 import { WalletModule } from './wallet/wallet.module';
 import { TestModule } from './test/test.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PlannersModule } from './planners/planners.module';
 
 @Module({
-    imports: [ProductsModule, ServicesModule, SuppliersModule, UsersModule, ReviewsModule, CategoriesModule, GlobalLocationsModule, WalletModule, TestModule, NotificationsModule],
+    imports: [
+        ProductsModule, 
+        ServicesModule, 
+        SuppliersModule, 
+        UsersModule, 
+        ReviewsModule, 
+        CategoriesModule, 
+        GlobalLocationsModule, 
+        WalletModule, 
+        TestModule, 
+        NotificationsModule,
+        PlannersModule
+    ],
     controllers: [],
     providers: [PrismaService],
 })
