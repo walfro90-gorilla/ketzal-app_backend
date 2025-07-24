@@ -1,4 +1,3 @@
-
 import { ConflictException, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
@@ -166,7 +165,24 @@ export class SuppliersService {
           createdAt: true,
         }
       });
-      
+
+      // Usar userId del DTO si está disponible, si no buscar por email
+      let userId = createSupplierDto.userId;
+      if (!userId) {
+        const userAdmin = await this.prismaService.user.findFirst({
+          where: { email: createSupplierDto.contactEmail }
+        });
+        userId = userAdmin?.id;
+      }
+      if (userId) {
+        await this.notificationsService.create({
+          userId,
+          title: '¡Tu proveedor está en revisión!',
+          message: `Tu solicitud para el supplier "${newSupplier.name}" fue recibida y está en proceso de verificación. Te notificaremos dentro de 72 horas si fue aprobada o rechazada.`,
+          type: NotificationType.INFO,
+        });
+      }
+
       console.log('Successfully created supplier:', newSupplier);
       return newSupplier;
       
@@ -214,17 +230,17 @@ export class SuppliersService {
   async findAll(pending?: string) {
     const allSuppliers = await this.prismaService.supplier.findMany({ include: { users: true } });
     if (pending === 'true') {
-      // Solo los que tienen extras.isPending === true
+      // Mostrar todos los suppliers con isPending === true, sin filtrar por emailVerified
       return allSuppliers
         .filter(s => {
           let extras = s.extras;
           if (typeof extras === 'string') {
             try { extras = JSON.parse(extras); } catch { extras = {}; }
           }
-          if (typeof extras === 'object' && extras !== null && 'isPending' in extras) {
-            return (extras as any).isPending === true;
-          }
-          return false;
+          return (
+            typeof extras === 'object' && extras !== null && 'isPending' in extras &&
+            (extras as any).isPending === true
+          );
         })
         .map(s => ({
           ...s,
@@ -233,137 +249,6 @@ export class SuppliersService {
         }));
     }
     return allSuppliers;
-  }
-
-  // Search method for debugging
-  async search(name?: string, email?: string) {
-    const where: any = {};
-    
-    if (name) {
-      where.name = {
-        contains: name,
-        mode: 'insensitive'
-      };
-    }
-    
-    if (email) {
-      where.contactEmail = {
-        contains: email,
-        mode: 'insensitive'
-      };
-    }
-    
-    const suppliers = await this.prismaService.supplier.findMany({
-      where,
-      select: {
-        id: true,
-        name: true,
-        contactEmail: true,
-        createdAt: true
-      }
-    });      console.log(`Search results for name="${name}", email="${email}":`, suppliers);
-    return suppliers;
-  }
-
-  // Check for duplicate suppliers
-  async checkDuplicate(name?: string, email?: string, excludeId?: number) {
-    const result = {
-      nameExists: false,
-      emailExists: false,
-      existingSuppliers: [] as any[]
-    };
-
-    if (name) {
-      const nameExists = await this.prismaService.supplier.findFirst({
-        where: {
-          name: {
-            equals: name
-          },
-          ...(excludeId && { id: { not: excludeId } })
-        },
-        select: { id: true, name: true, contactEmail: true }
-      });
-
-      if (nameExists) {
-        result.nameExists = true;
-        result.existingSuppliers.push(nameExists);
-      }
-    }
-
-    if (email) {
-      const emailExists = await this.prismaService.supplier.findFirst({
-        where: {
-          contactEmail: {
-            equals: email
-          },
-          ...(excludeId && { id: { not: excludeId } })
-        },
-        select: { id: true, name: true, contactEmail: true }
-      });
-
-      if (emailExists && !result.existingSuppliers.find(s => s.id === emailExists.id)) {
-        result.emailExists = true;
-        result.existingSuppliers.push(emailExists);
-      }
-    }
-
-    return result;
-  }
-
-  // Check dependencies before deletion
-  async checkDependencies(id: number) {
-    try {
-      const supplier = await this.prismaService.supplier.findUnique({
-        where: { id },
-        include: {
-          services: {
-            select: { id: true, name: true }
-          },
-          users: {
-            select: { id: true, name: true, email: true }
-          },
-          transportServices: {
-            select: { id: true, name: true }
-          },
-          hotelServices: {
-            select: { id: true, name: true }
-          },
-        }
-      });
-
-      if (!supplier) {
-        throw new Error(`Supplier with id ${id} not found`);
-      }
-
-      const dependencies = {
-        supplier: {
-          id: supplier.id,
-          name: supplier.name
-        },
-        services: supplier.services,
-        users: supplier.users,
-        transportServices: supplier.transportServices,
-        hotelServices: supplier.hotelServices,
-        canDelete: (
-          supplier.services.length === 0 &&
-          supplier.users.length === 0 &&
-          supplier.transportServices.length === 0 &&
-          supplier.hotelServices.length === 0
-        ),
-        totalDependencies: (
-          supplier.services.length +
-          supplier.users.length +
-          supplier.transportServices.length +
-          supplier.hotelServices.length
-        )
-      };
-
-      return dependencies;
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to check dependencies: ${errorMessage}`);
-    }
   }
 
   // Find one method
@@ -487,5 +372,106 @@ export class SuppliersService {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to soft delete supplier: ${errorMessage}`);
     }
+  }
+
+  // Check for duplicate suppliers by name or email
+  async checkDuplicate(name?: string, email?: string, excludeId?: number) {
+    const result = {
+      nameExists: false,
+      emailExists: false,
+      existingSuppliers: [] as any[]
+    };
+
+    if (name) {
+      const nameExists = await this.prismaService.supplier.findFirst({
+        where: {
+          name: {
+            equals: name
+          },
+          ...(excludeId && { id: { not: excludeId } })
+        },
+        select: { id: true, name: true, contactEmail: true }
+      });
+      if (nameExists) {
+        result.nameExists = true;
+        result.existingSuppliers.push(nameExists);
+      }
+    }
+
+    if (email) {
+      const emailExists = await this.prismaService.supplier.findFirst({
+        where: {
+          contactEmail: {
+            equals: email
+          },
+          ...(excludeId && { id: { not: excludeId } })
+        },
+        select: { id: true, name: true, contactEmail: true }
+      });
+      if (emailExists) {
+        result.emailExists = true;
+        result.existingSuppliers.push(emailExists);
+      }
+    }
+    return result;
+  }
+
+  // Search suppliers by name or email
+  async search(name?: string, email?: string) {
+    const where: any = {};
+    if (name) {
+      where.name = { contains: name, mode: 'insensitive' };
+    }
+    if (email) {
+      where.contactEmail = { contains: email, mode: 'insensitive' };
+    }
+    return this.prismaService.supplier.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        contactEmail: true,
+        createdAt: true
+      }
+    });
+  }
+
+  // Check supplier dependencies before delete
+  async checkDependencies(id: number) {
+    const supplier = await this.prismaService.supplier.findUnique({
+      where: { id },
+      include: {
+        services: true,
+        users: true,
+        transportServices: true,
+        hotelServices: true,
+      }
+    });
+    if (!supplier) {
+      throw new Error(`Supplier with id ${id} not found`);
+    }
+    const dependencies = {
+      supplier: {
+        id: supplier.id,
+        name: supplier.name
+      },
+      services: supplier.services,
+      users: supplier.users,
+      transportServices: supplier.transportServices,
+      hotelServices: supplier.hotelServices,
+      canDelete: (
+        supplier.services.length === 0 &&
+        supplier.users.length === 0 &&
+        supplier.transportServices.length === 0 &&
+        supplier.hotelServices.length === 0
+      ),
+      totalDependencies: (
+        supplier.services.length +
+        supplier.users.length +
+        supplier.transportServices.length +
+        supplier.hotelServices.length
+      )
+    };
+    return dependencies;
   }
 }

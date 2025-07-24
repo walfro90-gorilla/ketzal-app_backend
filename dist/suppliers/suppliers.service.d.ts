@@ -61,42 +61,6 @@ export declare class SuppliersService {
         extras: import("@prisma/client/runtime/library").JsonValue | null;
         supplierSubType: string | null;
     })[]>;
-    search(name?: string, email?: string): Promise<{
-        id: number;
-        name: string;
-        contactEmail: string;
-        createdAt: Date;
-    }[]>;
-    checkDuplicate(name?: string, email?: string, excludeId?: number): Promise<{
-        nameExists: boolean;
-        emailExists: boolean;
-        existingSuppliers: any[];
-    }>;
-    checkDependencies(id: number): Promise<{
-        supplier: {
-            id: number;
-            name: string;
-        };
-        services: {
-            id: number;
-            name: string;
-        }[];
-        users: {
-            id: string;
-            name: string | null;
-            email: string;
-        }[];
-        transportServices: {
-            id: number;
-            name: string;
-        }[];
-        hotelServices: {
-            id: number;
-            name: string;
-        }[];
-        canDelete: boolean;
-        totalDependencies: number;
-    }>;
     findOne(id: number): Promise<{
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
@@ -168,5 +132,137 @@ export declare class SuppliersService {
             extras: import("@prisma/client/runtime/library").JsonValue | null;
             supplierSubType: string | null;
         };
+    }>;
+    checkDuplicate(name?: string, email?: string, excludeId?: number): Promise<{
+        nameExists: boolean;
+        emailExists: boolean;
+        existingSuppliers: any[];
+    }>;
+    search(name?: string, email?: string): Promise<{
+        id: number;
+        name: string;
+        contactEmail: string;
+        createdAt: Date;
+    }[]>;
+    checkDependencies(id: number): Promise<{
+        supplier: {
+            id: number;
+            name: string;
+        };
+        services: {
+            serviceCategory: string | null;
+            id: number;
+            name: string;
+            description: string | null;
+            createdAt: Date;
+            location: string | null;
+            supplierId: number;
+            includes: import("@prisma/client/runtime/library").JsonValue | null;
+            price: number;
+            availableFrom: Date | null;
+            availableTo: Date | null;
+            packs: import("@prisma/client/runtime/library").JsonValue | null;
+            images: import("@prisma/client/runtime/library").JsonValue | null;
+            ytLink: string | null;
+            sizeTour: number | null;
+            serviceType: string | null;
+            stateFrom: string | null;
+            cityFrom: string | null;
+            stateTo: string | null;
+            cityTo: string | null;
+            excludes: import("@prisma/client/runtime/library").JsonValue | null;
+            faqs: import("@prisma/client/runtime/library").JsonValue | null;
+            itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+            hotelProviderID: number | null;
+            transportProviderID: number | null;
+            dates: import("@prisma/client/runtime/library").JsonValue | null;
+            addOns: import("@prisma/client/runtime/library").JsonValue | null;
+            currentBookings: number | null;
+            maxCapacity: number | null;
+            priceAxo: number | null;
+            seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        users: {
+            id: string;
+            name: string | null;
+            createdAt: Date;
+            email: string;
+            password: string | null;
+            emailVerified: Date | null;
+            image: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            supplierId: number | null;
+            updatedAt: Date;
+            axoCoinsEarned: number | null;
+            referralCode: string | null;
+        }[];
+        transportServices: {
+            serviceCategory: string | null;
+            id: number;
+            name: string;
+            description: string | null;
+            createdAt: Date;
+            location: string | null;
+            supplierId: number;
+            includes: import("@prisma/client/runtime/library").JsonValue | null;
+            price: number;
+            availableFrom: Date | null;
+            availableTo: Date | null;
+            packs: import("@prisma/client/runtime/library").JsonValue | null;
+            images: import("@prisma/client/runtime/library").JsonValue | null;
+            ytLink: string | null;
+            sizeTour: number | null;
+            serviceType: string | null;
+            stateFrom: string | null;
+            cityFrom: string | null;
+            stateTo: string | null;
+            cityTo: string | null;
+            excludes: import("@prisma/client/runtime/library").JsonValue | null;
+            faqs: import("@prisma/client/runtime/library").JsonValue | null;
+            itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+            hotelProviderID: number | null;
+            transportProviderID: number | null;
+            dates: import("@prisma/client/runtime/library").JsonValue | null;
+            addOns: import("@prisma/client/runtime/library").JsonValue | null;
+            currentBookings: number | null;
+            maxCapacity: number | null;
+            priceAxo: number | null;
+            seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        hotelServices: {
+            serviceCategory: string | null;
+            id: number;
+            name: string;
+            description: string | null;
+            createdAt: Date;
+            location: string | null;
+            supplierId: number;
+            includes: import("@prisma/client/runtime/library").JsonValue | null;
+            price: number;
+            availableFrom: Date | null;
+            availableTo: Date | null;
+            packs: import("@prisma/client/runtime/library").JsonValue | null;
+            images: import("@prisma/client/runtime/library").JsonValue | null;
+            ytLink: string | null;
+            sizeTour: number | null;
+            serviceType: string | null;
+            stateFrom: string | null;
+            cityFrom: string | null;
+            stateTo: string | null;
+            cityTo: string | null;
+            excludes: import("@prisma/client/runtime/library").JsonValue | null;
+            faqs: import("@prisma/client/runtime/library").JsonValue | null;
+            itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+            hotelProviderID: number | null;
+            transportProviderID: number | null;
+            dates: import("@prisma/client/runtime/library").JsonValue | null;
+            addOns: import("@prisma/client/runtime/library").JsonValue | null;
+            currentBookings: number | null;
+            maxCapacity: number | null;
+            priceAxo: number | null;
+            seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        canDelete: boolean;
+        totalDependencies: number;
     }>;
 }

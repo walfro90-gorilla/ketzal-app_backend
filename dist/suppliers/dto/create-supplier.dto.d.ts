@@ -6,4 +6,5 @@ export declare class CreateSupplierDto {
     description?: string;
     type?: string;
     imgLogo?: string;
+    userId?: string;
 }
