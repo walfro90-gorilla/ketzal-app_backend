@@ -1,9 +1,17 @@
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SupplierApprovalDto } from './dto/supplier-approval.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { UsersService } from '../users/users.service';
 export declare class SuppliersService {
     private prismaService;
-    constructor(prismaService: PrismaService);
+    private notificationsService;
+    private usersService;
+    constructor(prismaService: PrismaService, notificationsService: NotificationsService, usersService: UsersService);
+    approveOrDeclineSupplier(supplierId: number, dto: SupplierApprovalDto): Promise<{
+        success: boolean;
+    }>;
     getSupplierStats(): Promise<{
         totalSuppliers: number;
         totalServices: number;
@@ -22,7 +30,22 @@ export declare class SuppliersService {
         createdAt: Date;
         supplierType: string | null;
     }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+    findAll(pending?: string): Promise<({
+        users: {
+            id: string;
+            name: string | null;
+            createdAt: Date;
+            email: string;
+            password: string | null;
+            emailVerified: Date | null;
+            image: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            supplierId: number | null;
+            updatedAt: Date;
+            axoCoinsEarned: number | null;
+            referralCode: string | null;
+        }[];
+    } & {
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
@@ -37,7 +60,7 @@ export declare class SuppliersService {
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
         supplierSubType: string | null;
-    }[]>;
+    })[]>;
     search(name?: string, email?: string): Promise<{
         id: number;
         name: string;

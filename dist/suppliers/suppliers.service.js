@@ -13,9 +13,76 @@ exports.SuppliersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const library_1 = require("@prisma/client/runtime/library");
+const supplier_approval_dto_1 = require("./dto/supplier-approval.dto");
+const notifications_service_1 = require("../notifications/notifications.service");
+const users_service_1 = require("../users/users.service");
+const create_notification_dto_1 = require("../notifications/dto/create-notification.dto");
 let SuppliersService = class SuppliersService {
-    constructor(prismaService) {
+    constructor(prismaService, notificationsService, usersService) {
         this.prismaService = prismaService;
+        this.notificationsService = notificationsService;
+        this.usersService = usersService;
+    }
+    async approveOrDeclineSupplier(supplierId, dto) {
+        const supplier = await this.prismaService.supplier.findUnique({
+            where: { id: supplierId },
+            include: { users: true },
+        });
+        console.log('DEBUG supplier:', JSON.stringify(supplier, null, 2));
+        if (!supplier)
+            throw new Error('Supplier not found');
+        console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
+        console.log('DEBUG supplier.users ids:', supplier.users.map(u => u.id));
+        const user = supplier.users.find(u => String(u.id) === String(dto.userId));
+        if (!user) {
+            console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map(u => u.id));
+            throw new Error('User not found for this supplier');
+        }
+        let newExtras = {};
+        if (typeof supplier.extras === 'string') {
+            try {
+                newExtras = JSON.parse(supplier.extras);
+            }
+            catch (_a) {
+                newExtras = {};
+            }
+        }
+        else if (typeof supplier.extras === 'object' && supplier.extras !== null) {
+            newExtras = Object.assign({}, supplier.extras);
+        }
+        if (dto.action === supplier_approval_dto_1.SupplierApprovalAction.APPROVE) {
+            newExtras.isApproved = true;
+            newExtras.isPending = false;
+        }
+        else {
+            newExtras.isApproved = false;
+            newExtras.isPending = false;
+        }
+        await this.prismaService.supplier.update({
+            where: { id: supplierId },
+            data: { extras: newExtras },
+        });
+        const notifType = create_notification_dto_1.NotificationType.SUPPLIER_APPROVAL;
+        const notifTitle = dto.action === supplier_approval_dto_1.SupplierApprovalAction.APPROVE ? '¡Tu proveedor ha sido aprobado!' : 'Tu proveedor ha sido rechazado';
+        const notifMsg = dto.action === supplier_approval_dto_1.SupplierApprovalAction.APPROVE
+            ? '¡Felicidades! Tu proveedor fue aprobado por el equipo de KetzaL.'
+            : 'Lamentablemente tu proveedor fue rechazado. Puedes revisar y volver a intentarlo.';
+        await this.notificationsService.create({
+            userId: user.id,
+            title: notifTitle,
+            message: notifMsg,
+            type: notifType,
+        });
+        if (dto.action === supplier_approval_dto_1.SupplierApprovalAction.APPROVE) {
+            await this.prismaService.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+            await this.notificationsService.create({
+                userId: user.id,
+                title: '¡Ahora eres administrador!',
+                message: 'Tu cuenta ha sido actualizada a nivel administrador por la aprobación de tu proveedor.',
+                type: create_notification_dto_1.NotificationType.SUCCESS,
+            });
+        }
+        return { success: true };
     }
     async getSupplierStats() {
         const totalSuppliers = await this.prismaService.supplier.count();
@@ -112,8 +179,28 @@ let SuppliersService = class SuppliersService {
             throw error;
         }
     }
-    findAll() {
-        return this.prismaService.supplier.findMany();
+    async findAll(pending) {
+        const allSuppliers = await this.prismaService.supplier.findMany({ include: { users: true } });
+        if (pending === 'true') {
+            return allSuppliers
+                .filter(s => {
+                let extras = s.extras;
+                if (typeof extras === 'string') {
+                    try {
+                        extras = JSON.parse(extras);
+                    }
+                    catch (_a) {
+                        extras = {};
+                    }
+                }
+                if (typeof extras === 'object' && extras !== null && 'isPending' in extras) {
+                    return extras.isPending === true;
+                }
+                return false;
+            })
+                .map(s => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.users && s.users.length > 0 ? s.users[0] : null })));
+        }
+        return allSuppliers;
     }
     async search(name, email) {
         const where = {};
@@ -317,6 +404,8 @@ let SuppliersService = class SuppliersService {
 exports.SuppliersService = SuppliersService;
 exports.SuppliersService = SuppliersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_service_1.NotificationsService,
+        users_service_1.UsersService])
 ], SuppliersService);
 //# sourceMappingURL=suppliers.service.js.map

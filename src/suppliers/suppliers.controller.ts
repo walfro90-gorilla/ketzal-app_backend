@@ -1,11 +1,16 @@
+
+
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { SupplierApprovalDto } from './dto/supplier-approval.dto';
+
 
 @Controller('suppliers')
 export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
+
 
   @Get('stats')
   async getStats() {
@@ -17,8 +22,8 @@ export class SuppliersController {
     return this.suppliersService.create(createSupplierDto);
   }
   @Get()
-  findAll() {
-    return this.suppliersService.findAll();
+  findAll(@Query('pending') pending?: string) {
+    return this.suppliersService.findAll(pending);
   }
 
   @Get('check-duplicate')
@@ -48,6 +53,14 @@ export class SuppliersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSupplierDto: UpdateSupplierDto) {
     return this.suppliersService.update(+id, updateSupplierDto);
+  }
+
+  @Patch(':id/approval')
+  async approveOrDeclineSupplier(
+    @Param('id') id: string,
+    @Body() approvalDto: SupplierApprovalDto,
+  ) {
+    return this.suppliersService.approveOrDeclineSupplier(+id, approvalDto);
   }
 
   @Delete(':id')
