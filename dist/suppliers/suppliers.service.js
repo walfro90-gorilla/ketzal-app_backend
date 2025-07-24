@@ -142,6 +142,21 @@ let SuppliersService = class SuppliersService {
                     createdAt: true,
                 }
             });
+            let userId = createSupplierDto.userId;
+            if (!userId) {
+                const userAdmin = await this.prismaService.user.findFirst({
+                    where: { email: createSupplierDto.contactEmail }
+                });
+                userId = userAdmin === null || userAdmin === void 0 ? void 0 : userAdmin.id;
+            }
+            if (userId) {
+                await this.notificationsService.create({
+                    userId,
+                    title: '¡Tu proveedor está en revisión!',
+                    message: `Tu solicitud para el supplier "${newSupplier.name}" fue recibida y está en proceso de verificación. Te notificaremos dentro de 72 horas si fue aprobada o rechazada.`,
+                    type: create_notification_dto_1.NotificationType.INFO,
+                });
+            }
             console.log('Successfully created supplier:', newSupplier);
             return newSupplier;
         }
@@ -193,119 +208,12 @@ let SuppliersService = class SuppliersService {
                         extras = {};
                     }
                 }
-                if (typeof extras === 'object' && extras !== null && 'isPending' in extras) {
-                    return extras.isPending === true;
-                }
-                return false;
+                return (typeof extras === 'object' && extras !== null && 'isPending' in extras &&
+                    extras.isPending === true);
             })
                 .map(s => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.users && s.users.length > 0 ? s.users[0] : null })));
         }
         return allSuppliers;
-    }
-    async search(name, email) {
-        const where = {};
-        if (name) {
-            where.name = {
-                contains: name,
-                mode: 'insensitive'
-            };
-        }
-        if (email) {
-            where.contactEmail = {
-                contains: email,
-                mode: 'insensitive'
-            };
-        }
-        const suppliers = await this.prismaService.supplier.findMany({
-            where,
-            select: {
-                id: true,
-                name: true,
-                contactEmail: true,
-                createdAt: true
-            }
-        });
-        console.log(`Search results for name="${name}", email="${email}":`, suppliers);
-        return suppliers;
-    }
-    async checkDuplicate(name, email, excludeId) {
-        const result = {
-            nameExists: false,
-            emailExists: false,
-            existingSuppliers: []
-        };
-        if (name) {
-            const nameExists = await this.prismaService.supplier.findFirst({
-                where: Object.assign({ name: {
-                        equals: name
-                    } }, (excludeId && { id: { not: excludeId } })),
-                select: { id: true, name: true, contactEmail: true }
-            });
-            if (nameExists) {
-                result.nameExists = true;
-                result.existingSuppliers.push(nameExists);
-            }
-        }
-        if (email) {
-            const emailExists = await this.prismaService.supplier.findFirst({
-                where: Object.assign({ contactEmail: {
-                        equals: email
-                    } }, (excludeId && { id: { not: excludeId } })),
-                select: { id: true, name: true, contactEmail: true }
-            });
-            if (emailExists && !result.existingSuppliers.find(s => s.id === emailExists.id)) {
-                result.emailExists = true;
-                result.existingSuppliers.push(emailExists);
-            }
-        }
-        return result;
-    }
-    async checkDependencies(id) {
-        try {
-            const supplier = await this.prismaService.supplier.findUnique({
-                where: { id },
-                include: {
-                    services: {
-                        select: { id: true, name: true }
-                    },
-                    users: {
-                        select: { id: true, name: true, email: true }
-                    },
-                    transportServices: {
-                        select: { id: true, name: true }
-                    },
-                    hotelServices: {
-                        select: { id: true, name: true }
-                    },
-                }
-            });
-            if (!supplier) {
-                throw new Error(`Supplier with id ${id} not found`);
-            }
-            const dependencies = {
-                supplier: {
-                    id: supplier.id,
-                    name: supplier.name
-                },
-                services: supplier.services,
-                users: supplier.users,
-                transportServices: supplier.transportServices,
-                hotelServices: supplier.hotelServices,
-                canDelete: (supplier.services.length === 0 &&
-                    supplier.users.length === 0 &&
-                    supplier.transportServices.length === 0 &&
-                    supplier.hotelServices.length === 0),
-                totalDependencies: (supplier.services.length +
-                    supplier.users.length +
-                    supplier.transportServices.length +
-                    supplier.hotelServices.length)
-            };
-            return dependencies;
-        }
-        catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            throw new Error(`Failed to check dependencies: ${errorMessage}`);
-        }
     }
     async findOne(id) {
         const supplierFound = await this.prismaService.supplier.findUnique({
@@ -399,6 +307,89 @@ let SuppliersService = class SuppliersService {
             const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(`Failed to soft delete supplier: ${errorMessage}`);
         }
+    }
+    async checkDuplicate(name, email, excludeId) {
+        const result = {
+            nameExists: false,
+            emailExists: false,
+            existingSuppliers: []
+        };
+        if (name) {
+            const nameExists = await this.prismaService.supplier.findFirst({
+                where: Object.assign({ name: {
+                        equals: name
+                    } }, (excludeId && { id: { not: excludeId } })),
+                select: { id: true, name: true, contactEmail: true }
+            });
+            if (nameExists) {
+                result.nameExists = true;
+                result.existingSuppliers.push(nameExists);
+            }
+        }
+        if (email) {
+            const emailExists = await this.prismaService.supplier.findFirst({
+                where: Object.assign({ contactEmail: {
+                        equals: email
+                    } }, (excludeId && { id: { not: excludeId } })),
+                select: { id: true, name: true, contactEmail: true }
+            });
+            if (emailExists) {
+                result.emailExists = true;
+                result.existingSuppliers.push(emailExists);
+            }
+        }
+        return result;
+    }
+    async search(name, email) {
+        const where = {};
+        if (name) {
+            where.name = { contains: name, mode: 'insensitive' };
+        }
+        if (email) {
+            where.contactEmail = { contains: email, mode: 'insensitive' };
+        }
+        return this.prismaService.supplier.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                contactEmail: true,
+                createdAt: true
+            }
+        });
+    }
+    async checkDependencies(id) {
+        const supplier = await this.prismaService.supplier.findUnique({
+            where: { id },
+            include: {
+                services: true,
+                users: true,
+                transportServices: true,
+                hotelServices: true,
+            }
+        });
+        if (!supplier) {
+            throw new Error(`Supplier with id ${id} not found`);
+        }
+        const dependencies = {
+            supplier: {
+                id: supplier.id,
+                name: supplier.name
+            },
+            services: supplier.services,
+            users: supplier.users,
+            transportServices: supplier.transportServices,
+            hotelServices: supplier.hotelServices,
+            canDelete: (supplier.services.length === 0 &&
+                supplier.users.length === 0 &&
+                supplier.transportServices.length === 0 &&
+                supplier.hotelServices.length === 0),
+            totalDependencies: (supplier.services.length +
+                supplier.users.length +
+                supplier.transportServices.length +
+                supplier.hotelServices.length)
+        };
+        return dependencies;
     }
 };
 exports.SuppliersService = SuppliersService;

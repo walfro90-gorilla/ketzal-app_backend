@@ -1,14 +1,20 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/dto/create-notification.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UsersService {
 
   // Inject PrismaService
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    private prismaService: PrismaService,
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
+  ) {}
 
 
   // Create method
@@ -68,14 +74,60 @@ export class UsersService {
   }
   // Update method  
   async update(id: string, updateUserDto: UpdateUserDto ) {
+    // Obtener el usuario antes de actualizar para comparar el estado de emailVerified
+    const prevUser = await this.prismaService.user.findUnique({ where: { id } });
     const userFound = await this.prismaService.user.update({
       where: { id: id },
       data: updateUserDto
-    })
+    });
     if (!userFound) {
-      throw new NotFoundException(`User with id ${id} not found`)
+      throw new NotFoundException(`User with id ${id} not found`);
     }
-    return userFound
+    // Si el emailVerified estaba vacío y ahora tiene valor, notificar al usuario y a los superadmins
+    if (
+      prevUser &&
+      (!prevUser.emailVerified || prevUser.emailVerified === null) &&
+      userFound.emailVerified
+    ) {
+      // Buscar si el usuario tiene supplier asociado pendiente
+      const supplier = await this.prismaService.supplier.findFirst({
+        where: {
+          users: { some: { id } },
+          // Solo si está pendiente
+          OR: [
+            { extras: { equals: { isPending: true } } },
+            // Si extras es string, intentar parsear en backend
+          ]
+        }
+      });
+      if (supplier) {
+        // Notificación para el usuario: solicitud enviada
+        await this.notificationsService.create({
+          userId: id,
+          title: '¡Solicitud enviada!',
+          message: `Tu solicitud para el supplier "${supplier.name}" ha sido enviada y está pendiente de aprobación por el equipo de KetzaL.`,
+          type: NotificationType.INFO,
+        });
+        // Notificación para el usuario: en revisión
+        await this.notificationsService.create({
+          userId: id,
+          title: 'Tu proveedor está en revisión',
+          message: `Tu solicitud para el supplier "${supplier.name}" está en revisión. Te notificaremos dentro de 72 horas si fue aprobada o rechazada.`,
+          type: NotificationType.INFO,
+        });
+        // Notificación para todos los superadmins
+        const superadmins = await this.prismaService.user.findMany({ where: { role: 'superadmin' } });
+        for (const superadmin of superadmins) {
+          await this.notificationsService.create({
+            userId: superadmin.id,
+            title: 'Nueva Solicitud de Proveedor Turístico',
+            message: `${userFound.name || userFound.email} ha solicitado convertirse en proveedor de servicios turísticos (${supplier.name}). Revisa y aprueba/rechaza la solicitud en el panel de administración.`,
+            type: NotificationType.SUPPLIER_APPROVAL,
+          });
+        }
+      }
+    }
+    return userFound;
   }
   // Remove method
   async remove(id: string) {
