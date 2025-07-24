@@ -16,6 +16,7 @@ exports.SuppliersController = void 0;
 const common_1 = require("@nestjs/common");
 const suppliers_service_1 = require("./suppliers.service");
 const create_supplier_dto_1 = require("./dto/create-supplier.dto");
+const supplier_approval_dto_1 = require("./dto/supplier-approval.dto");
 let SuppliersController = class SuppliersController {
     constructor(suppliersService) {
         this.suppliersService = suppliersService;
@@ -26,8 +27,8 @@ let SuppliersController = class SuppliersController {
     create(createSupplierDto) {
         return this.suppliersService.create(createSupplierDto);
     }
-    findAll() {
-        return this.suppliersService.findAll();
+    findAll(pending) {
+        return this.suppliersService.findAll(pending);
     }
     checkDuplicate(name, email, excludeId) {
         return this.suppliersService.checkDuplicate(name, email, excludeId ? +excludeId : undefined);
@@ -43,6 +44,9 @@ let SuppliersController = class SuppliersController {
     }
     update(id, updateSupplierDto) {
         return this.suppliersService.update(+id, updateSupplierDto);
+    }
+    async approveOrDeclineSupplier(id, approvalDto) {
+        return this.suppliersService.approveOrDeclineSupplier(+id, approvalDto);
     }
     remove(id) {
         return this.suppliersService.remove(+id);
@@ -64,8 +68,9 @@ __decorate([
 ], SuppliersController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('pending')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findAll", null);
 __decorate([
@@ -107,6 +112,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Patch)(':id/approval'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, supplier_approval_dto_1.SupplierApprovalDto]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "approveOrDeclineSupplier", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

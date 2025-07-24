@@ -1,6 +1,7 @@
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { SupplierApprovalDto } from './dto/supplier-approval.dto';
 export declare class SuppliersController {
     private readonly suppliersService;
     constructor(suppliersService: SuppliersService);
@@ -22,7 +23,22 @@ export declare class SuppliersController {
         createdAt: Date;
         supplierType: string | null;
     }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+    findAll(pending?: string): Promise<({
+        users: {
+            id: string;
+            name: string | null;
+            createdAt: Date;
+            email: string;
+            password: string | null;
+            emailVerified: Date | null;
+            image: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            supplierId: number | null;
+            updatedAt: Date;
+            axoCoinsEarned: number | null;
+            referralCode: string | null;
+        }[];
+    } & {
         info: import("@prisma/client/runtime/library").JsonValue | null;
         id: number;
         name: string;
@@ -37,7 +53,7 @@ export declare class SuppliersController {
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
         supplierSubType: string | null;
-    }[]>;
+    })[]>;
     checkDuplicate(name?: string, email?: string, excludeId?: string): Promise<{
         nameExists: boolean;
         emailExists: boolean;
@@ -105,6 +121,9 @@ export declare class SuppliersController {
         photos: import("@prisma/client/runtime/library").JsonValue | null;
         extras: import("@prisma/client/runtime/library").JsonValue | null;
         supplierSubType: string | null;
+    }>;
+    approveOrDeclineSupplier(id: string, approvalDto: SupplierApprovalDto): Promise<{
+        success: boolean;
     }>;
     remove(id: string): Promise<{
         success: boolean;

@@ -1,14 +1,87 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+
+import { ConflictException, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { SupplierApprovalDto, SupplierApprovalAction } from './dto/supplier-approval.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { UsersService } from '../users/users.service';
+import { NotificationType } from '../notifications/dto/create-notification.dto';
 
 @Injectable()
-export class SuppliersService {
 
-  // inject PrismaService
-  constructor(private prismaService: PrismaService) { }
+export class SuppliersService {
+  constructor(
+    private prismaService: PrismaService,
+    private notificationsService: NotificationsService,
+    private usersService: UsersService,
+  ) {}
+
+  async approveOrDeclineSupplier(supplierId: number, dto: SupplierApprovalDto) {
+    // 1. Buscar supplier y user relacionado
+    const supplier = await this.prismaService.supplier.findUnique({
+      where: { id: supplierId },
+      include: { users: true },
+    });
+    console.log('DEBUG supplier:', JSON.stringify(supplier, null, 2));
+    if (!supplier) throw new Error('Supplier not found');
+    // Log quirúrgico para ver el valor y tipo de dto.userId
+    console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
+    // Log quirúrgico para ver los ids de los usuarios asociados
+    console.log('DEBUG supplier.users ids:', supplier.users.map(u => u.id));
+    // Asumimos que el primer usuario es el "dueño" (ajustar si hay lógica distinta)
+    const user = supplier.users.find(u => String(u.id) === String(dto.userId));
+    if (!user) {
+      console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map(u => u.id));
+      throw new Error('User not found for this supplier');
+    }
+
+    // 2. Actualizar estado en extras
+    let newExtras: any = {};
+    if (typeof supplier.extras === 'string') {
+      try { newExtras = JSON.parse(supplier.extras); } catch { newExtras = {}; }
+    } else if (typeof supplier.extras === 'object' && supplier.extras !== null) {
+      newExtras = { ...supplier.extras };
+    }
+    if (dto.action === SupplierApprovalAction.APPROVE) {
+      newExtras.isApproved = true;
+      newExtras.isPending = false;
+    } else {
+      newExtras.isApproved = false;
+      newExtras.isPending = false;
+    }
+    await this.prismaService.supplier.update({
+      where: { id: supplierId },
+      data: { extras: newExtras },
+    });
+
+    // 3. Crear notificación de resultado
+    const notifType = NotificationType.SUPPLIER_APPROVAL;
+    const notifTitle = dto.action === SupplierApprovalAction.APPROVE ? '¡Tu proveedor ha sido aprobado!' : 'Tu proveedor ha sido rechazado';
+    const notifMsg = dto.action === SupplierApprovalAction.APPROVE
+      ? '¡Felicidades! Tu proveedor fue aprobado por el equipo de KetzaL.'
+      : 'Lamentablemente tu proveedor fue rechazado. Puedes revisar y volver a intentarlo.';
+    await this.notificationsService.create({
+      userId: user.id,
+      title: notifTitle,
+      message: notifMsg,
+      type: notifType,
+    });
+
+    // 4. Si fue aprobado, cambiar rol y notificar
+    if (dto.action === SupplierApprovalAction.APPROVE) {
+      // Actualiza el rol directamente con Prisma
+      await this.prismaService.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+      await this.notificationsService.create({
+        userId: user.id,
+        title: '¡Ahora eres administrador!',
+        message: 'Tu cuenta ha sido actualizada a nivel administrador por la aprobación de tu proveedor.',
+        type: NotificationType.SUCCESS,
+      });
+    }
+    return { success: true };
+  }
 
   // Estadísticas generales de suppliers
   async getSupplierStats() {
@@ -138,8 +211,28 @@ export class SuppliersService {
     }
   }
   // Find all method
-  findAll() {
-    return this.prismaService.supplier.findMany()
+  async findAll(pending?: string) {
+    const allSuppliers = await this.prismaService.supplier.findMany({ include: { users: true } });
+    if (pending === 'true') {
+      // Solo los que tienen extras.isPending === true
+      return allSuppliers
+        .filter(s => {
+          let extras = s.extras;
+          if (typeof extras === 'string') {
+            try { extras = JSON.parse(extras); } catch { extras = {}; }
+          }
+          if (typeof extras === 'object' && extras !== null && 'isPending' in extras) {
+            return (extras as any).isPending === true;
+          }
+          return false;
+        })
+        .map(s => ({
+          ...s,
+          supplierId: s.id,
+          user: s.users && s.users.length > 0 ? s.users[0] : null
+        }));
+    }
+    return allSuppliers;
   }
 
   // Search method for debugging
