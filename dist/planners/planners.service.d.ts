@@ -6,20 +6,41 @@ export declare class PlannersService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     createPlanner(userId: string, createPlannerDto: CreatePlannerDto): Promise<{
+        user: {
+            id: string;
+            name: string | null;
+            email: string;
+        };
         items: ({
+            product: {
+                id: number;
+                name: string;
+                description: string | null;
+                price: number;
+                stock: number;
+                image: string;
+                createdAt: Date;
+                updatedAt: Date;
+                category: string | null;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                tags: import("@prisma/client/runtime/library").JsonValue | null;
+            } | null;
             service: {
                 id: number;
                 name: string;
-                createdAt: Date;
-                supplierId: number;
-                priceAxo: number | null;
                 description: string | null;
                 price: number;
+                createdAt: Date;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                includes: import("@prisma/client/runtime/library").JsonValue | null;
+                supplierId: number;
                 location: string | null;
                 availableFrom: Date | null;
                 availableTo: Date | null;
                 packs: import("@prisma/client/runtime/library").JsonValue | null;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
                 ytLink: string | null;
                 sizeTour: number | null;
                 serviceType: string | null;
@@ -28,7 +49,6 @@ export declare class PlannersService {
                 cityFrom: string | null;
                 stateTo: string | null;
                 cityTo: string | null;
-                includes: import("@prisma/client/runtime/library").JsonValue | null;
                 excludes: import("@prisma/client/runtime/library").JsonValue | null;
                 faqs: import("@prisma/client/runtime/library").JsonValue | null;
                 itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -40,42 +60,24 @@ export declare class PlannersService {
                 maxCapacity: number | null;
                 seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
             } | null;
-            product: {
-                id: number;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                image: string;
-                priceAxo: number | null;
-                description: string | null;
-                price: number;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                stock: number;
-                category: string | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                tags: import("@prisma/client/runtime/library").JsonValue | null;
-            } | null;
         } & {
             id: string;
             createdAt: Date;
-            plannerId: string;
+            priceAxo: number | null;
             serviceId: number | null;
+            plannerId: string;
             productId: number | null;
             quantity: number;
             priceMXN: number;
-            priceAxo: number | null;
             selectedDate: Date | null;
             notes: string | null;
         })[];
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
     } & {
         id: string;
-        userId: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -84,104 +86,41 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getPlannersByUser(userId: string): Promise<({
-        items: ({
-            service: {
-                id: number;
-                name: string;
-                createdAt: Date;
-                supplierId: number;
-                priceAxo: number | null;
-                description: string | null;
-                price: number;
-                location: string | null;
-                availableFrom: Date | null;
-                availableTo: Date | null;
-                packs: import("@prisma/client/runtime/library").JsonValue | null;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                ytLink: string | null;
-                sizeTour: number | null;
-                serviceType: string | null;
-                serviceCategory: string | null;
-                stateFrom: string | null;
-                cityFrom: string | null;
-                stateTo: string | null;
-                cityTo: string | null;
-                includes: import("@prisma/client/runtime/library").JsonValue | null;
-                excludes: import("@prisma/client/runtime/library").JsonValue | null;
-                faqs: import("@prisma/client/runtime/library").JsonValue | null;
-                itinerary: import("@prisma/client/runtime/library").JsonValue | null;
-                hotelProviderID: number | null;
-                transportProviderID: number | null;
-                dates: import("@prisma/client/runtime/library").JsonValue | null;
-                addOns: import("@prisma/client/runtime/library").JsonValue | null;
-                currentBookings: number | null;
-                maxCapacity: number | null;
-                seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
-            } | null;
-            product: {
-                id: number;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                image: string;
-                priceAxo: number | null;
-                description: string | null;
-                price: number;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                stock: number;
-                category: string | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                tags: import("@prisma/client/runtime/library").JsonValue | null;
-            } | null;
-        } & {
-            id: string;
-            createdAt: Date;
-            plannerId: string;
-            serviceId: number | null;
-            productId: number | null;
-            quantity: number;
-            priceMXN: number;
-            priceAxo: number | null;
-            selectedDate: Date | null;
-            notes: string | null;
-        })[];
         _count: {
             items: number;
         };
-    } & {
-        id: string;
-        userId: string;
-        name: string;
-        destination: string | null;
-        startDate: Date | null;
-        endDate: Date | null;
-        status: import(".prisma/client").$Enums.PlannerStatus;
-        totalMXN: number;
-        totalAxo: number;
-        isPublic: boolean;
-        shareCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-    })[]>;
-    getPlannerById(id: string, userId: string): Promise<{
         items: ({
+            product: {
+                id: number;
+                name: string;
+                description: string | null;
+                price: number;
+                stock: number;
+                image: string;
+                createdAt: Date;
+                updatedAt: Date;
+                category: string | null;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                tags: import("@prisma/client/runtime/library").JsonValue | null;
+            } | null;
             service: {
                 id: number;
                 name: string;
-                createdAt: Date;
-                supplierId: number;
-                priceAxo: number | null;
                 description: string | null;
                 price: number;
+                createdAt: Date;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                includes: import("@prisma/client/runtime/library").JsonValue | null;
+                supplierId: number;
                 location: string | null;
                 availableFrom: Date | null;
                 availableTo: Date | null;
                 packs: import("@prisma/client/runtime/library").JsonValue | null;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
                 ytLink: string | null;
                 sizeTour: number | null;
                 serviceType: string | null;
@@ -190,7 +129,6 @@ export declare class PlannersService {
                 cityFrom: string | null;
                 stateTo: string | null;
                 cityTo: string | null;
-                includes: import("@prisma/client/runtime/library").JsonValue | null;
                 excludes: import("@prisma/client/runtime/library").JsonValue | null;
                 faqs: import("@prisma/client/runtime/library").JsonValue | null;
                 itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -202,68 +140,69 @@ export declare class PlannersService {
                 maxCapacity: number | null;
                 seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
             } | null;
-            product: {
-                id: number;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                image: string;
-                priceAxo: number | null;
-                description: string | null;
-                price: number;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                stock: number;
-                category: string | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                tags: import("@prisma/client/runtime/library").JsonValue | null;
-            } | null;
         } & {
             id: string;
             createdAt: Date;
-            plannerId: string;
+            priceAxo: number | null;
             serviceId: number | null;
+            plannerId: string;
             productId: number | null;
             quantity: number;
             priceMXN: number;
-            priceAxo: number | null;
             selectedDate: Date | null;
             notes: string | null;
         })[];
+    } & {
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        destination: string | null;
+        startDate: Date | null;
+        endDate: Date | null;
+        status: import(".prisma/client").$Enums.PlannerStatus;
+        totalMXN: number;
+        totalAxo: number;
+        isPublic: boolean;
+        shareCode: string | null;
+    })[]>;
+    getPlannerById(id: string, userId: string): Promise<{
         user: {
             id: string;
             name: string | null;
             email: string;
         };
-    } & {
-        id: string;
-        userId: string;
-        name: string;
-        destination: string | null;
-        startDate: Date | null;
-        endDate: Date | null;
-        status: import(".prisma/client").$Enums.PlannerStatus;
-        totalMXN: number;
-        totalAxo: number;
-        isPublic: boolean;
-        shareCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
-    updatePlanner(id: string, userId: string, updatePlannerDto: UpdatePlannerDto): Promise<{
         items: ({
+            product: {
+                id: number;
+                name: string;
+                description: string | null;
+                price: number;
+                stock: number;
+                image: string;
+                createdAt: Date;
+                updatedAt: Date;
+                category: string | null;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                tags: import("@prisma/client/runtime/library").JsonValue | null;
+            } | null;
             service: {
                 id: number;
                 name: string;
-                createdAt: Date;
-                supplierId: number;
-                priceAxo: number | null;
                 description: string | null;
                 price: number;
+                createdAt: Date;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                includes: import("@prisma/client/runtime/library").JsonValue | null;
+                supplierId: number;
                 location: string | null;
                 availableFrom: Date | null;
                 availableTo: Date | null;
                 packs: import("@prisma/client/runtime/library").JsonValue | null;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
                 ytLink: string | null;
                 sizeTour: number | null;
                 serviceType: string | null;
@@ -272,7 +211,6 @@ export declare class PlannersService {
                 cityFrom: string | null;
                 stateTo: string | null;
                 cityTo: string | null;
-                includes: import("@prisma/client/runtime/library").JsonValue | null;
                 excludes: import("@prisma/client/runtime/library").JsonValue | null;
                 faqs: import("@prisma/client/runtime/library").JsonValue | null;
                 itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -284,37 +222,24 @@ export declare class PlannersService {
                 maxCapacity: number | null;
                 seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
             } | null;
-            product: {
-                id: number;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                image: string;
-                priceAxo: number | null;
-                description: string | null;
-                price: number;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                stock: number;
-                category: string | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                tags: import("@prisma/client/runtime/library").JsonValue | null;
-            } | null;
         } & {
             id: string;
             createdAt: Date;
-            plannerId: string;
+            priceAxo: number | null;
             serviceId: number | null;
+            plannerId: string;
             productId: number | null;
             quantity: number;
             priceMXN: number;
-            priceAxo: number | null;
             selectedDate: Date | null;
             notes: string | null;
         })[];
     } & {
         id: string;
-        userId: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -323,26 +248,117 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
+    }>;
+    updatePlanner(id: string, userId: string, updatePlannerDto: UpdatePlannerDto): Promise<{
+        items: ({
+            product: {
+                id: number;
+                name: string;
+                description: string | null;
+                price: number;
+                stock: number;
+                image: string;
+                createdAt: Date;
+                updatedAt: Date;
+                category: string | null;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                tags: import("@prisma/client/runtime/library").JsonValue | null;
+            } | null;
+            service: {
+                id: number;
+                name: string;
+                description: string | null;
+                price: number;
+                createdAt: Date;
+                images: import("@prisma/client/runtime/library").JsonValue | null;
+                priceAxo: number | null;
+                includes: import("@prisma/client/runtime/library").JsonValue | null;
+                supplierId: number;
+                location: string | null;
+                availableFrom: Date | null;
+                availableTo: Date | null;
+                packs: import("@prisma/client/runtime/library").JsonValue | null;
+                ytLink: string | null;
+                sizeTour: number | null;
+                serviceType: string | null;
+                serviceCategory: string | null;
+                stateFrom: string | null;
+                cityFrom: string | null;
+                stateTo: string | null;
+                cityTo: string | null;
+                excludes: import("@prisma/client/runtime/library").JsonValue | null;
+                faqs: import("@prisma/client/runtime/library").JsonValue | null;
+                itinerary: import("@prisma/client/runtime/library").JsonValue | null;
+                hotelProviderID: number | null;
+                transportProviderID: number | null;
+                dates: import("@prisma/client/runtime/library").JsonValue | null;
+                addOns: import("@prisma/client/runtime/library").JsonValue | null;
+                currentBookings: number | null;
+                maxCapacity: number | null;
+                seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
+            } | null;
+        } & {
+            id: string;
+            createdAt: Date;
+            priceAxo: number | null;
+            serviceId: number | null;
+            plannerId: string;
+            productId: number | null;
+            quantity: number;
+            priceMXN: number;
+            selectedDate: Date | null;
+            notes: string | null;
+        })[];
+    } & {
+        id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        destination: string | null;
+        startDate: Date | null;
+        endDate: Date | null;
+        status: import(".prisma/client").$Enums.PlannerStatus;
+        totalMXN: number;
+        totalAxo: number;
+        isPublic: boolean;
+        shareCode: string | null;
     }>;
     deletePlanner(id: string, userId: string): Promise<{
         message: string;
     }>;
     addItemToPlanner(addItemDto: AddItemToPlannerDto, userId: string): Promise<{
+        product: {
+            id: number;
+            name: string;
+            description: string | null;
+            price: number;
+            stock: number;
+            image: string;
+            createdAt: Date;
+            updatedAt: Date;
+            category: string | null;
+            images: import("@prisma/client/runtime/library").JsonValue | null;
+            priceAxo: number | null;
+            specifications: import("@prisma/client/runtime/library").JsonValue | null;
+            tags: import("@prisma/client/runtime/library").JsonValue | null;
+        } | null;
         service: {
             id: number;
             name: string;
-            createdAt: Date;
-            supplierId: number;
-            priceAxo: number | null;
             description: string | null;
             price: number;
+            createdAt: Date;
+            images: import("@prisma/client/runtime/library").JsonValue | null;
+            priceAxo: number | null;
+            includes: import("@prisma/client/runtime/library").JsonValue | null;
+            supplierId: number;
             location: string | null;
             availableFrom: Date | null;
             availableTo: Date | null;
             packs: import("@prisma/client/runtime/library").JsonValue | null;
-            images: import("@prisma/client/runtime/library").JsonValue | null;
             ytLink: string | null;
             sizeTour: number | null;
             serviceType: string | null;
@@ -351,7 +367,6 @@ export declare class PlannersService {
             cityFrom: string | null;
             stateTo: string | null;
             cityTo: string | null;
-            includes: import("@prisma/client/runtime/library").JsonValue | null;
             excludes: import("@prisma/client/runtime/library").JsonValue | null;
             faqs: import("@prisma/client/runtime/library").JsonValue | null;
             itinerary: import("@prisma/client/runtime/library").JsonValue | null;
@@ -363,25 +378,12 @@ export declare class PlannersService {
             maxCapacity: number | null;
             seasonalPrices: import("@prisma/client/runtime/library").JsonValue | null;
         } | null;
-        product: {
-            id: number;
+        planner: {
+            id: string;
             name: string;
             createdAt: Date;
             updatedAt: Date;
-            image: string;
-            priceAxo: number | null;
-            description: string | null;
-            price: number;
-            images: import("@prisma/client/runtime/library").JsonValue | null;
-            stock: number;
-            category: string | null;
-            specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            tags: import("@prisma/client/runtime/library").JsonValue | null;
-        } | null;
-        planner: {
-            id: string;
             userId: string;
-            name: string;
             destination: string | null;
             startDate: Date | null;
             endDate: Date | null;
@@ -390,18 +392,16 @@ export declare class PlannersService {
             totalAxo: number;
             isPublic: boolean;
             shareCode: string | null;
-            createdAt: Date;
-            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
-        plannerId: string;
+        priceAxo: number | null;
         serviceId: number | null;
+        plannerId: string;
         productId: number | null;
         quantity: number;
         priceMXN: number;
-        priceAxo: number | null;
         selectedDate: Date | null;
         notes: string | null;
     }>;

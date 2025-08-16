@@ -27,7 +27,7 @@ let GlobalLocationsService = class GlobalLocationsService {
     }
     async findAll() {
         const locations = await this.prisma.global_locations.findMany();
-        return locations.map(location => this.transformBigInt(location));
+        return locations.map((location) => this.transformBigInt(location));
     }
     async findOne(id) {
         const location = await this.prisma.global_locations.findUnique({ where: { id } });

@@ -32,10 +32,10 @@ let SuppliersService = class SuppliersService {
         if (!supplier)
             throw new Error('Supplier not found');
         console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
-        console.log('DEBUG supplier.users ids:', supplier.users.map(u => u.id));
-        const user = supplier.users.find(u => String(u.id) === String(dto.userId));
+        console.log('DEBUG supplier.users ids:', supplier.users.map((u) => u.id));
+        const user = supplier.users.find((u) => String(u.id) === String(dto.userId));
         if (!user) {
-            console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map(u => u.id));
+            console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map((u) => u.id));
             throw new Error('User not found for this supplier');
         }
         let newExtras = {};
@@ -198,7 +198,7 @@ let SuppliersService = class SuppliersService {
         const allSuppliers = await this.prismaService.supplier.findMany({ include: { users: true } });
         if (pending === 'true') {
             return allSuppliers
-                .filter(s => {
+                .filter((s) => {
                 let extras = s.extras;
                 if (typeof extras === 'string') {
                     try {
@@ -211,7 +211,7 @@ let SuppliersService = class SuppliersService {
                 return (typeof extras === 'object' && extras !== null && 'isPending' in extras &&
                     extras.isPending === true);
             })
-                .map(s => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.users && s.users.length > 0 ? s.users[0] : null })));
+                .map((s) => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.users && s.users.length > 0 ? s.users[0] : null })));
         }
         return allSuppliers;
     }

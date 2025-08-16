@@ -55,14 +55,7 @@ export declare class WalletController {
     }>;
     transferFunds(userId: string, transferDto: TransferFundsDto): Promise<{
         success: boolean;
-        wallet: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
         message: string;
     }>;
     getTransactions(userId: string, limit?: string, offset?: string): Promise<{

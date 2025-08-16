@@ -46,7 +46,7 @@ let ProductsService = class ProductsService {
     }
     async findAll() {
         const products = await this.prismaService.product.findMany();
-        return products.map(product => this.parseProductJson(product));
+        return products.map((product) => this.parseProductJson(product));
     }
     async findOne(id) {
         const productFound = await this.prismaService.product.findUnique({
@@ -98,7 +98,7 @@ let ProductsService = class ProductsService {
                 category: category
             }
         });
-        return products.map(product => this.parseProductJson(product));
+        return products.map((product) => this.parseProductJson(product));
     }
     async searchProducts(query, category) {
         const products = await this.prismaService.product.findMany({
@@ -114,7 +114,7 @@ let ProductsService = class ProductsService {
                 ]
             }
         });
-        return products.map(product => this.parseProductJson(product));
+        return products.map((product) => this.parseProductJson(product));
     }
     parseProductJson(product) {
         return Object.assign(Object.assign({}, product), { images: product.images ? JSON.parse(product.images) : [], specifications: product.specifications ? JSON.parse(product.specifications) : {}, tags: product.tags ? JSON.parse(product.tags) : [] });

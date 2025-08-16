@@ -29,14 +29,7 @@ export declare class WalletService {
         balanceMXN: number;
         balanceAxo: number;
     }>;
-    transferFunds(userId: string, recipientEmail: string, amountMXN: number, amountAxo: number, description?: string): Promise<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        balanceMXN: number;
-        balanceAxo: number;
-    }>;
+    transferFunds(userId: string, recipientEmail: string, amountMXN: number, amountAxo: number, description?: string): Promise<any>;
     getTransactions(userId: string, limit: number, offset: number): Promise<{
         transactions: {
             id: string;

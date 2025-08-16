@@ -23,9 +23,9 @@ export class ProductsService {
           stock: createProductDto.stock,
           image: createProductDto.image ?? '',
           category: createProductDto.category,
-          images: createProductDto.images ? createProductDto.images as Prisma.InputJsonValue : undefined,
-          specifications: createProductDto.specifications ? createProductDto.specifications as Prisma.InputJsonValue : undefined,
-          tags: createProductDto.tags ? createProductDto.tags as Prisma.InputJsonValue : undefined,
+          images: createProductDto.images ? createProductDto.images as any : undefined,
+          specifications: createProductDto.specifications ? createProductDto.specifications as any : undefined,
+          tags: createProductDto.tags ? createProductDto.tags as any : undefined,
         }
       })
     } catch (error) {
@@ -41,7 +41,7 @@ export class ProductsService {
   // READ ALL METHOD
   async findAll() {
     const products = await this.prismaService.product.findMany();
-    return products.map(product => this.parseProductJson(product));
+    return products.map((product: any) => this.parseProductJson(product));
   }
 
   // READ ONE METHOD
@@ -63,13 +63,13 @@ export class ProductsService {
     
     // Handle JSON fields properly
     if (updateProductDto.images !== undefined) {
-      updateData.images = updateProductDto.images ? updateProductDto.images as Prisma.InputJsonValue : undefined;
+      updateData.images = updateProductDto.images ? updateProductDto.images as any : undefined;
     }
     if (updateProductDto.specifications !== undefined) {
-      updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications as Prisma.InputJsonValue : undefined;
+      updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications as any : undefined;
     }
     if (updateProductDto.tags !== undefined) {
-      updateData.tags = updateProductDto.tags ? updateProductDto.tags as Prisma.InputJsonValue : undefined;
+      updateData.tags = updateProductDto.tags ? updateProductDto.tags as any : undefined;
     }
 
     const productFound = await this.prismaService.product.update({
@@ -104,7 +104,7 @@ export class ProductsService {
         category: category
       }
     });
-    return products.map(product => this.parseProductJson(product));
+    return products.map((product: any) => this.parseProductJson(product));
   }
 
   // SEARCH PRODUCTS
@@ -122,7 +122,7 @@ export class ProductsService {
         ]
       }
     });
-    return products.map(product => this.parseProductJson(product));
+    return products.map((product: any) => this.parseProductJson(product));
   }
 
   // Helper method to parse JSON fields

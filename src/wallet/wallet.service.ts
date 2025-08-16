@@ -163,7 +163,7 @@ export class WalletService {
     }
 
     // Realizar transferencia en transacción
-    const result = await this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx: any) => {
       const updatedSenderWallet = await tx.wallet.update({
         where: { id: senderWallet.id },
         data: {
