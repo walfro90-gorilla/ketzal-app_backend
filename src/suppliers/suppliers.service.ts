@@ -28,11 +28,11 @@ export class SuppliersService {
     // Log quirúrgico para ver el valor y tipo de dto.userId
     console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
     // Log quirúrgico para ver los ids de los usuarios asociados
-    console.log('DEBUG supplier.users ids:', supplier.users.map(u => u.id));
+    console.log('DEBUG supplier.users ids:', supplier.users.map((u: any) => u.id));
     // Asumimos que el primer usuario es el "dueño" (ajustar si hay lógica distinta)
-    const user = supplier.users.find(u => String(u.id) === String(dto.userId));
+    const user = supplier.users.find((u: any) => String(u.id) === String(dto.userId));
     if (!user) {
-      console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map(u => u.id));
+      console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map((u: any) => u.id));
       throw new Error('User not found for this supplier');
     }
 
@@ -232,7 +232,7 @@ export class SuppliersService {
     if (pending === 'true') {
       // Mostrar todos los suppliers con isPending === true, sin filtrar por emailVerified
       return allSuppliers
-        .filter(s => {
+        .filter((s: any) => {
           let extras = s.extras;
           if (typeof extras === 'string') {
             try { extras = JSON.parse(extras); } catch { extras = {}; }
@@ -242,7 +242,7 @@ export class SuppliersService {
             (extras as any).isPending === true
           );
         })
-        .map(s => ({
+        .map((s: any) => ({
           ...s,
           supplierId: s.id,
           user: s.users && s.users.length > 0 ? s.users[0] : null

@@ -256,8 +256,8 @@ export class PlannersService {
       where: { plannerId },
     });
 
-    const totalMXN = items.reduce((sum, item) => sum + (item.priceMXN * item.quantity), 0);
-    const totalAxo = items.reduce((sum, item) => sum + ((item.priceAxo || 0) * item.quantity), 0);
+    const totalMXN = items.reduce((sum: number, item: any) => sum + (item.priceMXN * item.quantity), 0);
+    const totalAxo = items.reduce((sum: number, item: any) => sum + ((item.priceAxo || 0) * item.quantity), 0);
 
     await this.prisma.travelPlanner.update({
       where: { id: plannerId },
