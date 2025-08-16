@@ -21,6 +21,9 @@ var NotificationType;
     NotificationType["SUPPLIER_APPROVAL"] = "SUPPLIER_APPROVAL";
     NotificationType["BOOKING_UPDATE"] = "BOOKING_UPDATE";
     NotificationType["SYSTEM_UPDATE"] = "SYSTEM_UPDATE";
+    NotificationType["USER_REGISTRATION"] = "USER_REGISTRATION";
+    NotificationType["WELCOME_BONUS"] = "WELCOME_BONUS";
+    NotificationType["WELCOME_MESSAGE"] = "WELCOME_MESSAGE";
 })(NotificationType || (exports.NotificationType = NotificationType = {}));
 var NotificationPriority;
 (function (NotificationPriority) {
