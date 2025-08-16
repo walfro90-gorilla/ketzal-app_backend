@@ -12,7 +12,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -21,6 +20,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
     findAll(): Promise<({
@@ -31,7 +31,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -40,6 +39,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     })[]>;
     findByUserId(userId: string, includeRead?: boolean): Promise<({
@@ -50,7 +50,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -59,6 +58,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     })[]>;
     findOne(id: string): Promise<{
@@ -69,7 +69,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -78,6 +77,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
     update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<{
@@ -88,7 +88,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -97,6 +96,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
     markAsRead(id: string): Promise<{
@@ -107,7 +107,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -116,12 +115,12 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
     markAllAsReadForUser(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
     remove(id: string): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -130,6 +129,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
     removeReadNotificationsForUser(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
@@ -146,7 +146,6 @@ export declare class NotificationsService {
         };
     } & {
         id: string;
-        createdAt: Date;
         userId: string;
         title: string;
         message: string;
@@ -155,6 +154,7 @@ export declare class NotificationsService {
         priority: import(".prisma/client").$Enums.NotificationPriority;
         metadata: import("@prisma/client/runtime/library").JsonValue | null;
         actionUrl: string | null;
+        createdAt: Date;
         readAt: Date | null;
     }>;
 }

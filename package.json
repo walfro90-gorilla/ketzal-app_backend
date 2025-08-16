@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "<p align=\"center\">\r   <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a>\r </p>",
+  "description": "Ketzal App Backend",
   "main": "index.js",
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -461,7 +461,12 @@
     "start:dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
-    "lint": "nest lint"
+    "lint": "nest lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "author": "",
   "license": "ISC",
