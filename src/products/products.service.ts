@@ -59,42 +59,48 @@ export class ProductsService {
 
   // UPDATE METHOD
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const updateData: any = { ...updateProductDto };
-    
-    // Handle JSON fields properly
-    if (updateProductDto.images !== undefined) {
-      updateData.images = updateProductDto.images ? updateProductDto.images as any : undefined;
-    }
-    if (updateProductDto.specifications !== undefined) {
-      updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications as any : undefined;
-    }
-    if (updateProductDto.tags !== undefined) {
-      updateData.tags = updateProductDto.tags ? updateProductDto.tags as any : undefined;
-    }
+    try {
+      const updateData: any = { ...updateProductDto };
+      
+      // Handle JSON fields properly
+      if (updateProductDto.images !== undefined) {
+        updateData.images = updateProductDto.images ? updateProductDto.images as any : undefined;
+      }
+      if (updateProductDto.specifications !== undefined) {
+        updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications as any : undefined;
+      }
+      if (updateProductDto.tags !== undefined) {
+        updateData.tags = updateProductDto.tags ? updateProductDto.tags as any : undefined;
+      }
 
-    const productFound = await this.prismaService.product.update({
-      where: {
-        id: id
-      },
-      data: updateData
-    })
-    if (!productFound) {
-      throw new NotFoundException(`Product with id ${id} not found`)
+      return await this.prismaService.product.update({
+        where: {
+          id: id
+        },
+        data: updateData
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+      throw error;
     }
-    return productFound;
   }
 
   // DELETE METHOD
   async remove(id: number) {
-    const deleteProduct = await this.prismaService.product.delete({
-      where: {
-        id: id
+    try {
+      return await this.prismaService.product.delete({
+        where: {
+          id: id
+        }
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new NotFoundException(`Product with id ${id} not found`);
       }
-    })
-    if (!deleteProduct) {
-      throw new NotFoundException(`Product with id ${id} not found`)
+      throw error;
     }
-    return deleteProduct
   }
 
   // FIND BY CATEGORY

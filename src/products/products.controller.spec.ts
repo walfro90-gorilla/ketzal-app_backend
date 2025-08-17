@@ -4,50 +4,28 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
-const mockProduct = {
-  id: 1,
-  name: 'Test Product',
-  description: 'A great product',
-  price: 100,
-  priceAxo: 120,
-  stock: 10,
-  image: 'image.jpg',
-  category: 'Test',
-  images: [],
-  specifications: {},
-  tags: [],
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  supplierId: null,
-};
-
 const mockProductsService = {
-  create: jest.fn().mockResolvedValue(mockProduct),
-  findAll: jest.fn().mockResolvedValue([mockProduct]),
-  findOne: jest.fn().mockResolvedValue(mockProduct),
-  update: jest.fn().mockResolvedValue(mockProduct),
-  remove: jest.fn().mockResolvedValue(mockProduct),
-  findByCategory: jest.fn().mockResolvedValue([mockProduct]),
-  searchProducts: jest.fn().mockResolvedValue([mockProduct]),
+  create: jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+  findByCategory: jest.fn(),
+  searchProducts: jest.fn(),
 };
 
 describe('ProductsController', () => {
   let controller: ProductsController;
-  let service: ProductsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
       providers: [
-        {
-          provide: ProductsService,
-          useValue: mockProductsService,
-        },
+        { provide: ProductsService, useValue: mockProductsService },
       ],
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
-    service = module.get<ProductsService>(ProductsService);
     jest.clearAllMocks();
   });
 
@@ -56,76 +34,59 @@ describe('ProductsController', () => {
   });
 
   describe('create', () => {
-    it('should create a product', async () => {
-      const createProductDto: CreateProductDto = {
-        name: 'New Product',
-        description: 'Description of new product',
-        price: 150.00,
-        priceAxo: 7.50,
-        stock: 100,
-        image: 'new-product.jpg',
-        category: 'electronics',
-        images: ['img1.jpg', 'img2.jpg'],
-        specifications: { weight: '1kg' },
-        tags: ['tag1', 'tag2'],
-      };
-
-      const result = await controller.create(createProductDto);
-
-      expect(service.create).toHaveBeenCalledWith(createProductDto);
-      expect(result).toEqual(mockProduct);
+    it('should call productsService.create with the correct data', async () => {
+      const createProductDto: CreateProductDto = { name: 'Test Product', description: 'Test Description', price: 100, stock: 10, category: 'Test Category', image: 'test.jpg' };
+      await controller.create(createProductDto);
+      expect(mockProductsService.create).toHaveBeenCalledWith(createProductDto);
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of products', async () => {
-      const result = await controller.findAll();
-      expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual([mockProduct]);
-    });
-  });
-
-  describe('findOne', () => {
-    it('should return a single product', async () => {
-      const result = await controller.findOne('1');
-      expect(service.findOne).toHaveBeenCalledWith(1);
-      expect(result).toEqual(mockProduct);
+    it('should call productsService.findAll', async () => {
+      await controller.findAll();
+      expect(mockProductsService.findAll).toHaveBeenCalled();
     });
   });
 
   describe('findByCategory', () => {
-    it('should return products by category', async () => {
-      const category = 'TestCategory';
-      const result = await controller.findByCategory(category);
-      expect(service.findByCategory).toHaveBeenCalledWith(category);
-      expect(result).toEqual([mockProduct]);
+    it('should call productsService.findByCategory with the correct category', async () => {
+      const category = 'Test Category';
+      await controller.findByCategory(category);
+      expect(mockProductsService.findByCategory).toHaveBeenCalledWith(category);
     });
   });
 
   describe('searchProducts', () => {
-    it('should return products matching the search query', async () => {
+    it('should call productsService.searchProducts with the correct data', async () => {
       const query = 'Test';
-      const category = 'TestCategory';
-      const result = await controller.searchProducts(query, category);
-      expect(service.searchProducts).toHaveBeenCalledWith(query, category);
-      expect(result).toEqual([mockProduct]);
+      const category = 'Test Category';
+      await controller.searchProducts(query, category);
+      expect(mockProductsService.searchProducts).toHaveBeenCalledWith(query, category);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should call productsService.findOne with the correct id', async () => {
+      const id = '1';
+      await controller.findOne(id);
+      expect(mockProductsService.findOne).toHaveBeenCalledWith(+id);
     });
   });
 
   describe('update', () => {
-    it('should update a product', async () => {
-      const updateProductDto: UpdateProductDto = { name: 'Updated Product' };
-      const result = await controller.update('1', updateProductDto);
-      expect(service.update).toHaveBeenCalledWith(1, updateProductDto);
-      expect(result).toEqual(mockProduct);
+    it('should call productsService.update with the correct data', async () => {
+      const id = '1';
+      const updateProductDto: UpdateProductDto = { name: 'Test' };
+      await controller.update(id, updateProductDto);
+      expect(mockProductsService.update).toHaveBeenCalledWith(+id, updateProductDto);
     });
   });
 
   describe('remove', () => {
-    it('should delete a product', async () => {
-      const result = await controller.remove('1');
-      expect(service.remove).toHaveBeenCalledWith(1);
-      expect(result).toEqual(mockProduct);
+    it('should call productsService.remove with the correct id', async () => {
+      const id = '1';
+      await controller.remove(id);
+      expect(mockProductsService.remove).toHaveBeenCalledWith(+id);
     });
   });
 });

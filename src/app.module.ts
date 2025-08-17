@@ -1,6 +1,5 @@
 import {Module} from '@nestjs/common';
-import { ProductsModule } from './products/products.module';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
 import { ServicesModule } from './services/services.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { UsersModule } from './users/users.module';
@@ -14,7 +13,7 @@ import { PlannersModule } from './planners/planners.module';
 
 @Module({
     imports: [
-        ProductsModule, 
+        PrismaModule,
         ServicesModule, 
         SuppliersModule, 
         UsersModule, 
@@ -27,6 +26,6 @@ import { PlannersModule } from './planners/planners.module';
         PlannersModule
     ],
     controllers: [],
-    providers: [PrismaService],
+    providers: [],
 })
 export class AppModule {}

@@ -5,8 +5,8 @@ export declare class WalletService {
     getOrCreateWallet(userId: string): Promise<{
         transactions: {
             id: string;
-            description: string;
             createdAt: Date;
+            description: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
             walletId: string;
             amountMXN: number | null;
@@ -33,8 +33,8 @@ export declare class WalletService {
     getTransactions(userId: string, limit: number, offset: number): Promise<{
         transactions: {
             id: string;
-            description: string;
             createdAt: Date;
+            description: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
             walletId: string;
             amountMXN: number | null;
