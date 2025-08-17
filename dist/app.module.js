@@ -19,6 +19,7 @@ const wallet_module_1 = require("./wallet/wallet.module");
 const test_module_1 = require("./test/test.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const planners_module_1 = require("./planners/planners.module");
+const products_module_1 = require("./products/products.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,7 +36,8 @@ exports.AppModule = AppModule = __decorate([
             wallet_module_1.WalletModule,
             test_module_1.TestModule,
             notifications_module_1.NotificationsModule,
-            planners_module_1.PlannersModule
+            planners_module_1.PlannersModule,
+            products_module_1.ProductsModule
         ],
         controllers: [],
         providers: [],
