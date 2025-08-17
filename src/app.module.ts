@@ -10,6 +10,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { TestModule } from './test/test.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PlannersModule } from './planners/planners.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { PlannersModule } from './planners/planners.module';
         WalletModule, 
         TestModule, 
         NotificationsModule,
-        PlannersModule
+        PlannersModule,
+        ProductsModule
     ],
     controllers: [],
     providers: [],
