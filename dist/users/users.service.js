@@ -123,15 +123,20 @@ let UsersService = class UsersService {
         return userFound;
     }
     async remove(id) {
-        const deletedUser = await this.prismaService.user.delete({
-            where: {
-                id: id
-            }
-        });
-        if (!deletedUser) {
-            throw new common_1.NotFoundException(`User with id ${id} not found`);
+        try {
+            return await this.prismaService.user.delete({
+                where: {
+                    id: id,
+                },
+            });
         }
-        return deletedUser;
+        catch (error) {
+            if (error instanceof library_1.PrismaClientKnownRequestError &&
+                error.code === 'P2025') {
+                throw new common_1.NotFoundException(`User with id ${id} not found`);
+            }
+            throw error;
+        }
     }
     async searchUsers(name, email) {
         const where = {};

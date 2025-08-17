@@ -13,6 +13,7 @@ exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const library_1 = require("@prisma/client/runtime/library");
+const client_1 = require("@prisma/client");
 let ProductsService = class ProductsService {
     constructor(prismaService) {
         this.prismaService = prismaService;
@@ -60,37 +61,45 @@ let ProductsService = class ProductsService {
         return this.parseProductJson(productFound);
     }
     async update(id, updateProductDto) {
-        const updateData = Object.assign({}, updateProductDto);
-        if (updateProductDto.images !== undefined) {
-            updateData.images = updateProductDto.images ? updateProductDto.images : undefined;
+        try {
+            const updateData = Object.assign({}, updateProductDto);
+            if (updateProductDto.images !== undefined) {
+                updateData.images = updateProductDto.images ? updateProductDto.images : undefined;
+            }
+            if (updateProductDto.specifications !== undefined) {
+                updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications : undefined;
+            }
+            if (updateProductDto.tags !== undefined) {
+                updateData.tags = updateProductDto.tags ? updateProductDto.tags : undefined;
+            }
+            return await this.prismaService.product.update({
+                where: {
+                    id: id
+                },
+                data: updateData
+            });
         }
-        if (updateProductDto.specifications !== undefined) {
-            updateData.specifications = updateProductDto.specifications ? updateProductDto.specifications : undefined;
+        catch (error) {
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                throw new common_1.NotFoundException(`Product with id ${id} not found`);
+            }
+            throw error;
         }
-        if (updateProductDto.tags !== undefined) {
-            updateData.tags = updateProductDto.tags ? updateProductDto.tags : undefined;
-        }
-        const productFound = await this.prismaService.product.update({
-            where: {
-                id: id
-            },
-            data: updateData
-        });
-        if (!productFound) {
-            throw new common_1.NotFoundException(`Product with id ${id} not found`);
-        }
-        return productFound;
     }
     async remove(id) {
-        const deleteProduct = await this.prismaService.product.delete({
-            where: {
-                id: id
-            }
-        });
-        if (!deleteProduct) {
-            throw new common_1.NotFoundException(`Product with id ${id} not found`);
+        try {
+            return await this.prismaService.product.delete({
+                where: {
+                    id: id
+                }
+            });
         }
-        return deleteProduct;
+        catch (error) {
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                throw new common_1.NotFoundException(`Product with id ${id} not found`);
+            }
+            throw error;
+        }
     }
     async findByCategory(category) {
         const products = await this.prismaService.product.findMany({

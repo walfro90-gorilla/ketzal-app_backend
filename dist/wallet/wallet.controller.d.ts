@@ -24,8 +24,8 @@ export declare class WalletController {
         wallet: {
             transactions: {
                 id: string;
-                description: string;
                 createdAt: Date;
+                description: string;
                 type: import(".prisma/client").$Enums.WalletTransactionType;
                 walletId: string;
                 amountMXN: number | null;
@@ -61,8 +61,8 @@ export declare class WalletController {
     getTransactions(userId: string, limit?: string, offset?: string): Promise<{
         transactions: {
             id: string;
-            description: string;
             createdAt: Date;
+            description: string;
             type: import(".prisma/client").$Enums.WalletTransactionType;
             walletId: string;
             amountMXN: number | null;

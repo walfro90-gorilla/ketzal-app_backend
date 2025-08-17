@@ -131,15 +131,21 @@ export class UsersService {
   }
   // Remove method
   async remove(id: string) {
-    const deletedUser = await this.prismaService.user.delete({
-      where: {
-        id: id
+    try {
+      return await this.prismaService.user.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`User with id ${id} not found`);
       }
-    })
-    if (!deletedUser) {
-      throw new NotFoundException(`User with id ${id} not found`)
+      throw error;
     }
-    return deletedUser
   }
 
   // Search users by name or email

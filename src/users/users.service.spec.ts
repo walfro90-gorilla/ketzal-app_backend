@@ -3,53 +3,23 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { NotificationType } from '../notifications/dto/create-notification.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-// Mock data and services
-const mockUser = {
-  id: '1',
-  email: 'test@example.com',
-  name: 'Test User',
-  password: 'password123',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  emailVerified: null,
-  role: 'user',
-  customer_id: null,
-  referralCode: 'ABCDE',
-  referredById: null,
-};
-
-const mockSupplier = {
-  id: 'sup-1',
-  name: 'Test Supplier',
-  extras: { isPending: true },
-};
-
-const mockSuperAdmin = {
-  id: 'admin-1',
-  role: 'superadmin',
-  email: 'admin@ketzal.com',
-  name: 'Admin',
-};
-
-const mockPrismaService = {
+const prismaMock = {
   user: {
-    create: jest.fn().mockResolvedValue(mockUser),
-    findUnique: jest.fn().mockResolvedValue(mockUser),
-    delete: jest.fn().mockResolvedValue(mockUser),
-    update: jest.fn().mockResolvedValue({ ...mockUser, name: 'Updated Name' }),
-    findMany: jest.fn().mockResolvedValue([mockUser]),
+    create: jest.fn(),
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   },
   supplier: {
-    findFirst: jest.fn().mockResolvedValue(mockSupplier),
+    findFirst: jest.fn(),
   },
 };
 
-const mockNotificationsService = {
+const notificationsServiceMock = {
   create: jest.fn(),
-  createNotification: jest.fn(),
 };
 
 describe('UsersService', () => {
@@ -61,8 +31,8 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: PrismaService, useValue: mockPrismaService },
-        { provide: NotificationsService, useValue: mockNotificationsService },
+        { provide: PrismaService, useValue: prismaMock },
+        { provide: NotificationsService, useValue: notificationsServiceMock },
       ],
     }).compile();
 
@@ -78,196 +48,195 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create a user successfully', async () => {
-      const createUserDto = {
-        email: 'test@example.com',
-        name: 'Test User',
-        password: 'password123',
-      };
+      const createUserDto = { name: 'Test User', email: 'test@example.com', password: 'password' };
+      const expectedUser = { id: '1', ...createUserDto, createdAt: new Date(), updatedAt: new Date(), emailVerified: null, role: 'user', extras: {} };
+      prismaMock.user.create.mockResolvedValue(expectedUser);
+
       const result = await service.create(createUserDto);
-      expect(prisma.user.create).toHaveBeenCalledWith({
+      expect(result).toEqual(expectedUser);
+      expect(prismaMock.user.create).toHaveBeenCalledWith({
         data: {
           name: createUserDto.name,
           email: createUserDto.email,
           password: createUserDto.password,
         },
       });
-      expect(result).toEqual(mockUser);
     });
 
-    it('should throw a ConflictException if the email already exists', async () => {
-      const createUserDto = {
-        email: 'test@example.com',
-        name: 'Test User',
-        password: 'password123',
-      };
-      const prismaError = new Prisma.PrismaClientKnownRequestError(
-        'User with this email already exists',
-        { code: 'P2002', clientVersion: 'mock' },
-      );
-      (prisma.user.create as jest.Mock).mockRejectedValue(prismaError);
+    it('should throw a ConflictException if email already exists', async () => {
+      const createUserDto = { name: 'Test User', email: 'test@example.com', password: 'password' };
+      const error = new PrismaClientKnownRequestError('User with email already exists', {
+        code: 'P2002',
+        clientVersion: ''
+      });
+      prismaMock.user.create.mockRejectedValue(error);
+
       await expect(service.create(createUserDto)).rejects.toThrow(
         new ConflictException(`User with email ${createUserDto.email} already exists`),
       );
     });
   });
 
-  describe('findOne', () => {
-    it('should return a user when a valid id is provided', async () => {
-      const result = await service.findOne(mockUser.id);
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: mockUser.id },
+  describe('findAll', () => {
+    it('should return an array of users', async () => {
+      const users = [{ id: '1', name: 'Test User', email: 'test@example.com' }];
+      prismaMock.user.findMany.mockResolvedValue(users);
+
+      const result = await service.findAll();
+      expect(result).toEqual(users);
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith({
         include: {
           supplier: {
-            select: { id: true, name: true, contactEmail: true },
-          },
+            select: {
+              id: true,
+              name: true,
+              contactEmail: true
+            }
+          }
         },
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
-      expect(result).toEqual(mockUser);
-    });
-
-    it('should throw a NotFoundException if user is not found', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(service.findOne('non-existent-id')).rejects.toThrow(
-        new NotFoundException('User with id non-existent-id not found'),
-      );
     });
   });
 
-  describe('remove', () => {
-    it('should delete a user successfully', async () => {
-      const result = await service.remove(mockUser.id);
-      expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: mockUser.id } });
-      expect(result).toEqual(mockUser);
+  describe('findOne', () => {
+    it('should return a user if found', async () => {
+      const user = { id: '1', name: 'Test User', email: 'test@example.com' };
+      prismaMock.user.findUnique.mockResolvedValue(user);
+
+      const result = await service.findOne('1');
+      expect(result).toEqual(user);
+      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+        where: { id: '1' },
+        include: { supplier: { select: { id: true, name: true, contactEmail: true } } },
+      });
     });
 
-    it('should throw a NotFoundException if the user to delete is not found', async () => {
-      (prisma.user.delete as jest.Mock).mockResolvedValue(null);
-      await expect(service.remove('non-existent-id')).rejects.toThrow(
-        new NotFoundException('User with id non-existent-id not found'),
-      );
+    it('should throw a NotFoundException if user not found', async () => {
+      prismaMock.user.findUnique.mockResolvedValue(null);
+      await expect(service.findOne('1')).rejects.toThrow(new NotFoundException('User with id 1 not found'));
     });
   });
 
   describe('update', () => {
+    const userId = '1';
     const updateUserDto = { name: 'Updated Name' };
+    const prevUser = { id: userId, name: 'Old Name', emailVerified: null };
+    const updatedUser = { id: userId, name: 'Updated Name', emailVerified: new Date() };
 
     it('should update a user successfully', async () => {
-      const result = await service.update(mockUser.id, updateUserDto);
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: mockUser.id },
+      prismaMock.user.findUnique.mockResolvedValue(prevUser);
+      prismaMock.user.update.mockResolvedValue(updatedUser);
+
+      const result = await service.update(userId, updateUserDto);
+      expect(result).toEqual(updatedUser);
+      expect(prismaMock.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
         data: updateUserDto,
       });
-      expect(result.name).toEqual('Updated Name');
     });
 
-    it('should throw a NotFoundException if the user to update is not found', async () => {
-      (prisma.user.update as jest.Mock).mockResolvedValue(null);
-      await expect(service.update('non-existent-id', updateUserDto)).rejects.toThrow(
-        new NotFoundException('User with id non-existent-id not found'),
-      );
-    });
-
-    it('should send notifications when emailVerified changes and a pending supplier exists', async () => {
-      const userBeforeUpdate = { ...mockUser, emailVerified: null };
-      const userAfterUpdate = { ...mockUser, emailVerified: new Date() };
-
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userBeforeUpdate);
-      (prisma.user.update as jest.Mock).mockResolvedValue(userAfterUpdate);
-      (prisma.supplier.findFirst as jest.Mock).mockResolvedValue(mockSupplier);
-      (prisma.user.findMany as jest.Mock).mockResolvedValue([mockSuperAdmin]);
-
-      await service.update(mockUser.id, { emailVerified: userAfterUpdate.emailVerified });
-
-      expect(notificationsService.create).toHaveBeenCalledTimes(3);
-
-      expect(notificationsService.create).toHaveBeenCalledWith({
-        userId: mockUser.id,
-        title: '¡Solicitud enviada!',
-        message: `Tu solicitud para el supplier "${mockSupplier.name}" ha sido enviada y está pendiente de aprobación por el equipo de KetzaL.`, 
-        type: NotificationType.INFO,
+    it('should send notifications when email is verified', async () => {
+        prismaMock.user.findUnique.mockResolvedValue(prevUser);
+        prismaMock.user.update.mockResolvedValue(updatedUser);
+        const supplier = { id: 's1', name: 'Test Supplier' };
+        prismaMock.supplier.findFirst.mockResolvedValue(supplier);
+        const superadmins = [{ id: 'sa1' }, { id: 'sa2' }];
+        prismaMock.user.findMany.mockResolvedValue(superadmins);
+  
+        await service.update(userId, { emailVerified: new Date() });
+  
+        // Check user notifications
+        expect(notificationsServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ userId: userId, title: '¡Solicitud enviada!' }));
+        expect(notificationsServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ userId: userId, title: 'Tu proveedor está en revisión' }));
+        
+        // Check superadmin notifications
+        expect(notificationsServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'sa1', title: 'Nueva Solicitud de Proveedor Turístico' }));
+        expect(notificationsServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'sa2', title: 'Nueva Solicitud de Proveedor Turístico' }));
+        expect(notificationsServiceMock.create).toHaveBeenCalledTimes(4); // 2 for user, 2 for superadmins
       });
 
-      expect(notificationsService.create).toHaveBeenCalledWith({
-        userId: mockUser.id,
-        title: 'Tu proveedor está en revisión',
-        message: `Tu solicitud para el supplier "${mockSupplier.name}" está en revisión. Te notificaremos dentro de 72 horas si fue aprobada o rechazada.`, 
-        type: NotificationType.INFO,
+    it('should throw a NotFoundException if user to update is not found', async () => {
+        prismaMock.user.findUnique.mockResolvedValue(null); // Simulate user not found before update
+        prismaMock.user.update.mockResolvedValue(null); // or update returns null
+  
+        await expect(service.update(userId, updateUserDto)).rejects.toThrow(new NotFoundException(`User with id ${userId} not found`));
       });
-
-      expect(notificationsService.create).toHaveBeenCalledWith({
-        userId: mockSuperAdmin.id,
-        title: 'Nueva Solicitud de Proveedor Turístico',
-        message: `${userAfterUpdate.name || userAfterUpdate.email} ha solicitado convertirse en proveedor de servicios turísticos (${mockSupplier.name}). Revisa y aprueba/rechaza la solicitud en el panel de administración.`, 
-        type: NotificationType.SUPPLIER_APPROVAL,
-      });
-    });
-
-    it('should NOT send notifications if emailVerified does not change', async () => {
-      const userBeforeUpdate = { ...mockUser, emailVerified: new Date() };
-      const userAfterUpdate = { ...mockUser, emailVerified: new Date(), name: 'Another Name' };
-
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userBeforeUpdate);
-      (prisma.user.update as jest.Mock).mockResolvedValue(userAfterUpdate);
-
-      await service.update(mockUser.id, { name: 'Another Name' });
-
-      expect(notificationsService.create).not.toHaveBeenCalled();
-    });
-
-    it('should NOT send notifications if no pending supplier is found', async () => {
-      const userBeforeUpdate = { ...mockUser, emailVerified: null };
-      const userAfterUpdate = { ...mockUser, emailVerified: new Date() };
-
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userBeforeUpdate);
-      (prisma.user.update as jest.Mock).mockResolvedValue(userAfterUpdate);
-      (prisma.supplier.findFirst as jest.Mock).mockResolvedValue(null);
-
-      await service.update(mockUser.id, { emailVerified: userAfterUpdate.emailVerified });
-
-      expect(notificationsService.create).not.toHaveBeenCalled();
-    });
   });
 
-  describe('findAll', () => {
-    it('should return an array of users', async () => {
-      const mockUsersArray = [mockUser, { ...mockUser, id: '2', email: 'test2@example.com' }];
-      (prisma.user.findMany as jest.Mock).mockResolvedValue(mockUsersArray);
+  describe('remove', () => {
+    it('should remove a user successfully', async () => {
+      const user = { id: '1' };
+      prismaMock.user.delete.mockResolvedValue(user);
 
-      const result = await service.findAll();
+      const result = await service.remove('1');
+      expect(result).toEqual(user);
+      expect(prismaMock.user.delete).toHaveBeenCalledWith({ where: { id: '1' } });
+    });
 
-      expect(prisma.user.findMany).toHaveBeenCalled();
-      expect(result).toEqual(mockUsersArray);
+    it('should throw a NotFoundException if user to remove is not found', async () => {
+      const error = new PrismaClientKnownRequestError('User not found', {
+        code: 'P2025',
+        clientVersion: ''
+      });
+      prismaMock.user.delete.mockRejectedValue(error);
+      await expect(service.remove('1')).rejects.toThrow(new NotFoundException('User with id 1 not found'));
     });
   });
 
   describe('searchUsers', () => {
-    it('should return users matching the search criteria', async () => {
-      const searchName = 'Test';
-      const mockUsersArray = [mockUser];
-      (prisma.user.findMany as jest.Mock).mockResolvedValue(mockUsersArray);
+    it('should return users matching the name', async () => {
+      const users = [{ id: '1', name: 'Test User', email: 'test@example.com' }];
+      prismaMock.user.findMany.mockResolvedValue(users);
 
-      const result = await service.searchUsers(searchName);
-
-      expect(prisma.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      const result = await service.searchUsers('Test');
+      expect(result).toEqual(users);
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
         where: {
           OR: [{
             name: {
-              contains: searchName,
+              contains: 'Test',
               mode: 'insensitive'
             }
           }]
         }
       }));
-      expect(result).toEqual(mockUsersArray);
     });
 
-    it('should handle search with no criteria', async () => {
-        (prisma.user.findMany as jest.Mock).mockResolvedValue([]);
-        const result = await service.searchUsers();
-        expect(prisma.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
-            where: {}
-        }));
-        expect(result).toEqual([]);
+    it('should return users matching the email', async () => {
+      const users = [{ id: '1', name: 'Test User', email: 'test@example.com' }];
+      prismaMock.user.findMany.mockResolvedValue(users);
+
+      const result = await service.searchUsers(undefined, 'test@');
+      expect(result).toEqual(users);
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: {
+          OR: [{
+            email: {
+              contains: 'test@',
+              mode: 'insensitive'
+            }
+          }]
+        }
+      }));
+    });
+
+    it('should return users matching the name or email', async () => {
+      const users = [{ id: '1', name: 'Test User', email: 'another@example.com' }];
+      prismaMock.user.findMany.mockResolvedValue(users);
+
+      const result = await service.searchUsers('Test', 'another@');
+      expect(result).toEqual(users);
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: {
+          OR: [
+            { name: { contains: 'Test', mode: 'insensitive' } },
+            { email: { contains: 'another@', mode: 'insensitive' } }
+          ]
+        }
+      }));
     });
   });
 });

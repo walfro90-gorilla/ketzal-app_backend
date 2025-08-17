@@ -155,6 +155,16 @@ describe('ProductsService', () => {
       });
       expect(result).toEqual(updatedProduct);
     });
+
+    it('should throw a NotFoundException if product to update is not found', async () => {
+      const updateDto = { name: 'Updated Name' };
+      const error = new Prisma.PrismaClientKnownRequestError('Product not found', {
+        code: 'P2025',
+        clientVersion: 'mock'
+      });
+      (prisma.product.update as jest.Mock).mockRejectedValue(error);
+      await expect(service.update(99, updateDto)).rejects.toThrow(new NotFoundException('Product with id 99 not found'));
+    });
   });
 
   describe('remove', () => {
@@ -165,10 +175,14 @@ describe('ProductsService', () => {
       expect(result).toEqual(mockProduct);
     });
 
-    it('should throw a NotFoundException if delete returns a falsy value', async () => {
-        (prisma.product.delete as jest.Mock).mockResolvedValue(null);
-        await expect(service.remove(99)).rejects.toThrow(new NotFoundException(`Product with id 99 not found`));
+    it('should throw a NotFoundException if product to remove is not found', async () => {
+      const error = new Prisma.PrismaClientKnownRequestError('Product not found', {
+        code: 'P2025',
+        clientVersion: 'mock'
       });
+      (prisma.product.delete as jest.Mock).mockRejectedValue(error);
+      await expect(service.remove(99)).rejects.toThrow(new NotFoundException('Product with id 99 not found'));
+    });
   });
 
   describe('findByCategory', () => {

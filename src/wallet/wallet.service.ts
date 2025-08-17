@@ -77,8 +77,8 @@ export class WalletService {
       wallet = await this.prisma.wallet.create({
         data: {
           userId,
-          balanceMXN: 0,
-          balanceAxo: 50
+          balanceMXN: amountMXN,
+          balanceAxo: amountAxo
         }
       });
     }

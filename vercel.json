@@ -2,15 +2,95 @@
     "version": 2,
     "builds": [
         {
+            "src": "api/products.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/users.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/wallet.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/services.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/suppliers.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/reviews.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/planners.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/notifications.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/locations.ts",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/categories.ts",
+            "use": "@vercel/node"
+        },
+        {
             "src": "dist/main.js",
-            "use": "@vercel/node"          
+            "use": "@vercel/node"
         }
     ],
     "routes": [
         {
+            "src": "/api/products(.*)",
+            "dest": "api/products.ts"
+        },
+        {
+            "src": "/api/users(.*)",
+            "dest": "api/users.ts"
+        },
+        {
+            "src": "/api/wallet(.*)",
+            "dest": "api/wallet.ts"
+        },
+        {
+            "src": "/api/services(.*)",
+            "dest": "api/services.ts"
+        },
+        {
+            "src": "/api/suppliers(.*)",
+            "dest": "api/suppliers.ts"
+        },
+        {
+            "src": "/api/reviews(.*)",
+            "dest": "api/reviews.ts"
+        },
+        {
+            "src": "/api/planners(.*)",
+            "dest": "api/planners.ts"
+        },
+        {
+            "src": "/api/notifications(.*)",
+            "dest": "api/notifications.ts"
+        },
+        {
+            "src": "/api/locations(.*)",
+            "dest": "api/locations.ts"
+        },
+        {
+            "src": "/api/categories(.*)",
+            "dest": "api/categories.ts"
+        },
+        {
             "src": "/(.*)",
             "dest": "dist/main.js",
-            "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
         }
-    ],
+    ]
 }

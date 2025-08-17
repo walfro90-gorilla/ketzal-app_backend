@@ -3,10 +3,18 @@ import { WalletService } from './wallet.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
+// Mock data
 const mockUser = {
   id: 'user-1',
   email: 'test@example.com',
   name: 'Test User',
+};
+
+const mockRecipientUser = {
+    id: 'user-2',
+    email: 'recipient@example.com',
+    name: 'Recipient User',
+    wallet: { id: 'wallet-2', balanceMXN: 0, balanceAxo: 50 }
 };
 
 const mockWallet = {
@@ -19,6 +27,7 @@ const mockWallet = {
   updatedAt: new Date(),
 };
 
+// Mock PrismaService
 const mockPrismaService = {
   user: {
     findUnique: jest.fn(),
@@ -57,6 +66,7 @@ describe('WalletService', () => {
     expect(service).toBeDefined();
   });
 
+  // Test suite for getOrCreateWallet
   describe('getOrCreateWallet', () => {
     it('should return an existing wallet', async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
@@ -73,7 +83,7 @@ describe('WalletService', () => {
       expect(prisma.wallet.create).not.toHaveBeenCalled();
     });
 
-    it('should create a new wallet if one does not exist', async () => {
+    it('should create a new wallet with a welcome bonus if one does not exist', async () => {
         const newWallet = { ...mockWallet, balanceAxo: 50, transactions: [] };
         (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
         (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(null);
@@ -106,8 +116,9 @@ describe('WalletService', () => {
     });
   });
 
+  // Test suite for addFunds
   describe('addFunds', () => {
-    it('should add funds to an existing wallet', async () => {
+    it('should add only MXN funds to an existing wallet', async () => {
       const updatedWalletData = { ...mockWallet, balanceMXN: mockWallet.balanceMXN + 100 };
       (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
       (prisma.wallet.update as jest.Mock).mockResolvedValue(updatedWalletData);
@@ -122,48 +133,106 @@ describe('WalletService', () => {
           balanceAxo: { increment: 0 },
         },
       });
-      expect(prisma.walletTransaction.create).toHaveBeenCalled();
+      expect(prisma.walletTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ description: 'Test Deposit' })
+      }));
       expect(result).toEqual(updatedWalletData);
     });
+
+    it('should add only AXO funds to an existing wallet', async () => {
+        const updatedWalletData = { ...mockWallet, balanceAxo: mockWallet.balanceAxo + 50 };
+        (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
+        (prisma.wallet.update as jest.Mock).mockResolvedValue(updatedWalletData);
+  
+        const result = await service.addFunds(mockUser.id, 0, 50);
+  
+        expect(prisma.wallet.update).toHaveBeenCalledWith({
+          where: { id: mockWallet.id },
+          data: {
+            balanceMXN: { increment: 0 },
+            balanceAxo: { increment: 50 },
+          },
+        });
+        expect(prisma.walletTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+          data: expect.objectContaining({ description: 'Depósito de 50 AXO' })
+        }));
+        expect(result).toEqual(updatedWalletData);
+      });
+
+      it('should add both MXN and AXO funds and create correct transaction description', async () => {
+        const updatedWalletData = { ...mockWallet, balanceMXN: 1100, balanceAxo: 550 };
+        (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
+        (prisma.wallet.update as jest.Mock).mockResolvedValue(updatedWalletData);
+    
+        const result = await service.addFunds(mockUser.id, 100, 50);
+    
+        expect(prisma.walletTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+          data: expect.objectContaining({ description: 'Depósito de $100 MXN y 50 AXO' })
+        }));
+        expect(result).toEqual(updatedWalletData);
+      });
 
     it('should create a wallet if it does not exist and then add funds', async () => {
         const newWallet = { ...mockWallet, balanceMXN: 100, balanceAxo: 50 };
         (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(null);
-        (prisma.wallet.create as jest.Mock).mockResolvedValue({ ...mockWallet, balanceMXN: 0, balanceAxo: 50 });
-        (prisma.wallet.update as jest.Mock).mockResolvedValue(newWallet);
+        (prisma.wallet.create as jest.Mock).mockResolvedValue(newWallet);
+        (prisma.wallet.update as jest.Mock).mockResolvedValue(newWallet); // This call is now important
   
-        const result = await service.addFunds(mockUser.id, 100, 0, 'Initial Deposit');
+        const result = await service.addFunds(mockUser.id, 100, 50, 'Initial Deposit');
   
         expect(prisma.wallet.create).toHaveBeenCalledWith({
-          data: { userId: mockUser.id, balanceMXN: 0, balanceAxo: 50 },
+          data: { userId: mockUser.id, balanceMXN: 100, balanceAxo: 50 },
         });
+        // In this scenario, the service creates the wallet and then immediately updates it.
+        // Let's ensure the update is called correctly after creation.
         expect(prisma.wallet.update).toHaveBeenCalledWith({
-            where: { id: mockWallet.id },
+            where: { id: newWallet.id },
             data: {
               balanceMXN: { increment: 100 },
-              balanceAxo: { increment: 0 },
+              balanceAxo: { increment: 50 },
             },
           });
         expect(result.balanceMXN).toBe(100);
+        expect(result.balanceAxo).toBe(50);
       });
   });
 
+  // Test suite for transferFunds
   describe('transferFunds', () => {
-    const recipientUser = { id: 'user-2', email: 'recipient@example.com', wallet: { id: 'wallet-2', balanceMXN: 0, balanceAxo: 50 } };
-
-    it('should transfer funds successfully', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(recipientUser);
+    it('should transfer funds successfully to a user with a wallet', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockRecipientUser);
       (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
-      (prisma.wallet.update as jest.Mock).mockResolvedValue(mockWallet); // Mock the update within transaction
+      (prisma.wallet.update as jest.Mock).mockResolvedValue(mockWallet); 
 
-      const result = await service.transferFunds(mockUser.id, recipientUser.email, 100, 0);
+      const result = await service.transferFunds(mockUser.id, mockRecipientUser.email, 100, 50);
 
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: recipientUser.email }, include: { wallet: true } });
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: mockRecipientUser.email }, include: { wallet: true } });
       expect(prisma.wallet.findUnique).toHaveBeenCalledWith({ where: { userId: mockUser.id } });
       expect(prisma.$transaction).toHaveBeenCalled();
       expect(prisma.wallet.update).toHaveBeenCalledTimes(2);
       expect(prisma.walletTransaction.create).toHaveBeenCalledTimes(2);
       expect(result).toBeDefined();
+    });
+
+    it('should create a wallet for the recipient if it does not exist during transfer', async () => {
+        const recipientWithoutWallet = { ...mockRecipientUser, wallet: null };
+        const newRecipientWallet = { id: 'new-wallet-2', userId: recipientWithoutWallet.id, balanceMXN: 0, balanceAxo: 50 };
+        
+        (prisma.user.findUnique as jest.Mock).mockResolvedValue(recipientWithoutWallet);
+        (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
+        (prisma.wallet.create as jest.Mock).mockResolvedValue(newRecipientWallet);
+        (prisma.wallet.update as jest.Mock).mockImplementation((args) => {
+            if (args.where.id === mockWallet.id) return { ...mockWallet, balanceMXN: 900 };
+            if (args.where.id === newRecipientWallet.id) return { ...newRecipientWallet, balanceMXN: 100 };
+            return {};
+        });
+
+        await service.transferFunds(mockUser.id, recipientWithoutWallet.email, 100, 0);
+
+        expect(prisma.wallet.create).toHaveBeenCalledWith({
+            data: { userId: recipientWithoutWallet.id, balanceMXN: 0, balanceAxo: 50 }
+        });
+        expect(prisma.$transaction).toHaveBeenCalled();
     });
 
     it('should throw HttpException if recipient is not found', async () => {
@@ -174,23 +243,33 @@ describe('WalletService', () => {
     });
 
     it('should throw HttpException if sender wallet is not found', async () => {
-        (prisma.user.findUnique as jest.Mock).mockResolvedValue(recipientUser);
+        (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockRecipientUser);
         (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(null);
-        await expect(service.transferFunds(mockUser.id, recipientUser.email, 100, 0)).rejects.toThrow(
+        await expect(service.transferFunds(mockUser.id, mockRecipientUser.email, 100, 0)).rejects.toThrow(
           new HttpException('Wallet no encontrado', HttpStatus.NOT_FOUND)
         );
       });
   
-      it('should throw HttpException for insufficient funds', async () => {
+      it('should throw HttpException for insufficient MXN funds', async () => {
         const poorWallet = { ...mockWallet, balanceMXN: 50 };
-        (prisma.user.findUnique as jest.Mock).mockResolvedValue(recipientUser);
+        (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockRecipientUser);
         (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(poorWallet);
-        await expect(service.transferFunds(mockUser.id, recipientUser.email, 100, 0)).rejects.toThrow(
+        await expect(service.transferFunds(mockUser.id, mockRecipientUser.email, 100, 0)).rejects.toThrow(
+          new HttpException('Fondos insuficientes', HttpStatus.BAD_REQUEST)
+        );
+      });
+
+      it('should throw HttpException for insufficient AXO funds', async () => {
+        const poorWallet = { ...mockWallet, balanceAxo: 20 };
+        (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockRecipientUser);
+        (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(poorWallet);
+        await expect(service.transferFunds(mockUser.id, mockRecipientUser.email, 0, 50)).rejects.toThrow(
           new HttpException('Fondos insuficientes', HttpStatus.BAD_REQUEST)
         );
       });
   });
 
+  // Test suite for getTransactions
   describe('getTransactions', () => {
     it('should return paginated transactions for a wallet', async () => {
       const mockTransactions = [{ id: 'txn-1' }, { id: 'txn-2' }];
@@ -225,28 +304,45 @@ describe('WalletService', () => {
     });
   });
 
+  // Test suite for convertCurrency
   describe('convertCurrency', () => {
-    it('should convert MXN to AXO successfully', async () => {
+    it('should convert MXN to AXO successfully and create a transaction', async () => {
       (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
       (prisma.wallet.update as jest.Mock).mockResolvedValue({ ...mockWallet, balanceMXN: 900, balanceAxo: 580 });
 
       const result = await service.convertCurrency(mockUser.id, 'MXN', 'AXO', 100);
 
-      expect(prisma.wallet.update).toHaveBeenCalled();
-      expect(prisma.walletTransaction.create).toHaveBeenCalled();
+      expect(prisma.wallet.update).toHaveBeenCalledWith(expect.objectContaining({
+          data: { balanceMXN: { increment: -100 }, balanceAxo: { increment: 80 } }
+      }));
+      expect(prisma.walletTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+          data: {
+              walletId: mockWallet.id,
+              type: 'DEPOSIT',
+              amountMXN: -100,
+              amountAxo: 80,
+              description: 'Conversión: 100 MXN → 80.00 AXO',
+              reference: 'CURRENCY_CONVERSION'
+          }
+      }));
       expect(result.wallet.balanceMXN).toBe(900);
       expect(result.wallet.balanceAxo).toBe(580);
       expect(result.conversion.to.amount).toBeCloseTo(80);
     });
 
-    it('should convert AXO to MXN successfully', async () => {
+    it('should convert AXO to MXN successfully and create a transaction', async () => {
         (prisma.wallet.findUnique as jest.Mock).mockResolvedValue(mockWallet);
         (prisma.wallet.update as jest.Mock).mockResolvedValue({ ...mockWallet, balanceMXN: 1110, balanceAxo: 400 });
   
         const result = await service.convertCurrency(mockUser.id, 'AXO', 'MXN', 100);
   
-        expect(prisma.wallet.update).toHaveBeenCalled();
-        expect(prisma.walletTransaction.create).toHaveBeenCalled();
+        const updateCall = (prisma.wallet.update as jest.Mock).mock.calls[0][0];
+        expect(updateCall.data.balanceAxo.increment).toBe(-100);
+        expect(updateCall.data.balanceMXN.increment).toBeCloseTo(110);
+                const transactionCall = (prisma.walletTransaction.create as jest.Mock).mock.calls[0][0];
+        expect(transactionCall.data.amountAxo).toBe(-100);
+        expect(transactionCall.data.amountMXN).toBeCloseTo(110);
+        expect(transactionCall.data.description).toBe('Conversión: 100 AXO → 110.00 MXN');
         expect(result.wallet.balanceMXN).toBe(1110);
         expect(result.wallet.balanceAxo).toBe(400);
         expect(result.conversion.to.amount).toBeCloseTo(110);
