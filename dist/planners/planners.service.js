@@ -19,7 +19,7 @@ let PlannersService = class PlannersService {
     }
     async createPlanner(userId, createPlannerDto) {
         try {
-            const planner = await this.prisma.travelPlanner.create({
+            const planner = await this.prisma.travel_planners.create({
                 data: {
                     userId,
                     name: createPlannerDto.name,
@@ -55,7 +55,7 @@ let PlannersService = class PlannersService {
         }
     }
     async getPlannersByUser(userId) {
-        const planners = await this.prisma.travelPlanner.findMany({
+        const planners = await this.prisma.travel_planners.findMany({
             where: {
                 userId,
             },
@@ -79,7 +79,7 @@ let PlannersService = class PlannersService {
         return planners;
     }
     async getPlannerById(id, userId) {
-        const planner = await this.prisma.travelPlanner.findFirst({
+        const planner = await this.prisma.travel_planners.findFirst({
             where: {
                 id,
                 userId,
@@ -109,14 +109,14 @@ let PlannersService = class PlannersService {
         return planner;
     }
     async updatePlanner(id, userId, updatePlannerDto) {
-        const existingPlanner = await this.prisma.travelPlanner.findFirst({
+        const existingPlanner = await this.prisma.travel_planners.findFirst({
             where: { id, userId },
         });
         if (!existingPlanner) {
             throw new common_1.NotFoundException('Planner not found or access denied');
         }
         try {
-            const updatedPlanner = await this.prisma.travelPlanner.update({
+            const updatedPlanner = await this.prisma.travel_planners.update({
                 where: { id },
                 data: {
                     name: updatePlannerDto.name,
@@ -144,14 +144,14 @@ let PlannersService = class PlannersService {
         }
     }
     async deletePlanner(id, userId) {
-        const existingPlanner = await this.prisma.travelPlanner.findFirst({
+        const existingPlanner = await this.prisma.travel_planners.findFirst({
             where: { id, userId },
         });
         if (!existingPlanner) {
             throw new common_1.NotFoundException('Planner not found or access denied');
         }
         try {
-            await this.prisma.travelPlanner.delete({
+            await this.prisma.travel_planners.delete({
                 where: { id },
             });
             return { message: 'Planner deleted successfully' };
@@ -161,7 +161,7 @@ let PlannersService = class PlannersService {
         }
     }
     async addItemToPlanner(addItemDto, userId) {
-        const planner = await this.prisma.travelPlanner.findFirst({
+        const planner = await this.prisma.travel_planners.findFirst({
             where: {
                 id: addItemDto.plannerId,
                 userId,
@@ -174,7 +174,7 @@ let PlannersService = class PlannersService {
             throw new common_1.BadRequestException('Either serviceId or productId is required');
         }
         try {
-            const item = await this.prisma.plannerItem.create({
+            const item = await this.prisma.planner_items.create({
                 data: {
                     plannerId: addItemDto.plannerId,
                     serviceId: addItemDto.serviceId,
@@ -199,7 +199,7 @@ let PlannersService = class PlannersService {
         }
     }
     async removeItemFromPlanner(itemId, userId) {
-        const item = await this.prisma.plannerItem.findFirst({
+        const item = await this.prisma.planner_items.findFirst({
             where: {
                 id: itemId,
                 planner: {
@@ -214,7 +214,7 @@ let PlannersService = class PlannersService {
             throw new common_1.NotFoundException('Item not found or access denied');
         }
         try {
-            await this.prisma.plannerItem.delete({
+            await this.prisma.planner_items.delete({
                 where: { id: itemId },
             });
             await this.updatePlannerTotals(item.plannerId);
@@ -225,12 +225,12 @@ let PlannersService = class PlannersService {
         }
     }
     async updatePlannerTotals(plannerId) {
-        const items = await this.prisma.plannerItem.findMany({
+        const items = await this.prisma.planner_items.findMany({
             where: { plannerId },
         });
         const totalMXN = items.reduce((sum, item) => sum + (item.priceMXN * item.quantity), 0);
         const totalAxo = items.reduce((sum, item) => sum + ((item.priceAxo || 0) * item.quantity), 0);
-        await this.prisma.travelPlanner.update({
+        await this.prisma.travel_planners.update({
             where: { id: plannerId },
             data: {
                 totalMXN,

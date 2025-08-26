@@ -109,7 +109,7 @@ describe('NotificationsService', () => {
   describe('markAllAsReadForUser', () => {
     it('should mark all notifications as read for a user', async () => {
       await service.markAllAsReadForUser('1');
-      expect(prisma.notification.updateMany).toHaveBeenCalled();
+      expect(prisma.notifications.updateMany).toHaveBeenCalled();
     });
   });
 

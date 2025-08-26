@@ -16,8 +16,52 @@ let ServicesService = class ServicesService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
-    create(createServiceDto) {
-        return this.prismaService.service.create({ data: createServiceDto });
+    async create(createServiceDto) {
+        console.log("Service received DTO:", JSON.stringify(createServiceDto, null, 2));
+        const { name, description, serviceType, serviceCategory, sizeTour, ytLink, images, price, dates, stateFrom, cityFrom, stateTo, cityTo, countryFrom, countryTo, transportProviderID, hotelProviderID, packs, itinerary, includes, excludes, faqs, supplierId, } = createServiceDto;
+        const transportId = transportProviderID
+            ? parseInt(transportProviderID, 10)
+            : undefined;
+        const hotelId = hotelProviderID ? parseInt(hotelProviderID, 10) : undefined;
+        const dataToCreate = {
+            name,
+            description,
+            serviceType,
+            serviceCategory,
+            sizeTour,
+            ytLink,
+            images: images ? Object.assign({}, images) : undefined,
+            price,
+            dates: dates ? dates.map((d) => (Object.assign({}, d))) : undefined,
+            stateFrom,
+            cityFrom,
+            stateTo,
+            cityTo,
+            countryFrom,
+            countryTo,
+            supplier: { connect: { id: supplierId } },
+            supplierTransport: transportId
+                ? { connect: { id: transportId } }
+                : undefined,
+            supplierHotel: hotelId ? { connect: { id: hotelId } } : undefined,
+            packs: packs ? packs.map((p) => (Object.assign({}, p))) : undefined,
+            itinerary: itinerary ? itinerary.map((i) => (Object.assign({}, i))) : undefined,
+            includes: includes ? [...includes] : undefined,
+            excludes: excludes ? [...excludes] : undefined,
+            faqs: faqs ? faqs.map((f) => (Object.assign({}, f))) : undefined,
+        };
+        console.log("Data being sent to Prisma:", JSON.stringify(dataToCreate, null, 2));
+        try {
+            const result = await this.prismaService.service.create({
+                data: dataToCreate,
+            });
+            console.log("Prisma create successful:", result);
+            return result;
+        }
+        catch (error) {
+            console.error("Error in Prisma create operation:", error);
+            throw error;
+        }
     }
     findAll() {
         return this.prismaService.service.findMany();
@@ -27,7 +71,7 @@ let ServicesService = class ServicesService {
         const servicesWithStats = await Promise.all(services.map(async (service) => {
             const reviews = await this.prismaService.review.findMany({
                 where: { serviceId: service.id },
-                select: { rating: true }
+                select: { rating: true },
             });
             const totalReviews = reviews.length;
             const averageRating = totalReviews > 0
@@ -38,11 +82,11 @@ let ServicesService = class ServicesService {
         return servicesWithStats;
     }
     async findOne(id) {
-        if (typeof id !== 'number' || isNaN(id)) {
-            throw new common_1.NotFoundException('A valid service id must be provided');
+        if (typeof id !== "number" || isNaN(id)) {
+            throw new common_1.NotFoundException("A valid service id must be provided");
         }
         const serviceFound = await this.prismaService.service.findUnique({
-            where: { id }
+            where: { id },
         });
         if (!serviceFound) {
             throw new common_1.NotFoundException(`Service #${id} not found`);
@@ -52,7 +96,7 @@ let ServicesService = class ServicesService {
     async update(id, updateServiceDto) {
         const updatedService = await this.prismaService.service.update({
             where: { id },
-            data: updateServiceDto
+            data: updateServiceDto,
         });
         if (!updatedService) {
             throw new common_1.NotFoundException(`Service #${id} not found`);
@@ -67,7 +111,7 @@ let ServicesService = class ServicesService {
         }
         try {
             const deletedService = await this.prismaService.service.delete({
-                where: { id }
+                where: { id },
             });
             console.log(`Service ${id} deleted successfully`);
             return deletedService;
@@ -80,11 +124,11 @@ let ServicesService = class ServicesService {
     async checkServiceDependencies(serviceId) {
         const reviews = await this.prismaService.review.findMany({
             where: { serviceId },
-            select: { id: true }
+            select: { id: true },
         });
         return {
             hasReviews: reviews.length > 0,
-            reviewsCount: reviews.length
+            reviewsCount: reviews.length,
         };
     }
     async getServiceDependencies(serviceId) {
@@ -96,8 +140,8 @@ let ServicesService = class ServicesService {
         const where = {};
         if (search) {
             where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } }
+                { name: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
             ];
         }
         const [services, total] = await Promise.all([
@@ -109,11 +153,11 @@ let ServicesService = class ServicesService {
                     description: true,
                     createdAt: true,
                 },
-                orderBy: { createdAt: 'desc' },
+                orderBy: { createdAt: "desc" },
                 skip,
                 take: limit,
             }),
-            this.prismaService.service.count({ where })
+            this.prismaService.service.count({ where }),
         ]);
         const statsFormatted = {
             total,
@@ -130,7 +174,7 @@ let ServicesService = class ServicesService {
                 hasNext: page * limit < total,
                 hasPrev: page > 1,
             },
-            stats: statsFormatted
+            stats: statsFormatted,
         };
     }
     async getBusTransportConfig(id) {
@@ -140,13 +184,13 @@ let ServicesService = class ServicesService {
                 id: true,
                 name: true,
                 description: true,
-            }
+            },
         });
-        return Object.assign(Object.assign({}, service), { hasBusTransport: false, busLayout: null, seatPricing: null, message: 'Transport configuration temporarily disabled' });
+        return Object.assign(Object.assign({}, service), { hasBusTransport: false, busLayout: null, seatPricing: null, message: "Transport configuration temporarily disabled" });
     }
     async updateBusTransportConfig(id, updateData) {
         const service = await this.findOne(id);
-        return Object.assign(Object.assign({}, service), { message: 'Transport configuration update temporarily disabled' });
+        return Object.assign(Object.assign({}, service), { message: "Transport configuration update temporarily disabled" });
     }
 };
 exports.ServicesService = ServicesService;

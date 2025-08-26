@@ -17,27 +17,50 @@ const common_1 = require("@nestjs/common");
 const services_service_1 = require("./services.service");
 const create_service_dto_1 = require("./dto/create-service.dto");
 function isPrismaError(error) {
-    return typeof error === 'object' && error !== null && 'code' in error;
+    return typeof error === "object" && error !== null && "code" in error;
 }
 let ServicesController = class ServicesController {
     constructor(servicesService) {
         this.servicesService = servicesService;
     }
-    create(createServiceDto) {
-        return this.servicesService.create(createServiceDto);
+    async create(createServiceDto) {
+        console.log("Backend received request with DTO:", JSON.stringify(createServiceDto, null, 2));
+        try {
+            const service = await this.servicesService.create(createServiceDto);
+            return {
+                message: "Servicio creado exitosamente",
+                data: service,
+            };
+        }
+        catch (error) {
+            if (isPrismaError(error)) {
+                if (error.code === "P2003") {
+                    throw new common_1.BadRequestException("El proveedor (supplier, hotel, or transport) no existe.");
+                }
+                if (error.code === "P2002") {
+                    throw new common_1.ConflictException("Ya existe un servicio con este nombre.");
+                }
+            }
+            console.error("Error creating service in controller:", error);
+            throw new common_1.InternalServerErrorException("No se pudo crear el servicio.");
+        }
     }
     findAll(page, limit, search, hasTransport) {
         if (page || limit || search || hasTransport) {
-            const pageNum = parseInt(page || '1');
-            const limitNum = parseInt(limit || '10');
+            const pageNum = parseInt(page || "1");
+            const limitNum = parseInt(limit || "10");
             if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
-                throw new common_1.BadRequestException('Los parámetros page y limit deben ser números positivos');
+                throw new common_1.BadRequestException("Los parámetros page y limit deben ser números positivos");
             }
             return this.servicesService.findAllWithBusInfo({
                 page: pageNum,
                 limit: limitNum,
                 search,
-                hasTransport: hasTransport === 'true' ? true : hasTransport === 'false' ? false : undefined,
+                hasTransport: hasTransport === "true"
+                    ? true
+                    : hasTransport === "false"
+                        ? false
+                        : undefined,
             });
         }
         return this.servicesService.findAll();
@@ -57,7 +80,7 @@ let ServicesController = class ServicesController {
     async getBusTransportConfig(id) {
         const config = await this.servicesService.getBusTransportConfig(id);
         if (!config) {
-            throw new common_1.NotFoundException('Servicio no encontrado');
+            throw new common_1.NotFoundException("Servicio no encontrado");
         }
         return config;
     }
@@ -65,13 +88,13 @@ let ServicesController = class ServicesController {
         try {
             const updatedService = await this.servicesService.updateBusTransportConfig(id, updateBusTransportDto);
             return {
-                message: 'Configuración actualizada exitosamente',
+                message: "Configuración actualizada exitosamente",
                 service: updatedService,
             };
         }
         catch (error) {
-            if (isPrismaError(error) && error.code === 'P2025') {
-                throw new common_1.NotFoundException('Servicio no encontrado');
+            if (isPrismaError(error) && error.code === "P2025") {
+                throw new common_1.NotFoundException("Servicio no encontrado");
             }
             throw error;
         }
@@ -86,70 +109,70 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_service_dto_1.CreateServiceDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ServicesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Query)('limit')),
-    __param(2, (0, common_1.Query)('search')),
-    __param(3, (0, common_1.Query)('hasTransport')),
+    __param(0, (0, common_1.Query)("page")),
+    __param(1, (0, common_1.Query)("limit")),
+    __param(2, (0, common_1.Query)("search")),
+    __param(3, (0, common_1.Query)("hasTransport")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)('with-reviews'),
+    (0, common_1.Get)("with-reviews"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "findAllWithReviewStats", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Patch)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "update", null);
 __decorate([
-    (0, common_1.Get)(':id/dependencies'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)(":id/dependencies"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "getServiceDependencies", null);
 __decorate([
-    (0, common_1.Get)(':id/bus-transport'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.Get)(":id/bus-transport"),
+    __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ServicesController.prototype, "getBusTransportConfig", null);
 __decorate([
-    (0, common_1.Put)(':id/bus-transport'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.Put)(":id/bus-transport"),
+    __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], ServicesController.prototype, "updateBusTransportConfig", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Delete)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ServicesController.prototype, "remove", null);
 exports.ServicesController = ServicesController = __decorate([
-    (0, common_1.Controller)('services'),
+    (0, common_1.Controller)("services"),
     __metadata("design:paramtypes", [services_service_1.ServicesService])
 ], ServicesController);
 //# sourceMappingURL=services.controller.js.map

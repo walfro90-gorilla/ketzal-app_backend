@@ -1,1 +1,1 @@
-{"version":3,"file":"service.entity.js","sourceRoot":"","sources":["../../../src/services/entities/service.entity.ts"],"names":[],"mappings":";;;AAGA,MAAa,OAAO;CAEnB;AAFD,0BAEC"}
+{"version":3,"file":"service.entity.js","sourceRoot":"","sources":["../../../src/services/entities/service.entity.ts"],"names":[],"mappings":";;;AAEA,MAAa,OAAO;IAQlB,YAAY,IAAsB;QAChC,MAAM,CAAC,MAAM,CAAC,IAAI,EAAE,IAAI,CAAC,CAAC;IAC5B,CAAC;CACF;AAXD,0BAWC"}

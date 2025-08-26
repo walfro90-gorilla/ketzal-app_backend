@@ -11,7 +11,7 @@ export class PlannersService {
   // 🔒 Crear planner (privado por defecto)
   async createPlanner(userId: string, createPlannerDto: CreatePlannerDto) {
     try {
-      const planner = await this.prisma.travelPlanner.create({
+      const planner = await this.prisma.travel_planners.create({
         data: {
           userId,
           name: createPlannerDto.name,
@@ -49,7 +49,7 @@ export class PlannersService {
 
   // 🔍 Obtener planners del usuario
   async getPlannersByUser(userId: string) {
-    const planners = await this.prisma.travelPlanner.findMany({
+    const planners = await this.prisma.travel_planners.findMany({
       where: {
         userId,
       },
@@ -76,7 +76,7 @@ export class PlannersService {
 
   // 📋 Obtener planner específico
   async getPlannerById(id: string, userId: string) {
-    const planner = await this.prisma.travelPlanner.findFirst({
+    const planner = await this.prisma.travel_planners.findFirst({
       where: {
         id,
         userId, // 🔒 Solo el propietario puede ver sus planners
@@ -111,7 +111,7 @@ export class PlannersService {
   // ✏️ Actualizar planner
   async updatePlanner(id: string, userId: string, updatePlannerDto: UpdatePlannerDto) {
     // Verificar que el planner existe y pertenece al usuario
-    const existingPlanner = await this.prisma.travelPlanner.findFirst({
+    const existingPlanner = await this.prisma.travel_planners.findFirst({
       where: { id, userId },
     });
 
@@ -120,7 +120,7 @@ export class PlannersService {
     }
 
     try {
-      const updatedPlanner = await this.prisma.travelPlanner.update({
+      const updatedPlanner = await this.prisma.travel_planners.update({
         where: { id },
         data: {
           name: updatePlannerDto.name,
@@ -151,7 +151,7 @@ export class PlannersService {
   // 🗑️ Eliminar planner
   async deletePlanner(id: string, userId: string) {
     // Verificar que el planner existe y pertenece al usuario
-    const existingPlanner = await this.prisma.travelPlanner.findFirst({
+    const existingPlanner = await this.prisma.travel_planners.findFirst({
       where: { id, userId },
     });
 
@@ -160,7 +160,7 @@ export class PlannersService {
     }
 
     try {
-      await this.prisma.travelPlanner.delete({
+      await this.prisma.travel_planners.delete({
         where: { id },
       });
 
@@ -173,7 +173,7 @@ export class PlannersService {
   // ➕ Agregar item al planner
   async addItemToPlanner(addItemDto: AddItemToPlannerDto, userId: string) {
     // Verificar que el planner existe y pertenece al usuario
-    const planner = await this.prisma.travelPlanner.findFirst({
+    const planner = await this.prisma.travel_planners.findFirst({
       where: {
         id: addItemDto.plannerId,
         userId,
@@ -190,7 +190,7 @@ export class PlannersService {
     }
 
     try {
-      const item = await this.prisma.plannerItem.create({
+      const item = await this.prisma.planner_items.create({
         data: {
           plannerId: addItemDto.plannerId,
           serviceId: addItemDto.serviceId,
@@ -220,7 +220,7 @@ export class PlannersService {
   // 🗑️ Remover item del planner
   async removeItemFromPlanner(itemId: string, userId: string) {
     // Verificar que el item existe y el planner pertenece al usuario
-    const item = await this.prisma.plannerItem.findFirst({
+    const item = await this.prisma.planner_items.findFirst({
       where: {
         id: itemId,
         planner: {
@@ -237,7 +237,7 @@ export class PlannersService {
     }
 
     try {
-      await this.prisma.plannerItem.delete({
+      await this.prisma.planner_items.delete({
         where: { id: itemId },
       });
 
@@ -252,14 +252,14 @@ export class PlannersService {
 
   // 🔄 Actualizar totales del planner
   private async updatePlannerTotals(plannerId: string) {
-    const items = await this.prisma.plannerItem.findMany({
+    const items = await this.prisma.planner_items.findMany({
       where: { plannerId },
     });
 
     const totalMXN = items.reduce((sum: number, item: any) => sum + (item.priceMXN * item.quantity), 0);
     const totalAxo = items.reduce((sum: number, item: any) => sum + ((item.priceAxo || 0) * item.quantity), 0);
 
-    await this.prisma.travelPlanner.update({
+    await this.prisma.travel_planners.update({
       where: { id: plannerId },
       data: {
         totalMXN,

@@ -21,36 +21,11 @@ export declare class WalletController {
     constructor(walletService: WalletService);
     getWallet(userId: string): Promise<{
         success: boolean;
-        wallet: {
-            transactions: {
-                id: string;
-                createdAt: Date;
-                description: string;
-                type: import(".prisma/client").$Enums.WalletTransactionType;
-                walletId: string;
-                amountMXN: number | null;
-                amountAxo: number | null;
-                reference: string | null;
-            }[];
-        } & {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
     }>;
     addFunds(userId: string, addFundsDto: AddFundsDto): Promise<{
         success: boolean;
-        wallet: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
         message: string;
     }>;
     transferFunds(userId: string, transferDto: TransferFundsDto): Promise<{
@@ -59,18 +34,9 @@ export declare class WalletController {
         message: string;
     }>;
     getTransactions(userId: string, limit?: string, offset?: string): Promise<{
-        transactions: {
-            id: string;
-            createdAt: Date;
-            description: string;
-            type: import(".prisma/client").$Enums.WalletTransactionType;
-            walletId: string;
-            amountMXN: number | null;
-            amountAxo: number | null;
-            reference: string | null;
-        }[];
+        transactions: any;
         pagination: {
-            total: number;
+            total: any;
             limit: number;
             offset: number;
             hasMore: boolean;
@@ -79,14 +45,7 @@ export declare class WalletController {
     }>;
     convertCurrency(userId: string, convertDto: ConvertCurrencyDto): Promise<{
         message: string;
-        wallet: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
         conversion: {
             from: {
                 currency: "MXN" | "AXO";

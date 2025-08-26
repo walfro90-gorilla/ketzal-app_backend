@@ -4,157 +4,19 @@ import { UpdateNotificationDto } from './dto/update-notification.dto';
 export declare class NotificationsService {
     private prismaService;
     constructor(prismaService: PrismaService);
-    create(createNotificationDto: CreateNotificationDto): Promise<{
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
-    findAll(): Promise<({
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    })[]>;
-    findByUserId(userId: string, includeRead?: boolean): Promise<({
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    })[]>;
-    findOne(id: string): Promise<{
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
-    update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<{
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
-    markAsRead(id: string): Promise<{
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
-    markAllAsReadForUser(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
-    remove(id: string): Promise<{
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
-    removeReadNotificationsForUser(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
+    create(createNotificationDto: CreateNotificationDto): Promise<any>;
+    findAll(): Promise<any>;
+    findByUserId(userId: string, includeRead?: boolean): Promise<any>;
+    findOne(id: string): Promise<any>;
+    update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<any>;
+    markAsRead(id: string): Promise<any>;
+    markAllAsReadForUser(userId: string): Promise<any>;
+    remove(id: string): Promise<any>;
+    removeReadNotificationsForUser(userId: string): Promise<any>;
     getNotificationStats(userId: string): Promise<{
-        total: number;
-        unread: number;
+        total: any;
+        unread: any;
         read: number;
     }>;
-    createQuickNotification(userId: string, title: string, message: string, type?: any): Promise<{
-        user: {
-            id: string;
-            name: string | null;
-            email: string;
-        };
-    } & {
-        id: string;
-        userId: string;
-        title: string;
-        message: string;
-        type: import(".prisma/client").$Enums.NotificationType;
-        isRead: boolean;
-        priority: import(".prisma/client").$Enums.NotificationPriority;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        actionUrl: string | null;
-        createdAt: Date;
-        readAt: Date | null;
-    }>;
+    createQuickNotification(userId: string, title: string, message: string, type?: any): Promise<any>;
 }
