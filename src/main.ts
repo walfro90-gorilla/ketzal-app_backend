@@ -3,6 +3,7 @@ import { AppModule } from "./app.module";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { ValidationPipe } from "@nestjs/common";
+import { HttpExceptionFilter } from "./common/filters/http-exception.filter";
 
 async function bootstrap() {
 
@@ -16,6 +17,9 @@ async function bootstrap() {
             enableImplicitConversion: true,
         },
     }));
+
+    // Apply the global exception filter
+    app.useGlobalFilters(new HttpExceptionFilter());
 
     const config = new DocumentBuilder()
         .setTitle('Ketzal app API')

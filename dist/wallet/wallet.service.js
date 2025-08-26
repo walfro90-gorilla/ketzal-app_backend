@@ -18,7 +18,7 @@ let WalletService = class WalletService {
     }
     async getOrCreateWallet(userId) {
         console.log('🔄 Service: Getting or creating wallet for user:', userId);
-        const user = await this.prisma.user.findUnique({
+        const user = await this.prisma.users.findUnique({
             where: { id: userId }
         });
         if (!user) {
@@ -26,7 +26,7 @@ let WalletService = class WalletService {
             throw new Error(`User not found: ${userId}`);
         }
         console.log('✅ Service: User found:', user.email);
-        let wallet = await this.prisma.wallet.findUnique({
+        let wallet = await this.prisma.wallets.findUnique({
             where: { userId },
             include: {
                 transactions: {
@@ -37,7 +37,7 @@ let WalletService = class WalletService {
         });
         if (!wallet) {
             console.log('🆕 Service: Creating new wallet for user:', userId);
-            wallet = await this.prisma.wallet.create({
+            wallet = await this.prisma.wallets.create({
                 data: {
                     userId,
                     balanceMXN: 0,
@@ -47,7 +47,7 @@ let WalletService = class WalletService {
                     transactions: true
                 }
             });
-            await this.prisma.walletTransaction.create({
+            await this.prisma.wallet_transactions.create({
                 data: {
                     walletId: wallet.id,
                     type: 'REWARD',
@@ -64,11 +64,11 @@ let WalletService = class WalletService {
         return wallet;
     }
     async addFunds(userId, amountMXN, amountAxo, description, paymentMethod) {
-        let wallet = await this.prisma.wallet.findUnique({
+        let wallet = await this.prisma.wallets.findUnique({
             where: { userId }
         });
         if (!wallet) {
-            wallet = await this.prisma.wallet.create({
+            wallet = await this.prisma.wallets.create({
                 data: {
                     userId,
                     balanceMXN: amountMXN,
@@ -76,7 +76,7 @@ let WalletService = class WalletService {
                 }
             });
         }
-        const updatedWallet = await this.prisma.wallet.update({
+        const updatedWallet = await this.prisma.wallets.update({
             where: { id: wallet.id },
             data: {
                 balanceMXN: {
@@ -87,27 +87,27 @@ let WalletService = class WalletService {
                 }
             }
         });
-        await this.prisma.walletTransaction.create({
+        await this.prisma.wallet_transactions.create({
             data: {
                 walletId: wallet.id,
                 type: 'DEPOSIT',
                 amountMXN: amountMXN > 0 ? amountMXN : null,
                 amountAxo: amountAxo > 0 ? amountAxo : null,
-                description: description || `Depósito de ${amountMXN > 0 ? `$${amountMXN} MXN` : ''}${amountMXN > 0 && amountAxo > 0 ? ' y ' : ''}${amountAxo > 0 ? `${amountAxo} AXO` : ''}`,
+                description: description || `Depósito de ${amountMXN > 0 ? `${amountMXN} MXN` : ''}${amountMXN > 0 && amountAxo > 0 ? ' y ' : ''}${amountAxo > 0 ? `${amountAxo} AXO` : ''}`,
                 reference: paymentMethod || 'MANUAL'
             }
         });
         return updatedWallet;
     }
     async transferFunds(userId, recipientEmail, amountMXN, amountAxo, description) {
-        const recipient = await this.prisma.user.findUnique({
+        const recipient = await this.prisma.users.findUnique({
             where: { email: recipientEmail },
             include: { wallet: true }
         });
         if (!recipient) {
             throw new common_1.HttpException('Usuario destinatario no encontrado', common_1.HttpStatus.NOT_FOUND);
         }
-        const senderWallet = await this.prisma.wallet.findUnique({
+        const senderWallet = await this.prisma.wallets.findUnique({
             where: { userId }
         });
         if (!senderWallet) {
@@ -119,7 +119,7 @@ let WalletService = class WalletService {
         }
         let recipientWallet = recipient.wallet;
         if (!recipientWallet) {
-            recipientWallet = await this.prisma.wallet.create({
+            recipientWallet = await this.prisma.wallets.create({
                 data: {
                     userId: recipient.id,
                     balanceMXN: 0,
@@ -128,7 +128,7 @@ let WalletService = class WalletService {
             });
         }
         const result = await this.prisma.$transaction(async (tx) => {
-            const updatedSenderWallet = await tx.wallet.update({
+            const updatedSenderWallet = await tx.wallets.update({
                 where: { id: senderWallet.id },
                 data: {
                     balanceMXN: {
@@ -139,7 +139,7 @@ let WalletService = class WalletService {
                     }
                 }
             });
-            await tx.wallet.update({
+            await tx.wallets.update({
                 where: { id: recipientWallet.id },
                 data: {
                     balanceMXN: {
@@ -150,7 +150,7 @@ let WalletService = class WalletService {
                     }
                 }
             });
-            await tx.walletTransaction.create({
+            await tx.wallet_transactions.create({
                 data: {
                     walletId: senderWallet.id,
                     type: 'TRANSFER_SENT',
@@ -160,7 +160,7 @@ let WalletService = class WalletService {
                     reference: recipient.id
                 }
             });
-            await tx.walletTransaction.create({
+            await tx.wallet_transactions.create({
                 data: {
                     walletId: recipientWallet.id,
                     type: 'TRANSFER_RECEIVED',
@@ -175,19 +175,19 @@ let WalletService = class WalletService {
         return result;
     }
     async getTransactions(userId, limit, offset) {
-        const wallet = await this.prisma.wallet.findUnique({
+        const wallet = await this.prisma.wallets.findUnique({
             where: { userId }
         });
         if (!wallet) {
             throw new common_1.HttpException('Wallet no encontrado', common_1.HttpStatus.NOT_FOUND);
         }
-        const transactions = await this.prisma.walletTransaction.findMany({
+        const transactions = await this.prisma.wallet_transactions.findMany({
             where: { walletId: wallet.id },
             orderBy: { createdAt: 'desc' },
             take: limit,
             skip: offset
         });
-        const total = await this.prisma.walletTransaction.count({
+        const total = await this.prisma.wallet_transactions.count({
             where: { walletId: wallet.id }
         });
         return {
@@ -203,7 +203,7 @@ let WalletService = class WalletService {
     async convertCurrency(userId, fromCurrency, toCurrency, amount) {
         const MXN_TO_AXO_RATE = 0.8;
         const AXO_TO_MXN_RATE = 1.1;
-        const wallet = await this.prisma.wallet.findUnique({
+        const wallet = await this.prisma.wallets.findUnique({
             where: { userId }
         });
         if (!wallet) {
@@ -231,7 +231,7 @@ let WalletService = class WalletService {
         else {
             throw new common_1.HttpException('Conversión no soportada', common_1.HttpStatus.BAD_REQUEST);
         }
-        const updatedWallet = await this.prisma.wallet.update({
+        const updatedWallet = await this.prisma.wallets.update({
             where: { id: wallet.id },
             data: {
                 balanceMXN: {
@@ -242,7 +242,7 @@ let WalletService = class WalletService {
                 }
             }
         });
-        await this.prisma.walletTransaction.create({
+        await this.prisma.wallet_transactions.create({
             data: {
                 walletId: wallet.id,
                 type: 'DEPOSIT',

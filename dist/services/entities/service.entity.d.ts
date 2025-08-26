@@ -1,4 +1,10 @@
-import { ServiceDateRange } from '../dto/create-service.dto';
-export declare class Service {
-    dates?: ServiceDateRange[];
+import { Prisma, Service as ServiceModel } from '@prisma/client';
+export declare class Service implements Partial<ServiceModel> {
+    id: number;
+    name: string;
+    price: number;
+    supplierId: number;
+    description?: string | null;
+    dates?: Prisma.JsonValue;
+    constructor(data: Partial<Service>);
 }

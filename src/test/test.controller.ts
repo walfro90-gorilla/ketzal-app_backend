@@ -9,7 +9,7 @@ export class TestController {
   async createTestUser() {
     try {
       // Crear usuario de prueba
-      const user = await this.prisma.user.upsert({
+      const user = await this.prisma.users.upsert({
         where: { email: 'test@ketzal.com' },
         update: {},
         create: {
@@ -23,7 +23,7 @@ export class TestController {
       });
 
       // Crear wallet para el usuario
-      const wallet = await this.prisma.wallet.upsert({
+      const wallet = await this.prisma.wallets.upsert({
         where: { userId: user.id },
         update: {},
         create: {
@@ -35,7 +35,7 @@ export class TestController {
 
       // Crear algunas transacciones de ejemplo
       const transactions = await Promise.all([
-        this.prisma.walletTransaction.create({
+        this.prisma.wallet_transactions.create({
           data: {
             walletId: wallet.id,
             type: 'DEPOSIT',
@@ -44,7 +44,7 @@ export class TestController {
             reference: 'WELCOME-001',
           },
         }),
-        this.prisma.walletTransaction.create({
+        this.prisma.wallet_transactions.create({
           data: {
             walletId: wallet.id,
             type: 'REWARD',
@@ -53,7 +53,7 @@ export class TestController {
             reference: 'REWARD-001',
           },
         }),
-        this.prisma.walletTransaction.create({
+        this.prisma.wallet_transactions.create({
           data: {
             walletId: wallet.id,
             type: 'PURCHASE',
@@ -62,7 +62,7 @@ export class TestController {
             reference: 'TOUR-001',
           },
         }),
-        this.prisma.walletTransaction.create({
+        this.prisma.wallet_transactions.create({
           data: {
             walletId: wallet.id,
             type: 'TRANSFER_RECEIVED',
@@ -92,7 +92,7 @@ export class TestController {
   @Get('wallet/:userId')
   async getTestWallet(@Param('userId') userId: string) {
     try {
-      const wallet = await this.prisma.wallet.findUnique({
+      const wallet = await this.prisma.wallets.findUnique({
         where: { userId },
         include: {
           transactions: {
@@ -126,7 +126,7 @@ export class TestController {
   @Post('add-funds/:userId')
   async addTestFunds(@Param('userId') userId: string, @Body() { amount, currency }: { amount: number; currency: 'MXN' | 'AXO' }) {
     try {
-      const wallet = await this.prisma.wallet.findUnique({
+      const wallet = await this.prisma.wallets.findUnique({
         where: { userId },
       });
 
@@ -138,13 +138,13 @@ export class TestController {
         ? { balanceMXN: { increment: amount } }
         : { balanceAxo: { increment: amount } };
 
-      const updatedWallet = await this.prisma.wallet.update({
+      const updatedWallet = await this.prisma.wallets.update({
         where: { userId },
         data: updateData,
       });
 
       // Crear transacción
-      await this.prisma.walletTransaction.create({
+      await this.prisma.wallet_transactions.create({
         data: {
           walletId: wallet.id,
           type: 'DEPOSIT',

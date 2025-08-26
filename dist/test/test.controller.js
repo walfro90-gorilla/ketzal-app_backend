@@ -21,7 +21,7 @@ let TestController = class TestController {
     }
     async createTestUser() {
         try {
-            const user = await this.prisma.user.upsert({
+            const user = await this.prisma.users.upsert({
                 where: { email: 'test@ketzal.com' },
                 update: {},
                 create: {
@@ -33,7 +33,7 @@ let TestController = class TestController {
                     axoCoinsEarned: 50
                 },
             });
-            const wallet = await this.prisma.wallet.upsert({
+            const wallet = await this.prisma.wallets.upsert({
                 where: { userId: user.id },
                 update: {},
                 create: {
@@ -43,7 +43,7 @@ let TestController = class TestController {
                 },
             });
             const transactions = await Promise.all([
-                this.prisma.walletTransaction.create({
+                this.prisma.wallet_transactions.create({
                     data: {
                         walletId: wallet.id,
                         type: 'DEPOSIT',
@@ -52,7 +52,7 @@ let TestController = class TestController {
                         reference: 'WELCOME-001',
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.wallet_transactions.create({
                     data: {
                         walletId: wallet.id,
                         type: 'REWARD',
@@ -61,7 +61,7 @@ let TestController = class TestController {
                         reference: 'REWARD-001',
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.wallet_transactions.create({
                     data: {
                         walletId: wallet.id,
                         type: 'PURCHASE',
@@ -70,7 +70,7 @@ let TestController = class TestController {
                         reference: 'TOUR-001',
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.wallet_transactions.create({
                     data: {
                         walletId: wallet.id,
                         type: 'TRANSFER_RECEIVED',
@@ -98,7 +98,7 @@ let TestController = class TestController {
     }
     async getTestWallet(userId) {
         try {
-            const wallet = await this.prisma.wallet.findUnique({
+            const wallet = await this.prisma.wallets.findUnique({
                 where: { userId },
                 include: {
                     transactions: {
@@ -129,7 +129,7 @@ let TestController = class TestController {
     }
     async addTestFunds(userId, { amount, currency }) {
         try {
-            const wallet = await this.prisma.wallet.findUnique({
+            const wallet = await this.prisma.wallets.findUnique({
                 where: { userId },
             });
             if (!wallet) {
@@ -138,11 +138,11 @@ let TestController = class TestController {
             const updateData = currency === 'MXN'
                 ? { balanceMXN: { increment: amount } }
                 : { balanceAxo: { increment: amount } };
-            const updatedWallet = await this.prisma.wallet.update({
+            const updatedWallet = await this.prisma.wallets.update({
                 where: { userId },
                 data: updateData,
             });
-            await this.prisma.walletTransaction.create({
+            await this.prisma.wallet_transactions.create({
                 data: Object.assign(Object.assign({ walletId: wallet.id, type: 'DEPOSIT' }, (currency === 'MXN' ? { amountMXN: amount } : { amountAxo: amount })), { description: `Depósito de prueba de ${amount} ${currency}`, reference: `TEST-${Date.now()}` }),
             });
             return {
