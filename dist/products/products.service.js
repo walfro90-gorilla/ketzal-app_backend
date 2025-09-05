@@ -33,6 +33,8 @@ let ProductsService = class ProductsService {
                     images: createProductDto.images ? createProductDto.images : undefined,
                     specifications: createProductDto.specifications ? createProductDto.specifications : undefined,
                     tags: createProductDto.tags ? createProductDto.tags : undefined,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 }
             });
         }
@@ -43,6 +45,7 @@ let ProductsService = class ProductsService {
                     throw new common_1.ConflictException(`Product with name ${createProductDto.name} already exists`);
                 }
             }
+            throw error;
         }
     }
     async findAll() {

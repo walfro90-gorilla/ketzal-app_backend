@@ -109,7 +109,7 @@ describe('NotificationsService', () => {
   describe('markAllAsReadForUser', () => {
     it('should mark all notifications as read for a user', async () => {
       await service.markAllAsReadForUser('1');
-      expect(prisma.notifications.updateMany).toHaveBeenCalled();
+      expect(mockPrismaService.notification.updateMany).toHaveBeenCalled();
     });
   });
 
@@ -126,7 +126,7 @@ describe('NotificationsService', () => {
   describe('removeReadNotificationsForUser', () => {
     it('should remove read notifications for a user', async () => {
       await service.removeReadNotificationsForUser('1');
-      expect(prisma.notification.deleteMany).toHaveBeenCalled();
+      expect(mockPrismaService.notification.deleteMany).toHaveBeenCalled();
     });
   });
 

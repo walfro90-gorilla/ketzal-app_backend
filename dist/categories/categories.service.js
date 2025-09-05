@@ -17,7 +17,9 @@ let CategoriesService = class CategoriesService {
         this.prismaService = prismaService;
     }
     create(createCategoryDto) {
-        return this.prismaService.categories.create({ data: createCategoryDto });
+        return this.prismaService.categories.create({
+            data: Object.assign(Object.assign({}, createCategoryDto), { createdAt: new Date(), updatedAt: new Date() })
+        });
     }
     findAll() {
         return this.prismaService.categories.findMany();
@@ -29,7 +31,10 @@ let CategoriesService = class CategoriesService {
         return category;
     }
     async update(id, updateCategoryDto) {
-        const updated = await this.prismaService.categories.update({ where: { id }, data: updateCategoryDto });
+        const updated = await this.prismaService.categories.update({
+            where: { id },
+            data: Object.assign(Object.assign({}, updateCategoryDto), { updatedAt: new Date() })
+        });
         if (!updated)
             throw new common_1.NotFoundException(`Category #${id} not found`);
         return updated;

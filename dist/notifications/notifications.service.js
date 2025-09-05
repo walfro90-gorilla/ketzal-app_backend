@@ -17,8 +17,8 @@ let NotificationsService = class NotificationsService {
         this.prismaService = prismaService;
     }
     async create(createNotificationDto) {
-        return this.prismaService.notification.create({
-            data: createNotificationDto,
+        return await this.prismaService.notification.create({
+            data: Object.assign(Object.assign({}, createNotificationDto), { id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) }),
             include: {
                 user: {
                     select: { id: true, name: true, email: true }
@@ -78,7 +78,19 @@ let NotificationsService = class NotificationsService {
         });
     }
     async markAsRead(id) {
-        return this.update(id, { isRead: true, readAt: new Date().toISOString() });
+        await this.findOne(id);
+        return this.prismaService.notification.update({
+            where: { id },
+            data: {
+                isRead: true,
+                readAt: new Date()
+            },
+            include: {
+                user: {
+                    select: { id: true, name: true, email: true }
+                }
+            }
+        });
     }
     async markAllAsReadForUser(userId) {
         return this.prismaService.notification.updateMany({

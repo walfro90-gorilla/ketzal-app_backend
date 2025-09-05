@@ -6,8 +6,9 @@ const prisma_service_1 = require("../prisma/prisma.service");
 describe('ReviewsService', () => {
     let service;
     let prisma;
+    const mockReview = { id: 1, rating: 5, comment: 'test comment', serviceId: 1, userId: '1' };
     const mockPrismaService = {
-        reviews: {
+        review: {
             create: jest.fn(),
             findMany: jest.fn(),
             findUnique: jest.fn(),
@@ -34,10 +35,10 @@ describe('ReviewsService', () => {
     describe('create', () => {
         it('should create a review', async () => {
             const dto = { rating: 5, comment: 'test', serviceId: 1, userId: '1' };
-            mockPrismaService.reviews.create.mockResolvedValue(Object.assign({ id: 1 }, dto));
+            prisma.review.create.mockResolvedValue(mockReview);
             const result = await service.create(dto);
             expect(result).toBeDefined();
-            expect(prisma.reviews.create).toHaveBeenCalled();
+            expect(prisma.review.create).toHaveBeenCalled();
         });
         it('should throw an error if required fields are missing', async () => {
             const dto = { rating: 5, comment: 'test', serviceId: 1, userId: '' };
@@ -52,7 +53,7 @@ describe('ReviewsService', () => {
     describe('findAll', () => {
         it('should return all reviews', async () => {
             const reviews = [{ id: 1, name: 'test' }];
-            mockPrismaService.reviews.findMany.mockResolvedValue(reviews);
+            mockPrismaService.review.findMany.mockResolvedValue(reviews);
             const result = await service.findAll();
             expect(result).toEqual(reviews);
         });
@@ -60,19 +61,19 @@ describe('ReviewsService', () => {
     describe('findOne', () => {
         it('should return a review', async () => {
             const review = { id: 1, name: 'test' };
-            mockPrismaService.reviews.findUnique.mockResolvedValue(review);
+            mockPrismaService.review.findUnique.mockResolvedValue(review);
             const result = await service.findOne(1);
             expect(result).toEqual(review);
         });
         it('should throw not found exception', async () => {
-            mockPrismaService.reviews.findUnique.mockResolvedValue(null);
+            mockPrismaService.review.findUnique.mockResolvedValue(null);
             await expect(service.findOne(1)).rejects.toThrow('Review #1 not found');
         });
     });
     describe('update', () => {
         it('should update a review', async () => {
             const review = { id: 1, name: 'test' };
-            mockPrismaService.reviews.update.mockResolvedValue(review);
+            mockPrismaService.review.update.mockResolvedValue(review);
             const result = await service.update(1, { comment: 'test' });
             expect(result).toEqual(review);
         });
@@ -80,7 +81,7 @@ describe('ReviewsService', () => {
     describe('remove', () => {
         it('should remove a review', async () => {
             const review = { id: 1, name: 'test' };
-            mockPrismaService.reviews.delete.mockResolvedValue(review);
+            mockPrismaService.review.delete.mockResolvedValue(review);
             const result = await service.remove(1);
             expect(result).toEqual(review);
         });
@@ -88,7 +89,7 @@ describe('ReviewsService', () => {
     describe('getReviewsByService', () => {
         it('should return reviews for a service', async () => {
             const reviews = [{ id: 1, name: 'test' }];
-            mockPrismaService.reviews.findMany.mockResolvedValue(reviews);
+            mockPrismaService.review.findMany.mockResolvedValue(reviews);
             const result = await service.getReviewsByService(1);
             expect(result).toEqual(reviews);
         });
@@ -96,7 +97,7 @@ describe('ReviewsService', () => {
     describe('getReviewStatsForService', () => {
         it('should return review stats for a service', async () => {
             const reviews = [{ rating: 5 }, { rating: 4 }];
-            mockPrismaService.reviews.findMany.mockResolvedValue(reviews);
+            mockPrismaService.review.findMany.mockResolvedValue(reviews);
             const result = await service.getReviewStatsForService(1);
             expect(result).toEqual({ totalReviews: 2, averageRating: 4.5, serviceId: 1 });
         });
@@ -104,7 +105,7 @@ describe('ReviewsService', () => {
     describe('createReview', () => {
         it('should create a review', async () => {
             const review = { id: 1, name: 'test' };
-            mockPrismaService.reviews.create.mockResolvedValue(review);
+            mockPrismaService.review.create.mockResolvedValue(review);
             const result = await service.createReview(1, '1', 5, 'test');
             expect(result).toEqual(review);
         });

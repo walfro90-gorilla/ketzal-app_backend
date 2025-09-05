@@ -16,28 +16,28 @@ export class GlobalLocationsService {
   }
 
   create(createDto: CreateGlobalLocationDto) {
-    return this.prisma.global_locations.create({ data: createDto }).then(this.transformBigInt);
+    return this.prisma.globalLocations.create({ data: createDto }).then(this.transformBigInt);
   }
 
   async findAll() {
-    const locations = await this.prisma.global_locations.findMany();
+    const locations = await this.prisma.globalLocations.findMany();
     return locations.map((location: any) => this.transformBigInt(location));
   }
 
   async findOne(id: number) {
-    const location = await this.prisma.global_locations.findUnique({ where: { id } });
+    const location = await this.prisma.globalLocations.findUnique({ where: { id } });
     if (!location) throw new NotFoundException(`Location #${id} not found`);
     return this.transformBigInt(location);
   }
 
   async update(id: number, updateDto: UpdateGlobalLocationDto) {
-    const updated = await this.prisma.global_locations.update({ where: { id }, data: updateDto });
+    const updated = await this.prisma.globalLocations.update({ where: { id }, data: updateDto });
     if (!updated) throw new NotFoundException(`Location #${id} not found`);
     return this.transformBigInt(updated);
   }
 
   async remove(id: number) {
-    const deleted = await this.prisma.global_locations.delete({ where: { id } });
+    const deleted = await this.prisma.globalLocations.delete({ where: { id } });
     if (!deleted) throw new NotFoundException(`Location #${id} not found`);
     return deleted;
   }

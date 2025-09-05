@@ -25,11 +25,14 @@ let UsersService = class UsersService {
     }
     async create(createUserDto) {
         try {
-            return await this.prismaService.user.create({
+            return await this.prismaService.users.create({
                 data: {
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     name: createUserDto.name,
                     email: createUserDto.email,
                     password: createUserDto.password,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 }
             });
         }
@@ -40,10 +43,11 @@ let UsersService = class UsersService {
                     throw new common_1.ConflictException(`User with email ${createUserDto.email} already exists`);
                 }
             }
+            throw error;
         }
     }
     findAll() {
-        return this.prismaService.user.findMany({
+        return this.prismaService.users.findMany({
             include: {
                 supplier: {
                     select: {
@@ -52,15 +56,12 @@ let UsersService = class UsersService {
                         contactEmail: true
                     }
                 }
-            },
-            orderBy: {
-                createdAt: 'desc'
             }
         });
     }
     async findOne(id) {
-        const userFound = await this.prismaService.user.findUnique({
-            where: { id: id },
+        const userFound = await this.prismaService.users.findUnique({
+            where: { id },
             include: {
                 supplier: {
                     select: {
@@ -77,8 +78,8 @@ let UsersService = class UsersService {
         return userFound;
     }
     async update(id, updateUserDto) {
-        const prevUser = await this.prismaService.user.findUnique({ where: { id } });
-        const userFound = await this.prismaService.user.update({
+        const prevUser = await this.prismaService.users.findUnique({ where: { id } });
+        const userFound = await this.prismaService.users.update({
             where: { id: id },
             data: updateUserDto
         });
@@ -109,7 +110,7 @@ let UsersService = class UsersService {
                     message: `Tu solicitud para el supplier "${supplier.name}" está en revisión. Te notificaremos dentro de 72 horas si fue aprobada o rechazada.`,
                     type: create_notification_dto_1.NotificationType.INFO,
                 });
-                const superadmins = await this.prismaService.user.findMany({ where: { role: 'superadmin' } });
+                const superadmins = await this.prismaService.users.findMany({ where: { role: 'superadmin' } });
                 for (const superadmin of superadmins) {
                     await this.notificationsService.create({
                         userId: superadmin.id,
@@ -124,7 +125,7 @@ let UsersService = class UsersService {
     }
     async remove(id) {
         try {
-            return await this.prismaService.user.delete({
+            return await this.prismaService.users.delete({
                 where: {
                     id: id,
                 },
@@ -159,7 +160,7 @@ let UsersService = class UsersService {
                 });
             }
         }
-        return this.prismaService.user.findMany({
+        return this.prismaService.users.findMany({
             where,
             include: {
                 supplier: {

@@ -8,13 +8,6 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model global_locations {
-  id      BigInt @id @default(autoincrement())
-  country String
-  state   String
-  city    String
-}
-
 model Account {
   userId            String
   type              String
@@ -29,7 +22,7 @@ model Account {
   session_state     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime
-  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User              Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -41,80 +34,6 @@ model Categories {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime
-}
-
-model Payment {
-  id                 String         @id
-  plannerId          String?
-  userId             String
-  amountMXN          Float
-  amountAxo          Float?
-  status             PaymentStatus  @default(PENDING)
-  installments       Int            @default(1)
-  currentInstallment Int            @default(1)
-  dueDate            DateTime?
-  paidAt             DateTime?
-  paymentMethod      String?
-  transactionId      String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime
-  TravelPlanner      TravelPlanner? @relation(fields: [plannerId], references: [id])
-  User               User           @relation(fields: [userId], references: [id])
-}
-
-model PlannerItem {
-  id            String        @id
-  plannerId     String
-  serviceId     Int?
-  productId     Int?
-  quantity      Int           @default(1)
-  priceMXN      Float
-  priceAxo      Float?
-  selectedDate  DateTime?
-  notes         String?
-  createdAt     DateTime      @default(now())
-  TravelPlanner TravelPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
-  Product       Product?      @relation(fields: [productId], references: [id])
-  Service       Service?      @relation(fields: [serviceId], references: [id])
-}
-
-model Product {
-  id             Int            @id @default(autoincrement())
-  name           String         @unique
-  description    String?
-  price          Float
-  stock          Int
-  image          String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime
-  category       String?
-  images         Json?
-  priceAxo       Float?
-  specifications Json?
-  tags           Json?
-  PlannerItem    PlannerItem[]
-  WishlistItem   WishlistItem[]
-}
-
-model Review {
-  id        Int      @id @default(autoincrement())
-  serviceId Int
-  userId    String
-  rating    Int
-  comment   String
-  createdAt DateTime @default(now())
-  Service   Service  @relation(fields: [serviceId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model GlobalLocations {
@@ -124,34 +43,6 @@ model GlobalLocations {
   city    String
 }
 
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime
-  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
-}
-
-model Categories {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  image       String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-}
-
 model Payment {
   id                 String         @id
   plannerId          String?
@@ -168,7 +59,7 @@ model Payment {
   createdAt          DateTime       @default(now())
   updatedAt          DateTime
   TravelPlanner      TravelPlanner? @relation(fields: [plannerId], references: [id])
-  User               User           @relation(fields: [userId], references: [id])
+  User               Users           @relation(fields: [userId], references: [id])
 }
 
 model PlannerItem {
@@ -213,72 +104,71 @@ model Review {
   comment   String
   createdAt DateTime @default(now())
   Service   Service  @relation(fields: [serviceId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  User      Users     @relation(fields: [userId], references: [id])
 }
 
 model Service {
-  id                                             Int            @id @default(autoincrement())
-  supplierId                                     Int
-  name                                           String
-  description                                    String?
-  price                                          Float
-  location                                       String?
-  availableFrom                                  DateTime?
-  availableTo                                    DateTime?
-  createdAt                                      DateTime       @default(now())
-  packs                                          Json?
-  images                                         Json?
-  ytLink                                         String?
-  sizeTour                                       Float?
-  serviceType                                    String?
-  serviceCategory                                String?
-  stateFrom                                      String?
-  cityFrom                                       String?
-  stateTo                                        String?
-  cityTo                                         String?
-  includes                                       Json?
-  excludes                                       Json?
-  faqs                                           Json?
-  itinerary                                      Json?
-  hotelProviderID                                Int?
-  transportProviderID                            Int?
-  dates                                          Json?
-  addOns                                         Json?
-  busLayout                                      Json?
-  currentBookings                                Int?           @default(0)
-  hasBusTransport                                Boolean?       @default(false)
-
-  maxCapacity                                    Int?
-  priceAxo                                       Float?
-  seasonalPrices                                 Json?
-  seatPricing                                    Json?          @db.Json
-  PlannerItem                                    PlannerItem[]
-  Review                                         Review[]
-  hotelProvider                                  Supplier?      @relation("HotelServices", fields: [hotelProviderID], references: [id])
-  supplier                                       Supplier       @relation("OfferedServices", fields: [supplierId], references: [id])
-  transportProvider                              Supplier?      @relation("TransportServices", fields: [transportProviderID], references: [id])
-  WishlistItem                                   WishlistItem[]
+  id              Int       @id @default(autoincrement())
+  supplierId      Int
+  name            String
+  description     String?
+  price           Float
+  location        String?
+  availableFrom   DateTime?
+  availableTo     DateTime?
+  createdAt       DateTime  @default(now())
+  packs           Json?
+  images          Json?
+  ytLink          String?
+  sizeTour        Float?
+  serviceType     String?
+  serviceCategory String?
+  stateFrom       String?
+  cityFrom        String?
+  stateTo         String?
+  cityTo          String?
+  includes        Json?
+  excludes        Json?
+  faqs            Json?
+  itinerary       Json?
+  hotelProviderID Int?
+  transportProviderID Int?
+  dates           Json?
+  addOns          Json?
+  busLayout       Json?
+  currentBookings Int?      @default(0)
+  hasBusTransport Boolean?  @default(false)
+  maxCapacity     Int?
+  priceAxo        Float?
+  seasonalPrices  Json?
+  seatPricing     Json?     @db.Json
+  PlannerItem     PlannerItem[]
+  Review          Review[]
+  hotelProvider   Supplier?  @relation("HotelServices", fields: [hotelProviderID], references: [id])
+  supplier        Supplier   @relation("OfferedServices", fields: [supplierId], references: [id])
+  transportProvider Supplier? @relation("TransportServices", fields: [transportProviderID], references: [id])
+  WishlistItem    WishlistItem[]
 }
 
 model Supplier {
-  id                                            Int       @id @default(autoincrement())
-  name                                          String    @unique
-  contactEmail                                  String    @unique
-  phoneNumber                                   String?
-  address                                       String?
-  description                                   String?
-  imgLogo                                       String?
-  createdAt                                     DateTime  @default(now())
-  supplierType                                  String?
-  location                                      Json?
-  photos                                        Json?
-  extras                                        Json?
-  info                                          Json?
-  supplierSubType                               String?
-  Service_Service_hotelProviderIDToSupplier     Service[] @relation("Service_hotelProviderIDToSupplier")
-  Service_Service_supplierIdToSupplier          Service[] @relation("Service_supplierIdToSupplier")
-  Service_Service_transportProviderIDToSupplier Service[] @relation("Service_transportProviderIDToSupplier")
-  User                                          User[]
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  contactEmail  String    @unique
+  phoneNumber   String?
+  address       String?
+  description   String?
+  imgLogo       String?
+  createdAt     DateTime  @default(now())
+  supplierType  String?
+  location      Json?
+  photos        Json?
+  extras        Json?
+  info          Json?
+  supplierSubType String?
+  hotelProvider   Service[] @relation("HotelServices")
+  offeredServices Service[] @relation("OfferedServices")
+  transportProvider Service[] @relation("TransportServices")
+  users         Users[]   @relation("SupplierUsers")
 }
 
 model TravelPlanner {
@@ -297,154 +187,7 @@ model TravelPlanner {
   updatedAt   DateTime
   Payment     Payment[]
   PlannerItem PlannerItem[]
-  User        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Users {
-  id             String          @id
-  name           String?
-  email          String          @unique
-  password       String?
-  emailVerified  DateTime?
-  image          String?
-  role           Role            @default(admin)
-  supplierId     Int?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime
-  axoCoinsEarned Float?          @default(50)
-  referralCode   String?
-  Account        Account[]
-  Payment        Payment[]
-  Review         Review[]
-  TravelPlanner  TravelPlanner[]
-  supplier       Supplier?       @relation("SupplierUsers", fields: [supplierId], references: [id])
-  Wallets        Wallets?
-  Wishlist       Wishlist[]
-}
-
-model VerificationToken {
-  identifier String   @id @unique
-  token      String
-  expires    DateTime
-}
-
-model Wallets {
-  id                String              @id
-  userId            String              @unique
-  balanceMXN        Float               @default(0)
-  balanceAxo        Float               @default(0)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
-  Users             Users               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  WalletTransactions WalletTransactions[]
-}
-
-model WalletTransactions {
-  id          String                @id
-  walletId    String
-  type        WalletTransactionType
-  amountMXN   Float?
-  amountAxo   Float?
-  description String
-  reference   String?
-  createdAt   DateTime              @default(now())
-  Wallets     Wallets               @relation(fields: [walletId], references: [id], onDelete: Cascade)
-}
-
-model Wishlist {
-  id           String         @id
-  userId       String
-  name         String         @default("Mi Lista de Deseos")
-  isPublic     Boolean        @default(false)
-  shareCode    String?        @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime
-  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  WishlistItem WishlistItem[]
-}
-
-model WishlistItem {
-  id         String   @id
-  wishlistId String
-  serviceId  Int?
-  productId  Int?
-  priceAlert Float?
-  createdAt  DateTime @default(now())
-  Product    Product? @relation(fields: [productId], references: [id])
-  Service    Service? @relation(fields: [serviceId], references: [id])
-  Wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-}
-
-enum Role {
-  user
-  admin
-  superadmin
-}
-
-enum PaymentStatus {
-  PENDING
-  PARTIAL
-  COMPLETED
-  REFUNDED
-}
-
-enum PlannerStatus {
-  PLANNING
-  RESERVED
-  CONFIRMED
-  TRAVELLING
-  COMPLETED
-}
-
-enum WalletTransactionType {
-  DEPOSIT
-  WITHDRAWAL
-  PURCHASE
-  REFUND
-  TRANSFER_SENT
-  TRANSFER_RECEIVED
-  REWARD
-}
-
-
-model Supplier {
-  id                                            Int       @id @default(autoincrement())
-  name                                          String    @unique
-  contactEmail                                  String    @unique
-  phoneNumber                                   String?
-  address                                       String?
-  description                                   String?
-  imgLogo                                       String?
-  createdAt                                     DateTime  @default(now())
-  supplierType                                  String?
-  location                                      Json?
-  photos                                        Json?
-  extras                                        Json?
-  info                                          Json?
-  supplierSubType                               String?
-  Service_Service_hotelProviderIDToSupplier     Service[] @relation("Service_hotelProviderIDToSupplier")
-  Service_Service_supplierIdToSupplier          Service[] @relation("Service_supplierIdToSupplier")
-  Service_Service_transportProviderIDToSupplier Service[] @relation("Service_transportProviderIDToSupplier")
-  User                                          User[]
-}
-
-model TravelPlanner {
-  id          String        @id
-  userId      String
-  name        String
-  destination String?
-  startDate   DateTime?
-  endDate     DateTime?
-  status      PlannerStatus @default(PLANNING)
-  totalMXN    Float         @default(0)
-  totalAxo    Float         @default(0)
-  isPublic    Boolean       @default(false)
-  shareCode   String?       @unique
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime
-  Payment     Payment[]
-  PlannerItem PlannerItem[]
-  User        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User        Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Users {
@@ -467,6 +210,9 @@ model Users {
   supplier       Supplier?       @relation("SupplierUsers", fields: [supplierId], references: [id])
   Wallet         Wallet?
   Wishlist       Wishlist[]
+  notifications  Notification[]
+
+  @@map("User")
 }
 
 model VerificationToken {
@@ -475,7 +221,7 @@ model VerificationToken {
   expires    DateTime
 }
 
-model Wallets {
+model Wallet {
   id                String              @id
   userId            String              @unique
   balanceMXN        Float               @default(0)
@@ -483,10 +229,12 @@ model Wallets {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime
   Users             Users               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  WalletTransactions WalletTransactions[]
+  WalletTransaction WalletTransaction[]
+
+  @@map("Wallets")
 }
 
-model WalletTransactions {
+model WalletTransaction {
   id          String                @id
   walletId    String
   type        WalletTransactionType
@@ -496,6 +244,8 @@ model WalletTransactions {
   reference   String?
   createdAt   DateTime              @default(now())
   Wallet      Wallet                @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@map("WalletTransactions")
 }
 
 model Wishlist {
@@ -506,8 +256,10 @@ model Wishlist {
   shareCode    String?        @unique
   createdAt    DateTime       @default(now())
   updatedAt    DateTime
-  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User         Users           @relation(fields: [userId], references: [id], onDelete: Cascade)
   WishlistItem WishlistItem[]
+
+  @@map("Wishlist")
 }
 
 model WishlistItem {
@@ -520,6 +272,27 @@ model WishlistItem {
   Product    Product? @relation(fields: [productId], references: [id])
   Service    Service? @relation(fields: [serviceId], references: [id])
   Wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  @@map("WishlistItem")
+}
+
+model Notification {
+  id        String     @id
+  userId    String
+  title     String
+  message   String
+  type      String     @default("INFO")
+  isRead    Boolean    @default(false)
+  priority  String     @default("NORMAL")
+  metadata  Json?
+  actionUrl String?
+  createdAt DateTime   @default(now())
+  readAt    DateTime?
+  user      Users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("Notification")
 }
 
 enum Role {

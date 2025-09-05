@@ -29,14 +29,14 @@ let ReviewsService = class ReviewsService {
                 userId
             },
             include: {
-                user: {
+                User: {
                     select: {
                         id: true,
                         name: true,
                         image: true
                     }
                 },
-                service: {
+                Service: {
                     select: {
                         id: true,
                         name: true
@@ -70,7 +70,7 @@ let ReviewsService = class ReviewsService {
         return this.prismaService.review.findMany({
             where: { serviceId },
             include: {
-                user: {
+                User: {
                     select: {
                         id: true,
                         name: true,

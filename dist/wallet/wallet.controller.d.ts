@@ -21,11 +21,25 @@ export declare class WalletController {
     constructor(walletService: WalletService);
     getWallet(userId: string): Promise<{
         success: boolean;
-        wallet: any;
+        wallet: {
+            id: string;
+            userId: string;
+            balanceMXN: number;
+            balanceAxo: number;
+            createdAt: Date;
+            updatedAt: Date;
+        };
     }>;
     addFunds(userId: string, addFundsDto: AddFundsDto): Promise<{
         success: boolean;
-        wallet: any;
+        wallet: {
+            id: string;
+            userId: string;
+            balanceMXN: number;
+            balanceAxo: number;
+            createdAt: Date;
+            updatedAt: Date;
+        };
         message: string;
     }>;
     transferFunds(userId: string, transferDto: TransferFundsDto): Promise<{
@@ -34,9 +48,18 @@ export declare class WalletController {
         message: string;
     }>;
     getTransactions(userId: string, limit?: string, offset?: string): Promise<{
-        transactions: any;
+        transactions: {
+            id: string;
+            createdAt: Date;
+            walletId: string;
+            type: import(".prisma/client").$Enums.WalletTransactionType;
+            amountMXN: number | null;
+            amountAxo: number | null;
+            description: string;
+            reference: string | null;
+        }[];
         pagination: {
-            total: any;
+            total: number;
             limit: number;
             offset: number;
             hasMore: boolean;
@@ -45,7 +68,14 @@ export declare class WalletController {
     }>;
     convertCurrency(userId: string, convertDto: ConvertCurrencyDto): Promise<{
         message: string;
-        wallet: any;
+        wallet: {
+            id: string;
+            userId: string;
+            balanceMXN: number;
+            balanceAxo: number;
+            createdAt: Date;
+            updatedAt: Date;
+        };
         conversion: {
             from: {
                 currency: "MXN" | "AXO";

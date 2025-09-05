@@ -73,10 +73,10 @@ export class ServicesService {
       countryFrom,
       countryTo,
       supplier: { connect: { id: supplierId } },
-      supplierTransport: transportId
+      transportProvider: transportId
         ? { connect: { id: transportId } }
         : undefined,
-      supplierHotel: hotelId ? { connect: { id: hotelId } } : undefined,
+      hotelProvider: hotelId ? { connect: { id: hotelId } } : undefined,
       packs: packs ? packs.map((p) => ({ ...p })) : undefined,
       itinerary: itinerary ? itinerary.map((i) => ({ ...i })) : undefined,
       includes: includes ? [...includes] : undefined,
@@ -144,6 +144,37 @@ export class ServicesService {
     return servicesWithStats;
   }
 
+  // Find all services with average rating
+  async findAllWithAverageRating() {
+    const services = await this.prismaService.service.findMany();
+
+    // Get average rating for each service
+    const servicesWithAverageRating = await Promise.all(
+      services.map(async (service: any) => {
+        const reviews = await this.prismaService.review.findMany({
+          where: { serviceId: service.id },
+          select: { rating: true },
+        });
+
+        const totalReviews = reviews.length;
+        const averageRating =
+          totalReviews > 0
+            ? reviews.reduce(
+                (sum: number, review: any) => sum + review.rating,
+                0
+              ) / totalReviews
+            : 0;
+
+        return {
+          ...service,
+          averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+        };
+      })
+    );
+
+    return servicesWithAverageRating;
+  }
+
   // Find one service
   async findOne(id: number) {
     if (typeof id !== "number" || isNaN(id)) {
@@ -168,6 +199,22 @@ export class ServicesService {
       throw new NotFoundException(`Service #${id} not found`);
     }
     return updatedService;
+  }
+
+  // Get service with supplier
+  async getServiceWithSupplier(id: number) {
+    const service = await this.prismaService.service.findUnique({
+      where: { id },
+      include: {
+        supplier: true,
+      },
+    });
+
+    if (!service) {
+      throw new NotFoundException(`Service #${id} not found`);
+    }
+
+    return service;
   }
 
   // Remove a service
@@ -196,6 +243,15 @@ export class ServicesService {
     }
   }
 
+  // Get services by supplier
+  async getServicesBySupplier(supplierId: number) {
+    return this.prismaService.service.findMany({
+      where: {
+        supplierId,
+      },
+    });
+  }
+
   // Check dependencies before service deletion
   private async checkServiceDependencies(serviceId: number) {
     const reviews = await this.prismaService.review.findMany({
@@ -212,6 +268,25 @@ export class ServicesService {
   // Public method to get service dependencies (used by controller)
   async getServiceDependencies(serviceId: number) {
     return this.checkServiceDependencies(serviceId);
+  }
+
+  // Get reviews for a service
+  async getReviews(serviceId: number) {
+    return this.prismaService.review.findMany({
+      where: { serviceId },
+      include: {
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   // Find all services with bus info (temporarily simplified)
@@ -274,6 +349,57 @@ export class ServicesService {
         hasPrev: page > 1,
       },
       stats: statsFormatted,
+    };
+  }
+
+  // Search services
+  async search(
+    name: string,
+    location: string,
+    startDate: Date,
+    endDate: Date,
+    page: number,
+    limit: number,
+  ) {
+    const skip = (page - 1) * limit;
+  
+    // Build the where clause
+    const where: any = {};
+  
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive',
+      };
+    }
+  
+    if (location) {
+      where.OR = [
+        { cityFrom: { contains: location, mode: 'insensitive' } },
+        { stateFrom: { contains: location, mode: 'insensitive' } },
+        { cityTo: { contains: location, mode: 'insensitive' } },
+        { stateTo: { contains: location, mode: 'insensitive' } },
+      ];
+    }
+  
+    // Get services with pagination
+    const [services, total] = await Promise.all([
+      this.prismaService.service.findMany({
+        where,
+        skip,
+        take: limit,
+      }),
+      this.prismaService.service.count({ where }),
+    ]);
+  
+    return {
+      data: services,
+      total,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 

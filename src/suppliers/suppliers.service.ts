@@ -28,7 +28,7 @@ export class SuppliersService {
     // Log quirúrgico para ver el valor y tipo de dto.userId
     console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
     // Log quirúrgico para ver los ids de los usuarios asociados
-    console.log('DEBUG supplier.users ids:', supplier.users.map((u: any) => u.id));
+    console.log('DEBUG supplier.User ids:', supplier.users.map((u: any) => u.id));
     // Asumimos que el primer usuario es el "dueño" (ajustar si hay lógica distinta)
     const user = supplier.users.find((u: any) => String(u.id) === String(dto.userId));
     if (!user) {
@@ -71,7 +71,7 @@ export class SuppliersService {
     // 4. Si fue aprobado, cambiar rol y notificar
     if (dto.action === SupplierApprovalAction.APPROVE) {
       // Actualiza el rol directamente con Prisma
-      await this.prismaService.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+      await this.prismaService.users.update({ where: { id: user.id }, data: { role: 'admin' } });
       await this.notificationsService.create({
         userId: user.id,
         title: '¡Ahora eres administrador!',
@@ -89,7 +89,7 @@ export class SuppliersService {
     // Total de servicios
     const totalServices = await this.prismaService.service.count();
     // Total de usuarios asociados a suppliers
-    const totalSupplierUsers = await this.prismaService.user.count({ where: { supplierId: { not: null } } });
+    const totalSupplierUsers = await this.prismaService.users.count({ where: { supplierId: { not: null } } });
     // Total de hotelServices y transportServices
     const totalHotelServices = await this.prismaService.service.count({ where: { serviceCategory: 'hotel' } });
     const totalTransportServices = await this.prismaService.service.count({ where: { serviceCategory: 'transport' } });
@@ -169,7 +169,7 @@ export class SuppliersService {
       // Usar userId del DTO si está disponible, si no buscar por email
       let userId = createSupplierDto.userId;
       if (!userId) {
-        const userAdmin = await this.prismaService.user.findFirst({
+        const userAdmin = await this.prismaService.users.findFirst({
           where: { email: createSupplierDto.contactEmail }
         });
         userId = userAdmin?.id;
@@ -245,7 +245,7 @@ export class SuppliersService {
         .map((s: any) => ({
           ...s,
           supplierId: s.id,
-          user: s.users && s.users.length > 0 ? s.users[0] : null
+          user: s.User && s.User.length > 0 ? s.User[0] : null
         }));
     }
     return allSuppliers;
@@ -286,10 +286,10 @@ export class SuppliersService {
       const supplier = await this.prismaService.supplier.findUnique({
         where: { id },
         include: {
-          services: true,
+          offeredServices: true,
           users: true,
-          transportServices: true,
-          hotelServices: true,
+          transportProvider: true,
+          hotelProvider: true,
         }
       });
 
@@ -300,21 +300,21 @@ export class SuppliersService {
       console.log('Supplier found:', {
         id: supplier.id,
         name: supplier.name,
-        servicesCount: supplier.services.length,
+        servicesCount: supplier.offeredServices.length,
         usersCount: supplier.users.length,
-        transportServicesCount: supplier.transportServices.length,
-        hotelServicesCount: supplier.hotelServices.length,
+        transportServicesCount: supplier.transportProvider.length,
+        hotelServicesCount: supplier.hotelProvider.length,
       });
 
       // Check for dependencies
       const totalDependencies = 
-        supplier.services.length + 
+        supplier.offeredServices.length + 
         supplier.users.length + 
-        supplier.transportServices.length + 
-        supplier.hotelServices.length;
+        supplier.transportProvider.length + 
+        supplier.hotelProvider.length;
 
       if (totalDependencies > 0) {
-        const errorMessage = `Cannot delete supplier "${supplier.name}". It has dependencies: ${supplier.services.length} services, ${supplier.users.length} users, ${supplier.transportServices.length} transport services, ${supplier.hotelServices.length} hotel services`;
+        const errorMessage = `Cannot delete supplier "${supplier.name}". It has dependencies: ${supplier.offeredServices.length} services, ${supplier.users.length} users, ${supplier.transportProvider.length} transport services, ${supplier.hotelProvider.length} hotel services`;
         console.error(errorMessage);
         throw new ConflictException(errorMessage);
       }
@@ -441,10 +441,10 @@ export class SuppliersService {
     const supplier = await this.prismaService.supplier.findUnique({
       where: { id },
       include: {
-        services: true,
+        offeredServices: true,
         users: true,
-        transportServices: true,
-        hotelServices: true,
+        transportProvider: true,
+        hotelProvider: true,
       }
     });
     if (!supplier) {
@@ -455,21 +455,21 @@ export class SuppliersService {
         id: supplier.id,
         name: supplier.name
       },
-      services: supplier.services,
+      services: supplier.offeredServices,
       users: supplier.users,
-      transportServices: supplier.transportServices,
-      hotelServices: supplier.hotelServices,
+      transportServices: supplier.transportProvider,
+      hotelServices: supplier.hotelProvider,
       canDelete: (
-        supplier.services.length === 0 &&
+        supplier.offeredServices.length === 0 &&
         supplier.users.length === 0 &&
-        supplier.transportServices.length === 0 &&
-        supplier.hotelServices.length === 0
+        supplier.transportProvider.length === 0 &&
+        supplier.hotelProvider.length === 0
       ),
       totalDependencies: (
-        supplier.services.length +
+        supplier.offeredServices.length +
         supplier.users.length +
-        supplier.transportServices.length +
-        supplier.hotelServices.length
+        supplier.transportProvider.length +
+        supplier.hotelProvider.length
       )
     };
     return dependencies;

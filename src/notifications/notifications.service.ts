@@ -9,8 +9,11 @@ export class NotificationsService {
 
   // CREATE - Crear notificación
   async create(createNotificationDto: CreateNotificationDto) {
-    return this.prismaService.notification.create({
-      data: createNotificationDto,
+    return await this.prismaService.notification.create({
+      data: {
+        ...createNotificationDto,
+        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      },
       include: {
         user: {
           select: { id: true, name: true, email: true }
@@ -88,9 +91,23 @@ export class NotificationsService {
     });
   }
 
-  // UPDATE - Marcar como leída
+  // UPDATE - Marcar una notificación como leída
   async markAsRead(id: string) {
-    return this.update(id, { isRead: true, readAt: new Date().toISOString() });
+    // Verificar que existe
+    await this.findOne(id);
+
+    return this.prismaService.notification.update({
+      where: { id },
+      data: {
+        isRead: true,
+        readAt: new Date()
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true }
+        }
+      }
+    });
   }
 
   // UPDATE - Marcar todas como leídas para un usuario

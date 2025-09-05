@@ -11,8 +11,9 @@ export class PlannersService {
   // 🔒 Crear planner (privado por defecto)
   async createPlanner(userId: string, createPlannerDto: CreatePlannerDto) {
     try {
-      const planner = await this.prisma.travel_planners.create({
+      const planner = await this.prisma.travelPlanner.create({
         data: {
+          id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
           userId,
           name: createPlannerDto.name,
           destination: createPlannerDto.destination,
@@ -23,21 +24,8 @@ export class PlannersService {
           shareCode: createPlannerDto.shareCode,
           totalMXN: 0,
           totalAxo: 0,
-        },
-        include: {
-          items: {
-            include: {
-              service: true,
-              product: true,
-            },
-          },
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       });
 
@@ -49,22 +37,9 @@ export class PlannersService {
 
   // 🔍 Obtener planners del usuario
   async getPlannersByUser(userId: string) {
-    const planners = await this.prisma.travel_planners.findMany({
+    const planners = await this.prisma.travelPlanner.findMany({
       where: {
         userId,
-      },
-      include: {
-        items: {
-          include: {
-            service: true,
-            product: true,
-          },
-        },
-        _count: {
-          select: {
-            items: true,
-          },
-        },
       },
       orderBy: {
         updatedAt: 'desc',
@@ -75,30 +50,17 @@ export class PlannersService {
   }
 
   // 📋 Obtener planner específico
-  async getPlannerById(id: string, userId: string) {
-    const planner = await this.prisma.travel_planners.findFirst({
+  async getPlannerById(id: string, userId: string, includeItems: boolean = false) {
+    const planner = await this.prisma.travelPlanner.findFirst({
       where: {
         id,
         userId, // 🔒 Solo el propietario puede ver sus planners
       },
-      include: {
-        items: {
-          include: {
-            service: true,
-            product: true,
-          },
-          orderBy: {
-            createdAt: 'asc',
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
+      ...(includeItems && {
+        include: {
+          PlannerItem: true,
+        }
+      })
     });
 
     if (!planner) {
@@ -111,7 +73,7 @@ export class PlannersService {
   // ✏️ Actualizar planner
   async updatePlanner(id: string, userId: string, updatePlannerDto: UpdatePlannerDto) {
     // Verificar que el planner existe y pertenece al usuario
-    const existingPlanner = await this.prisma.travel_planners.findFirst({
+    const existingPlanner = await this.prisma.travelPlanner.findFirst({
       where: { id, userId },
     });
 
@@ -120,29 +82,21 @@ export class PlannersService {
     }
 
     try {
-      const updatedPlanner = await this.prisma.travel_planners.update({
+      const updated = await this.prisma.travelPlanner.update({
         where: { id },
         data: {
           name: updatePlannerDto.name,
           destination: updatePlannerDto.destination,
-          startDate: updatePlannerDto.startDate ? new Date(updatePlannerDto.startDate) : undefined,
-          endDate: updatePlannerDto.endDate ? new Date(updatePlannerDto.endDate) : undefined,
+          startDate: updatePlannerDto.startDate ? new Date(updatePlannerDto.startDate) : null,
+          endDate: updatePlannerDto.endDate ? new Date(updatePlannerDto.endDate) : null,
           status: updatePlannerDto.status,
           isPublic: updatePlannerDto.isPublic,
           shareCode: updatePlannerDto.shareCode,
           updatedAt: new Date(),
         },
-        include: {
-          items: {
-            include: {
-              service: true,
-              product: true,
-            },
-          },
-        },
       });
 
-      return updatedPlanner;
+      return updated;
     } catch (error) {
       throw new BadRequestException('Error updating planner: ' + ((error as any).message || error));
     }
@@ -151,7 +105,7 @@ export class PlannersService {
   // 🗑️ Eliminar planner
   async deletePlanner(id: string, userId: string) {
     // Verificar que el planner existe y pertenece al usuario
-    const existingPlanner = await this.prisma.travel_planners.findFirst({
+    const existingPlanner = await this.prisma.travelPlanner.findFirst({
       where: { id, userId },
     });
 
@@ -160,7 +114,7 @@ export class PlannersService {
     }
 
     try {
-      await this.prisma.travel_planners.delete({
+      await this.prisma.travelPlanner.delete({
         where: { id },
       });
 
@@ -173,7 +127,7 @@ export class PlannersService {
   // ➕ Agregar item al planner
   async addItemToPlanner(addItemDto: AddItemToPlannerDto, userId: string) {
     // Verificar que el planner existe y pertenece al usuario
-    const planner = await this.prisma.travel_planners.findFirst({
+    const planner = await this.prisma.travelPlanner.findFirst({
       where: {
         id: addItemDto.plannerId,
         userId,
@@ -190,8 +144,9 @@ export class PlannersService {
     }
 
     try {
-      const item = await this.prisma.planner_items.create({
+      const item = await this.prisma.plannerItem.create({
         data: {
+          id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
           plannerId: addItemDto.plannerId,
           serviceId: addItemDto.serviceId,
           productId: addItemDto.productId,
@@ -200,11 +155,7 @@ export class PlannersService {
           priceAxo: addItemDto.priceAxo,
           selectedDate: addItemDto.selectedDate ? new Date(addItemDto.selectedDate) : null,
           notes: addItemDto.notes,
-        },
-        include: {
-          service: true,
-          product: true,
-          planner: true,
+          createdAt: new Date(),
         },
       });
 
@@ -220,15 +171,13 @@ export class PlannersService {
   // 🗑️ Remover item del planner
   async removeItemFromPlanner(itemId: string, userId: string) {
     // Verificar que el item existe y el planner pertenece al usuario
-    const item = await this.prisma.planner_items.findFirst({
+    const item = await this.prisma.plannerItem.findFirst({
       where: {
         id: itemId,
-        planner: {
-          userId,
-        },
+        plannerId: userId,
       },
       include: {
-        planner: true,
+        TravelPlanner: true,
       },
     });
 
@@ -237,7 +186,7 @@ export class PlannersService {
     }
 
     try {
-      await this.prisma.planner_items.delete({
+      await this.prisma.plannerItem.delete({
         where: { id: itemId },
       });
 
@@ -252,14 +201,14 @@ export class PlannersService {
 
   // 🔄 Actualizar totales del planner
   private async updatePlannerTotals(plannerId: string) {
-    const items = await this.prisma.planner_items.findMany({
+    const items = await this.prisma.plannerItem.findMany({
       where: { plannerId },
     });
 
     const totalMXN = items.reduce((sum: number, item: any) => sum + (item.priceMXN * item.quantity), 0);
     const totalAxo = items.reduce((sum: number, item: any) => sum + ((item.priceAxo || 0) * item.quantity), 0);
 
-    await this.prisma.travel_planners.update({
+    await this.prisma.travelPlanner.update({
       where: { id: plannerId },
       data: {
         totalMXN,
@@ -271,9 +220,9 @@ export class PlannersService {
 
   // 📊 Obtener estadísticas del planner
   async getPlannerStats(id: string, userId: string) {
-    const planner = await this.getPlannerById(id, userId);
+    const planner = await this.getPlannerById(id, userId, true);
     
-    const totalItems = planner.items?.length || 0;
+    const totalItems = (planner as any).PlannerItem?.length || 0;
     const totalMXN = planner.totalMXN;
     const totalAxo = planner.totalAxo;
     
@@ -283,7 +232,7 @@ export class PlannersService {
       : 0;
 
     // Categorizar items por fecha
-    const itemsByDate = (planner.items || []).reduce((acc: Record<string, any[]>, item: any) => {
+    const itemsByDate = ((planner as any).PlannerItem || []).reduce((acc: Record<string, any[]>, item: any) => {
       if (item.selectedDate) {
         const dateKey = item.selectedDate.toISOString().split('T')[0];
         if (!acc[dateKey]) acc[dateKey] = [];
@@ -299,9 +248,8 @@ export class PlannersService {
       daysPlanned: daysDifference,
       itemsByDate: Object.keys(itemsByDate).map(date => ({
         date,
-        items: itemsByDate[date],
-        totalCost: itemsByDate[date].reduce((sum: number, item: any) => sum + (item.priceMXN * item.quantity), 0),
-      })),
+        items: itemsByDate[date]
+      }))
     };
   }
 }
