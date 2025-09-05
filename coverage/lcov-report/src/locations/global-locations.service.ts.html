@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">44% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>11/25</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>6/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">47.36% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>9/19</span>
             </div>
         
             
@@ -107,58 +107,58 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { Injectable, NotFoundException } from '@nestjs/common';</span>
-<span class="cstat-no" title="statement not covered" >import { PrismaService } from 'src/prisma/prisma.service';</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGlobalLocationDto } from './dto/create-global-location.dto';
 import { UpdateGlobalLocationDto } from './dto/update-global-location.dto';
 &nbsp;
 @Injectable()
-export <span class="cstat-no" title="statement not covered" >class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >GlobalLocationsService </span>{</span></span>
-<span class="fstat-no" title="function not covered" >  constructor(private <span class="cstat-no" title="statement not covered" >p</span>risma: P</span>rismaService) {}
+export class GlobalLocationsService {
+  constructor(private prisma: PrismaService) {}
 &nbsp;
   // Helper function to convert BigInt to number
   private <span class="fstat-no" title="function not covered" >transformBigInt(</span>obj: any): any {
@@ -168,29 +168,29 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
 <span class="cstat-no" title="statement not covered" >    return obj;</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  create(</span>createDto: CreateGlobalLocationDto) {
-<span class="cstat-no" title="statement not covered" >    return this.prisma.global_locations.create({ data: createDto }).then(this.transformBigInt);</span>
+  create(createDto: CreateGlobalLocationDto) {
+    return this.prisma.globalLocations.create({ data: createDto }).then(this.transformBigInt);
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  async </span>findAll() {
-    const locations = <span class="cstat-no" title="statement not covered" >await this.prisma.global_locations.findMany();</span>
+  async findAll() {
+    const locations = await this.prisma.globalLocations.findMany();
 <span class="cstat-no" title="statement not covered" >    return locations.map(<span class="fstat-no" title="function not covered" >(l</span>ocation: any) =&gt; <span class="cstat-no" title="statement not covered" >this.transformBigInt(location))</span>;</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  async </span>findOne(id: number) {
-    const location = <span class="cstat-no" title="statement not covered" >await this.prisma.global_locations.findUnique({ where: { id } });</span>
+  async findOne(id: number) {
+    const location = await this.prisma.globalLocations.findUnique({ where: { id } });
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!location) <span class="cstat-no" title="statement not covered" >throw new NotFoundException(`Location #${id} not found`);</span></span>
 <span class="cstat-no" title="statement not covered" >    return this.transformBigInt(location);</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  async </span>update(id: number, updateDto: UpdateGlobalLocationDto) {
-    const updated = <span class="cstat-no" title="statement not covered" >await this.prisma.global_locations.update({ where: { id }, data: updateDto });</span>
+  async update(id: number, updateDto: UpdateGlobalLocationDto) {
+    const updated = await this.prisma.globalLocations.update({ where: { id }, data: updateDto });
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!updated) <span class="cstat-no" title="statement not covered" >throw new NotFoundException(`Location #${id} not found`);</span></span>
 <span class="cstat-no" title="statement not covered" >    return this.transformBigInt(updated);</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  async </span>remove(id: number) {
-    const deleted = <span class="cstat-no" title="statement not covered" >await this.prisma.global_locations.delete({ where: { id } });</span>
+  async remove(id: number) {
+    const deleted = await this.prisma.globalLocations.delete({ where: { id } });
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!deleted) <span class="cstat-no" title="statement not covered" >throw new NotFoundException(`Location #${id} not found`);</span></span>
 <span class="cstat-no" title="statement not covered" >    return deleted;</span>
   }
@@ -202,7 +202,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-17T13:58:32.052Z
+                at 2025-09-05T21:15:12.010Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

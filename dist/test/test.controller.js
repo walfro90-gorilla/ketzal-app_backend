@@ -25,58 +25,73 @@ let TestController = class TestController {
                 where: { email: 'test@ketzal.com' },
                 update: {},
                 create: {
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     email: 'test@ketzal.com',
                     name: 'Usuario de Prueba',
                     password: 'hashedpassword123',
                     role: 'user',
                     referralCode: 'TEST123',
-                    axoCoinsEarned: 50
+                    axoCoinsEarned: 50,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 },
             });
-            const wallet = await this.prisma.wallets.upsert({
+            const wallet = await this.prisma.wallet.upsert({
                 where: { userId: user.id },
                 update: {},
                 create: {
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     userId: user.id,
                     balanceMXN: 1000.0,
                     balanceAxo: 500.0,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 },
             });
             const transactions = await Promise.all([
-                this.prisma.wallet_transactions.create({
+                this.prisma.walletTransaction.create({
                     data: {
+                        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
                         type: 'DEPOSIT',
                         amountMXN: 1000.0,
                         description: 'Depósito inicial de bienvenida',
                         reference: 'WELCOME-001',
+                        createdAt: new Date(),
                     },
                 }),
-                this.prisma.wallet_transactions.create({
+                this.prisma.walletTransaction.create({
                     data: {
+                        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
                         type: 'REWARD',
                         amountAxo: 500.0,
-                        description: 'Recompensa por registro',
-                        reference: 'REWARD-001',
+                        description: 'Regalo de bienvenida AXO Coins',
+                        reference: 'WELCOME-AXO-001',
+                        createdAt: new Date(),
                     },
                 }),
-                this.prisma.wallet_transactions.create({
+                this.prisma.walletTransaction.create({
                     data: {
+                        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
                         type: 'PURCHASE',
-                        amountMXN: 250.0,
-                        description: 'Compra de tour a Teotihuacán',
-                        reference: 'TOUR-001',
+                        amountMXN: -200.0,
+                        amountAxo: -100.0,
+                        description: 'Compra de servicio turístico',
+                        reference: 'SERVICE-001',
+                        createdAt: new Date(),
                     },
                 }),
-                this.prisma.wallet_transactions.create({
+                this.prisma.walletTransaction.create({
                     data: {
+                        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
-                        type: 'TRANSFER_RECEIVED',
-                        amountMXN: 100.0,
-                        description: 'Transferencia de amigo',
-                        reference: 'TRANSFER-001',
+                        type: 'REFUND',
+                        amountMXN: 50.0,
+                        description: 'Reembolso por cancelación',
+                        reference: 'REFUND-001',
+                        createdAt: new Date(),
                     },
                 }),
             ]);
@@ -98,14 +113,14 @@ let TestController = class TestController {
     }
     async getTestWallet(userId) {
         try {
-            const wallet = await this.prisma.wallets.findUnique({
+            const wallet = await this.prisma.wallet.findUnique({
                 where: { userId },
                 include: {
-                    transactions: {
+                    WalletTransaction: {
                         orderBy: { createdAt: 'desc' },
                         take: 10,
                     },
-                    user: {
+                    Users: {
                         select: {
                             id: true,
                             name: true,
@@ -129,7 +144,7 @@ let TestController = class TestController {
     }
     async addTestFunds(userId, { amount, currency }) {
         try {
-            const wallet = await this.prisma.wallets.findUnique({
+            const wallet = await this.prisma.wallet.findUnique({
                 where: { userId },
             });
             if (!wallet) {
@@ -138,12 +153,12 @@ let TestController = class TestController {
             const updateData = currency === 'MXN'
                 ? { balanceMXN: { increment: amount } }
                 : { balanceAxo: { increment: amount } };
-            const updatedWallet = await this.prisma.wallets.update({
+            const updatedWallet = await this.prisma.wallet.update({
                 where: { userId },
-                data: updateData,
+                data: Object.assign(Object.assign({}, updateData), { updatedAt: new Date() }),
             });
-            await this.prisma.wallet_transactions.create({
-                data: Object.assign(Object.assign({ walletId: wallet.id, type: 'DEPOSIT' }, (currency === 'MXN' ? { amountMXN: amount } : { amountAxo: amount })), { description: `Depósito de prueba de ${amount} ${currency}`, reference: `TEST-${Date.now()}` }),
+            await this.prisma.walletTransaction.create({
+                data: Object.assign(Object.assign({ id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), walletId: wallet.id, type: 'DEPOSIT', createdAt: new Date() }, (currency === 'MXN' ? { amountMXN: amount } : { amountAxo: amount })), { description: `Depósito de prueba de ${amount} ${currency}`, reference: `TEST-${Date.now()}` }),
             });
             return {
                 success: true,

@@ -2,20 +2,50 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class WalletService {
     private prisma;
     constructor(prisma: PrismaService);
-    getOrCreateWallet(userId: string): Promise<any>;
-    addFunds(userId: string, amountMXN: number, amountAxo: number, description?: string, paymentMethod?: string): Promise<any>;
+    getOrCreateWallet(userId: string): Promise<{
+        id: string;
+        userId: string;
+        balanceMXN: number;
+        balanceAxo: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    addFunds(userId: string, amountMXN: number, amountAxo: number, description?: string, paymentMethod?: string): Promise<{
+        id: string;
+        userId: string;
+        balanceMXN: number;
+        balanceAxo: number;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
     transferFunds(userId: string, recipientEmail: string, amountMXN: number, amountAxo: number, description?: string): Promise<any>;
     getTransactions(userId: string, limit: number, offset: number): Promise<{
-        transactions: any;
+        transactions: {
+            id: string;
+            createdAt: Date;
+            walletId: string;
+            type: import(".prisma/client").$Enums.WalletTransactionType;
+            amountMXN: number | null;
+            amountAxo: number | null;
+            description: string;
+            reference: string | null;
+        }[];
         pagination: {
-            total: any;
+            total: number;
             limit: number;
             offset: number;
             hasMore: boolean;
         };
     }>;
     convertCurrency(userId: string, fromCurrency: 'MXN' | 'AXO', toCurrency: 'MXN' | 'AXO', amount: number): Promise<{
-        wallet: any;
+        wallet: {
+            id: string;
+            userId: string;
+            balanceMXN: number;
+            balanceAxo: number;
+            createdAt: Date;
+            updatedAt: Date;
+        };
         conversion: {
             from: {
                 currency: "MXN" | "AXO";

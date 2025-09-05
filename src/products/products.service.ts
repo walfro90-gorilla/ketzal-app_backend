@@ -26,15 +26,18 @@ export class ProductsService {
           images: createProductDto.images ? createProductDto.images as any : undefined,
           specifications: createProductDto.specifications ? createProductDto.specifications as any : undefined,
           tags: createProductDto.tags ? createProductDto.tags as any : undefined,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         }
-      })
+      });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         const prismaError = error as PrismaClientKnownRequestError;
         if (prismaError.code === 'P2002') {
-          throw new ConflictException(`Product with name ${createProductDto.name} already exists`)
+          throw new ConflictException(`Product with name ${createProductDto.name} already exists`);
         }
       }
+      throw error;
     }
   }
 

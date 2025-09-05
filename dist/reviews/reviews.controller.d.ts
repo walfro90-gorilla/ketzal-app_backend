@@ -5,6 +5,16 @@ export declare class ReviewsController {
     private readonly reviewsService;
     constructor(reviewsService: ReviewsService);
     create(createReviewDto: CreateReviewDto): import(".prisma/client").Prisma.Prisma__ReviewClient<{
+        Service: {
+            name: string;
+            id: number;
+        };
+        User: {
+            name: string | null;
+            id: string;
+            image: string | null;
+        };
+    } & {
         createdAt: Date;
         id: number;
         serviceId: number;
@@ -44,14 +54,20 @@ export declare class ReviewsController {
         rating: number;
         comment: string;
     }>;
-    getReviews(serviceId: string): import(".prisma/client").Prisma.PrismaPromise<{
+    getReviews(serviceId: string): import(".prisma/client").Prisma.PrismaPromise<({
+        User: {
+            name: string | null;
+            id: string;
+            image: string | null;
+        };
+    } & {
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
         rating: number;
         comment: string;
-    }[]>;
+    })[]>;
     getReviewStats(serviceId: string): Promise<{
         totalReviews: number;
         averageRating: number;

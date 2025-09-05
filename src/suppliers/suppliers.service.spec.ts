@@ -12,7 +12,7 @@ describe('SuppliersService', () => {
   let notificationsService: NotificationsService;
 
   const mockPrismaService = {
-    suppliers: {
+    supplier: {
       findUnique: jest.fn(),
       update: jest.fn(),
       count: jest.fn(),
@@ -21,10 +21,10 @@ describe('SuppliersService', () => {
       findMany: jest.fn(),
       delete: jest.fn(),
     },
-    services: {
+    service: {
       count: jest.fn(),
     },
-    users: {
+    user: {
       count: jest.fn(),
       update: jest.fn(),
       findFirst: jest.fn(),
@@ -66,10 +66,10 @@ describe('SuppliersService', () => {
     it('should approve a supplier, change user role, and send notifications', async () => {
       const supplierId = 1;
       const userId = 10;
-      const supplier = { id: supplierId, users: [{ id: userId }], extras: {} };
-      mockPrismaService.suppliers.findUnique.mockResolvedValue(supplier);
-      mockPrismaService.suppliers.update.mockResolvedValue({});
-      mockPrismaService.users.update.mockResolvedValue({});
+      const supplier = { id: supplierId, User: [{ id: userId }], extras: {} };
+      mockPrismaService.supplier.findUnique.mockResolvedValue(supplier);
+      mockPrismaService.supplier.update.mockResolvedValue({});
+      mockPrismaService.user.update.mockResolvedValue({});
 
       const result = await service.approveOrDeclineSupplier(supplierId, {
         userId: String(userId),
@@ -77,7 +77,7 @@ describe('SuppliersService', () => {
       });
 
       expect(result).toEqual({ success: true });
-      expect(prisma.suppliers.update).toHaveBeenCalledWith({
+      expect(prisma.supplier.update).toHaveBeenCalledWith({
         where: { id: supplierId },
         data: { extras: { isApproved: true, isPending: false } },
       });
@@ -88,8 +88,8 @@ describe('SuppliersService', () => {
     it('should decline a supplier and send a notification', async () => {
         const supplierId = 1;
         const userId = 10;
-        const supplier = { id: supplierId, users: [{ id: userId }], extras: {} };
-        mockPrismaService.suppliers.findUnique.mockResolvedValue(supplier);
+        const supplier = { id: supplierId, User: [{ id: userId }], extras: {} };
+        mockPrismaService.supplier.findUnique.mockResolvedValue(supplier);
   
         const result = await service.approveOrDeclineSupplier(supplierId, {
           userId: String(userId),
@@ -97,7 +97,7 @@ describe('SuppliersService', () => {
         });
   
         expect(result).toEqual({ success: true });
-        expect(prisma.suppliers.update).toHaveBeenCalledWith({
+        expect(prisma.supplier.update).toHaveBeenCalledWith({
           where: { id: supplierId },
           data: { extras: { isApproved: false, isPending: false } },
         });
@@ -107,9 +107,9 @@ describe('SuppliersService', () => {
 
   describe('getSupplierStats', () => {
     it('should return supplier statistics', async () => {
-      mockPrismaService.suppliers.count.mockResolvedValue(10);
-      mockPrismaService.services.count.mockResolvedValue(20);
-      mockPrismaService.users.count.mockResolvedValue(5);
+      mockPrismaService.supplier.count.mockResolvedValue(10);
+      mockPrismaService.service.count.mockResolvedValue(20);
+      mockPrismaService.user.count.mockResolvedValue(5);
 
       const stats = await service.getSupplierStats();
 
@@ -126,19 +126,19 @@ describe('SuppliersService', () => {
   describe('create', () => {
     it('should create a supplier', async () => {
       const dto = { name: 'Test Supplier', contactEmail: 'test@example.com' };
-      mockPrismaService.suppliers.findFirst.mockResolvedValue(null);
-      mockPrismaService.users.findFirst.mockResolvedValue({id: 1});
-      mockPrismaService.suppliers.create.mockResolvedValue({ id: 1, ...dto });
+      mockPrismaService.supplier.findFirst.mockResolvedValue(null);
+      mockPrismaService.user.findFirst.mockResolvedValue({id: 1});
+      mockPrismaService.supplier.create.mockResolvedValue({ id: 1, ...dto });
 
       const result = await service.create(dto);
 
       expect(result).toBeDefined();
-      expect(prisma.suppliers.create).toHaveBeenCalled();
+      expect(prisma.supplier.create).toHaveBeenCalled();
     });
 
     it('should throw a conflict exception if supplier name already exists', async () => {
         const dto = { name: 'Test Supplier', contactEmail: 'test@example.com' };
-        mockPrismaService.suppliers.findFirst.mockResolvedValue({ id: 1, ...dto });
+        mockPrismaService.supplier.findFirst.mockResolvedValue({ id: 1, ...dto });
   
         await expect(service.create(dto)).rejects.toThrow(ConflictException);
       });
@@ -147,7 +147,7 @@ describe('SuppliersService', () => {
   describe('findAll', () => {
     it('should return all suppliers', async () => {
       const suppliers = [{id: 1, name: 'test'}];
-      mockPrismaService.suppliers.findMany.mockResolvedValue(suppliers);
+      mockPrismaService.supplier.findMany.mockResolvedValue(suppliers);
       const result = await service.findAll();
       expect(result).toEqual(suppliers);
     });
@@ -156,13 +156,13 @@ describe('SuppliersService', () => {
   describe('findOne', () => {
     it('should return a supplier', async () => {
       const supplier = {id: 1, name: 'test'};
-      mockPrismaService.suppliers.findUnique.mockResolvedValue(supplier);
+      mockPrismaService.supplier.findUnique.mockResolvedValue(supplier);
       const result = await service.findOne(1);
       expect(result).toEqual(supplier);
     });
 
     it('should throw not found exception', async () => {
-      mockPrismaService.suppliers.findUnique.mockResolvedValue(null);
+      mockPrismaService.supplier.findUnique.mockResolvedValue(null);
       await expect(service.findOne(1)).rejects.toThrow(Error);
     });
   });
@@ -170,7 +170,7 @@ describe('SuppliersService', () => {
   describe('update', () => {
     it('should update a supplier', async () => {
       const supplier = {id: 1, name: 'test'};
-      mockPrismaService.suppliers.update.mockResolvedValue(supplier);
+      mockPrismaService.supplier.update.mockResolvedValue(supplier);
       const result = await service.update(1, {name: 'test'});
       expect(result).toEqual(supplier);
     });
@@ -181,30 +181,30 @@ describe('SuppliersService', () => {
       const supplier = {
         id: 1,
         name: 'Test Supplier',
-        services: [],
-        users: [],
-        transportServices: [],
-        hotelServices: [],
+        Service_Service_supplierIdToSupplier: [],
+        User: [],
+        Service_Service_transportProviderIDToSupplier: [],
+        Service_Service_hotelProviderIDToSupplier: [],
       };
-      mockPrismaService.suppliers.findUnique.mockResolvedValue(supplier);
-      mockPrismaService.suppliers.delete.mockResolvedValue(supplier);
+      mockPrismaService.supplier.findUnique.mockResolvedValue(supplier);
+      mockPrismaService.supplier.delete.mockResolvedValue(supplier);
 
       const result = await service.remove(1);
 
       expect(result.success).toBe(true);
-      expect(prisma.suppliers.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(prisma.supplier.delete).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
     it('should throw a conflict exception if supplier has dependencies', async () => {
         const supplier = {
           id: 1,
           name: 'Test Supplier',
-          services: [{id: 1}],
-          users: [],
-          transportServices: [],
-          hotelServices: [],
+          Service_Service_supplierIdToSupplier: [{id: 1}],
+          User: [],
+          Service_Service_transportProviderIDToSupplier: [],
+          Service_Service_hotelProviderIDToSupplier: [],
         };
-        mockPrismaService.suppliers.findUnique.mockResolvedValue(supplier);
+        mockPrismaService.supplier.findUnique.mockResolvedValue(supplier);
   
         await expect(service.remove(1)).rejects.toThrow(ConflictException);
       });

@@ -32,7 +32,7 @@ let SuppliersService = class SuppliersService {
         if (!supplier)
             throw new Error('Supplier not found');
         console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
-        console.log('DEBUG supplier.users ids:', supplier.users.map((u) => u.id));
+        console.log('DEBUG supplier.User ids:', supplier.users.map((u) => u.id));
         const user = supplier.users.find((u) => String(u.id) === String(dto.userId));
         if (!user) {
             console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map((u) => u.id));
@@ -74,7 +74,7 @@ let SuppliersService = class SuppliersService {
             type: notifType,
         });
         if (dto.action === supplier_approval_dto_1.SupplierApprovalAction.APPROVE) {
-            await this.prismaService.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+            await this.prismaService.users.update({ where: { id: user.id }, data: { role: 'admin' } });
             await this.notificationsService.create({
                 userId: user.id,
                 title: '¡Ahora eres administrador!',
@@ -87,7 +87,7 @@ let SuppliersService = class SuppliersService {
     async getSupplierStats() {
         const totalSuppliers = await this.prismaService.supplier.count();
         const totalServices = await this.prismaService.service.count();
-        const totalSupplierUsers = await this.prismaService.user.count({ where: { supplierId: { not: null } } });
+        const totalSupplierUsers = await this.prismaService.users.count({ where: { supplierId: { not: null } } });
         const totalHotelServices = await this.prismaService.service.count({ where: { serviceCategory: 'hotel' } });
         const totalTransportServices = await this.prismaService.service.count({ where: { serviceCategory: 'transport' } });
         return {
@@ -144,7 +144,7 @@ let SuppliersService = class SuppliersService {
             });
             let userId = createSupplierDto.userId;
             if (!userId) {
-                const userAdmin = await this.prismaService.user.findFirst({
+                const userAdmin = await this.prismaService.users.findFirst({
                     where: { email: createSupplierDto.contactEmail }
                 });
                 userId = userAdmin === null || userAdmin === void 0 ? void 0 : userAdmin.id;
@@ -211,7 +211,7 @@ let SuppliersService = class SuppliersService {
                 return (typeof extras === 'object' && extras !== null && 'isPending' in extras &&
                     extras.isPending === true);
             })
-                .map((s) => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.users && s.users.length > 0 ? s.users[0] : null })));
+                .map((s) => (Object.assign(Object.assign({}, s), { supplierId: s.id, user: s.User && s.User.length > 0 ? s.User[0] : null })));
         }
         return allSuppliers;
     }
@@ -244,10 +244,10 @@ let SuppliersService = class SuppliersService {
             const supplier = await this.prismaService.supplier.findUnique({
                 where: { id },
                 include: {
-                    services: true,
+                    offeredServices: true,
                     users: true,
-                    transportServices: true,
-                    hotelServices: true,
+                    transportProvider: true,
+                    hotelProvider: true,
                 }
             });
             if (!supplier) {
@@ -256,17 +256,17 @@ let SuppliersService = class SuppliersService {
             console.log('Supplier found:', {
                 id: supplier.id,
                 name: supplier.name,
-                servicesCount: supplier.services.length,
+                servicesCount: supplier.offeredServices.length,
                 usersCount: supplier.users.length,
-                transportServicesCount: supplier.transportServices.length,
-                hotelServicesCount: supplier.hotelServices.length,
+                transportServicesCount: supplier.transportProvider.length,
+                hotelServicesCount: supplier.hotelProvider.length,
             });
-            const totalDependencies = supplier.services.length +
+            const totalDependencies = supplier.offeredServices.length +
                 supplier.users.length +
-                supplier.transportServices.length +
-                supplier.hotelServices.length;
+                supplier.transportProvider.length +
+                supplier.hotelProvider.length;
             if (totalDependencies > 0) {
-                const errorMessage = `Cannot delete supplier "${supplier.name}". It has dependencies: ${supplier.services.length} services, ${supplier.users.length} users, ${supplier.transportServices.length} transport services, ${supplier.hotelServices.length} hotel services`;
+                const errorMessage = `Cannot delete supplier "${supplier.name}". It has dependencies: ${supplier.offeredServices.length} services, ${supplier.users.length} users, ${supplier.transportProvider.length} transport services, ${supplier.hotelProvider.length} hotel services`;
                 console.error(errorMessage);
                 throw new common_1.ConflictException(errorMessage);
             }
@@ -362,10 +362,10 @@ let SuppliersService = class SuppliersService {
         const supplier = await this.prismaService.supplier.findUnique({
             where: { id },
             include: {
-                services: true,
+                offeredServices: true,
                 users: true,
-                transportServices: true,
-                hotelServices: true,
+                transportProvider: true,
+                hotelProvider: true,
             }
         });
         if (!supplier) {
@@ -376,18 +376,18 @@ let SuppliersService = class SuppliersService {
                 id: supplier.id,
                 name: supplier.name
             },
-            services: supplier.services,
+            services: supplier.offeredServices,
             users: supplier.users,
-            transportServices: supplier.transportServices,
-            hotelServices: supplier.hotelServices,
-            canDelete: (supplier.services.length === 0 &&
+            transportServices: supplier.transportProvider,
+            hotelServices: supplier.hotelProvider,
+            canDelete: (supplier.offeredServices.length === 0 &&
                 supplier.users.length === 0 &&
-                supplier.transportServices.length === 0 &&
-                supplier.hotelServices.length === 0),
-            totalDependencies: (supplier.services.length +
+                supplier.transportProvider.length === 0 &&
+                supplier.hotelProvider.length === 0),
+            totalDependencies: (supplier.offeredServices.length +
                 supplier.users.length +
-                supplier.transportServices.length +
-                supplier.hotelServices.length)
+                supplier.transportProvider.length +
+                supplier.hotelProvider.length)
         };
         return dependencies;
     }

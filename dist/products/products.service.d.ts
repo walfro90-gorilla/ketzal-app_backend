@@ -19,7 +19,7 @@ export declare class ProductsService {
         stock: number;
         category: string | null;
         specifications: Prisma.JsonValue | null;
-    } | undefined>;
+    }>;
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
     update(id: number, updateProductDto: UpdateProductDto): Promise<{

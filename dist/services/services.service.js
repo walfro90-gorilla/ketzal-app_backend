@@ -40,10 +40,10 @@ let ServicesService = class ServicesService {
             countryFrom,
             countryTo,
             supplier: { connect: { id: supplierId } },
-            supplierTransport: transportId
+            transportProvider: transportId
                 ? { connect: { id: transportId } }
                 : undefined,
-            supplierHotel: hotelId ? { connect: { id: hotelId } } : undefined,
+            hotelProvider: hotelId ? { connect: { id: hotelId } } : undefined,
             packs: packs ? packs.map((p) => (Object.assign({}, p))) : undefined,
             itinerary: itinerary ? itinerary.map((i) => (Object.assign({}, i))) : undefined,
             includes: includes ? [...includes] : undefined,
@@ -81,6 +81,21 @@ let ServicesService = class ServicesService {
         }));
         return servicesWithStats;
     }
+    async findAllWithAverageRating() {
+        const services = await this.prismaService.service.findMany();
+        const servicesWithAverageRating = await Promise.all(services.map(async (service) => {
+            const reviews = await this.prismaService.review.findMany({
+                where: { serviceId: service.id },
+                select: { rating: true },
+            });
+            const totalReviews = reviews.length;
+            const averageRating = totalReviews > 0
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+                : 0;
+            return Object.assign(Object.assign({}, service), { averageRating: Math.round(averageRating * 10) / 10 });
+        }));
+        return servicesWithAverageRating;
+    }
     async findOne(id) {
         if (typeof id !== "number" || isNaN(id)) {
             throw new common_1.NotFoundException("A valid service id must be provided");
@@ -103,6 +118,18 @@ let ServicesService = class ServicesService {
         }
         return updatedService;
     }
+    async getServiceWithSupplier(id) {
+        const service = await this.prismaService.service.findUnique({
+            where: { id },
+            include: {
+                supplier: true,
+            },
+        });
+        if (!service) {
+            throw new common_1.NotFoundException(`Service #${id} not found`);
+        }
+        return service;
+    }
     async remove(id) {
         await this.findOne(id);
         const dependencies = await this.checkServiceDependencies(id);
@@ -121,6 +148,13 @@ let ServicesService = class ServicesService {
             throw new common_1.NotFoundException(`Service #${id} not found`);
         }
     }
+    async getServicesBySupplier(supplierId) {
+        return this.prismaService.service.findMany({
+            where: {
+                supplierId,
+            },
+        });
+    }
     async checkServiceDependencies(serviceId) {
         const reviews = await this.prismaService.review.findMany({
             where: { serviceId },
@@ -133,6 +167,23 @@ let ServicesService = class ServicesService {
     }
     async getServiceDependencies(serviceId) {
         return this.checkServiceDependencies(serviceId);
+    }
+    async getReviews(serviceId) {
+        return this.prismaService.review.findMany({
+            where: { serviceId },
+            include: {
+                User: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
     }
     async findAllWithBusInfo(filters) {
         const { page, limit, search } = filters;
@@ -175,6 +226,41 @@ let ServicesService = class ServicesService {
                 hasPrev: page > 1,
             },
             stats: statsFormatted,
+        };
+    }
+    async search(name, location, startDate, endDate, page, limit) {
+        const skip = (page - 1) * limit;
+        const where = {};
+        if (name) {
+            where.name = {
+                contains: name,
+                mode: 'insensitive',
+            };
+        }
+        if (location) {
+            where.OR = [
+                { cityFrom: { contains: location, mode: 'insensitive' } },
+                { stateFrom: { contains: location, mode: 'insensitive' } },
+                { cityTo: { contains: location, mode: 'insensitive' } },
+                { stateTo: { contains: location, mode: 'insensitive' } },
+            ];
+        }
+        const [services, total] = await Promise.all([
+            this.prismaService.service.findMany({
+                where,
+                skip,
+                take: limit,
+            }),
+            this.prismaService.service.count({ where }),
+        ]);
+        return {
+            data: services,
+            total,
+            pagination: {
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
         };
     }
     async getBusTransportConfig(id) {

@@ -8,7 +8,13 @@ export class CategoriesService {
   constructor(private prismaService: PrismaService) {}
 
   create(createCategoryDto: CreateCategoryDto) {
-    return this.prismaService.categories.create({ data: createCategoryDto });
+    return this.prismaService.categories.create({ 
+      data: {
+        ...createCategoryDto,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } 
+    });
   }
 
   findAll() {
@@ -22,7 +28,13 @@ export class CategoriesService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const updated = await this.prismaService.categories.update({ where: { id }, data: updateCategoryDto });
+    const updated = await this.prismaService.categories.update({ 
+      where: { id }, 
+      data: {
+        ...updateCategoryDto,
+        updatedAt: new Date(),
+      } 
+    });
     if (!updated) throw new NotFoundException(`Category #${id} not found`);
     return updated;
   }

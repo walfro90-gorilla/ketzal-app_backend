@@ -20,11 +20,14 @@ export class UsersService {
   // Create method
   async create(createUserDto: CreateUserDto) {
     try {
-      return await this.prismaService.user.create({
+      return await this.prismaService.users.create({
         data: {
+          id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
           name: createUserDto.name,
           email: createUserDto.email,
           password: createUserDto.password,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           // Add other fields as needed
         }
       })
@@ -35,11 +38,11 @@ export class UsersService {
           throw new ConflictException(`User with email ${createUserDto.email} already exists`)
         }
       }
-      
+      throw error;
     }
   }  // Find all method
   findAll() {
-    return this.prismaService.user.findMany({
+    return this.prismaService.users.findMany({
       include: {
         supplier: {
           select: {
@@ -48,15 +51,12 @@ export class UsersService {
             contactEmail: true
           }
         }
-      },
-      orderBy: {
-        createdAt: 'desc'
       }
     })
   }  // Find one method
   async findOne(id: string) {
-    const userFound = await this.prismaService.user.findUnique({
-      where: { id: id },
+    const userFound = await this.prismaService.users.findUnique({
+      where: { id },
       include: {
         supplier: {
           select: {
@@ -75,8 +75,8 @@ export class UsersService {
   // Update method  
   async update(id: string, updateUserDto: UpdateUserDto ) {
     // Obtener el usuario antes de actualizar para comparar el estado de emailVerified
-    const prevUser = await this.prismaService.user.findUnique({ where: { id } });
-    const userFound = await this.prismaService.user.update({
+    const prevUser = await this.prismaService.users.findUnique({ where: { id } });
+    const userFound = await this.prismaService.users.update({
       where: { id: id },
       data: updateUserDto
     });
@@ -116,7 +116,7 @@ export class UsersService {
           type: NotificationType.INFO,
         });
         // Notificación para todos los superadmins
-        const superadmins = await this.prismaService.user.findMany({ where: { role: 'superadmin' } });
+        const superadmins = await this.prismaService.users.findMany({ where: { role: 'superadmin' } });
         for (const superadmin of superadmins) {
           await this.notificationsService.create({
             userId: superadmin.id,
@@ -132,7 +132,7 @@ export class UsersService {
   // Remove method
   async remove(id: string) {
     try {
-      return await this.prismaService.user.delete({
+      return await this.prismaService.users.delete({
         where: {
           id: id,
         },
@@ -172,7 +172,7 @@ export class UsersService {
       }
     }
 
-    return this.prismaService.user.findMany({
+    return this.prismaService.users.findMany({
       where,
       include: {
         supplier: {

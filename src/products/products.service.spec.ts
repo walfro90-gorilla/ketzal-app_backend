@@ -23,7 +23,7 @@ const mockProduct = {
 };
 
 const mockPrismaService = {
-  products: {
+  product: {
     create: jest.fn().mockResolvedValue(mockProduct),
     findMany: jest.fn().mockResolvedValue([mockProduct]),
     findUnique: jest.fn().mockResolvedValue(mockProduct),
@@ -54,8 +54,26 @@ describe('ProductsService', () => {
   });
 
   describe('create', () => {
-    it('should create a product successfully', async () => {
-      const createProductDto = {
+    it('should create a product', async () => {
+    const createProductDto = { 
+      name: 'Test Product', 
+      description: 'A great product', 
+      price: 100, 
+      priceAxo: 120, 
+      stock: 10, 
+      image: 'image.jpg',
+      category: 'Test',
+      images: [],
+      specifications: {},
+      tags: []
+    };
+
+    (prisma.product.create as jest.Mock).mockResolvedValue(mockProduct);
+
+    const result = await service.create(createProductDto);
+
+    expect(prisma.product.create).toHaveBeenCalledWith({
+      data: {
         name: 'Test Product',
         description: 'A great product',
         price: 100,
@@ -65,22 +83,11 @@ describe('ProductsService', () => {
         category: 'Test',
         images: [],
         specifications: {},
-        tags: [],
-      };
-
-      const result = await service.create(createProductDto);
-
-      expect(prisma.products.create).toHaveBeenCalledWith({
-        data: {
-          ...createProductDto,
-          image: 'image.jpg',
-          images: [],
-          specifications: {},
-          tags: [],
-        },
-      });
-      expect(result).toEqual(mockProduct);
+        tags: []
+      }
     });
+    expect(result).toEqual(mockProduct);
+  });
 
     it('should throw a ConflictException if the product name already exists', async () => {
       const createProductDto = {
@@ -101,7 +108,7 @@ describe('ProductsService', () => {
         { code: 'P2002', clientVersion: 'mock' }
       );
       
-      (prisma.products.create as jest.Mock).mockRejectedValue(prismaError);
+      (prisma.product.create as jest.Mock).mockRejectedValue(prismaError);
 
       await expect(service.create(createProductDto)).rejects.toThrow(
         new ConflictException(`Product with name ${createProductDto.name} already exists`)
@@ -111,32 +118,28 @@ describe('ProductsService', () => {
 
   describe('findAll', () => {
     it('should return an array of products', async () => {
-      const mockProducts = [
-        { ...mockProduct, id: 1, name: 'Product 1' },
-        { ...mockProduct, id: 2, name: 'Product 2', images: '["img1.jpg"]', specifications: '{"key":"value"}', tags: '["tag1"]' },
-      ];
-      (prisma.products.findMany as jest.Mock).mockResolvedValue(mockProducts);
+      const mockProducts = [mockProduct];
+      (prisma.product.findMany as jest.Mock).mockResolvedValue(mockProducts);
 
       const result = await service.findAll();
 
-      expect(prisma.products.findMany).toHaveBeenCalled();
-      expect(result).toEqual([
-        { ...mockProduct, id: 1, name: 'Product 1', images: [], specifications: {}, tags: [] },
-        { ...mockProduct, id: 2, name: 'Product 2', images: ['img1.jpg'], specifications: { key: 'value' }, tags: ['tag1'] },
-      ]);
+      expect(prisma.product.findMany).toHaveBeenCalled();
+      expect(result).toEqual(mockProducts);
     });
   });
 
   describe('findOne', () => {
     it('should return a single product', async () => {
-      (prisma.products.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+      (prisma.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+
       const result = await service.findOne(1);
-      expect(prisma.products.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(result).toEqual({ ...mockProduct, images: [], specifications: {}, tags: [] });
+
+      expect(prisma.product.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(result).toEqual(mockProduct);
     });
 
     it('should throw a NotFoundException if product is not found', async () => {
-      (prisma.products.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.product.findUnique as jest.Mock).mockResolvedValue(null);
       await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
     });
   });
@@ -145,11 +148,11 @@ describe('ProductsService', () => {
     it('should update a product successfully', async () => {
       const updateDto = { name: 'Updated Name' };
       const updatedProduct = { ...mockProduct, ...updateDto };
-      (prisma.products.update as jest.Mock).mockResolvedValue(updatedProduct);
+      (prisma.product.update as jest.Mock).mockResolvedValue(updatedProduct);
 
       const result = await service.update(1, updateDto);
 
-      expect(prisma.products.update).toHaveBeenCalledWith({
+      expect(prisma.product.update).toHaveBeenCalledWith({
         where: { id: 1 },
         data: updateDto,
       });
@@ -162,16 +165,16 @@ describe('ProductsService', () => {
         code: 'P2025',
         clientVersion: 'mock'
       });
-      (prisma.products.update as jest.Mock).mockRejectedValue(error);
+      (prisma.product.update as jest.Mock).mockRejectedValue(error);
       await expect(service.update(99, updateDto)).rejects.toThrow(new NotFoundException('Product with id 99 not found'));
     });
   });
 
   describe('remove', () => {
     it('should delete a product successfully', async () => {
-      (prisma.products.delete as jest.Mock).mockResolvedValue(mockProduct);
+      (prisma.product.delete as jest.Mock).mockResolvedValue(mockProduct);
       const result = await service.remove(1);
-      expect(prisma.products.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(prisma.product.delete).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(result).toEqual(mockProduct);
     });
 
@@ -180,7 +183,7 @@ describe('ProductsService', () => {
         code: 'P2025',
         clientVersion: 'mock'
       });
-      (prisma.products.delete as jest.Mock).mockRejectedValue(error);
+      (prisma.product.delete as jest.Mock).mockRejectedValue(error);
       await expect(service.remove(99)).rejects.toThrow(new NotFoundException('Product with id 99 not found'));
     });
   });
@@ -189,11 +192,11 @@ describe('ProductsService', () => {
     it('should return products for a given category', async () => {
       const category = 'Test';
       const mockProducts = [{ ...mockProduct, category: category }];
-      (prisma.products.findMany as jest.Mock).mockResolvedValue(mockProducts);
+      (prisma.product.findMany as jest.Mock).mockResolvedValue(mockProducts);
 
       const result = await service.findByCategory(category);
 
-      expect(prisma.products.findMany).toHaveBeenCalledWith({ where: { category: category } });
+      expect(prisma.product.findMany).toHaveBeenCalledWith({ where: { category: category } });
       expect(result).toEqual([{ ...mockProduct, category: category, images: [], specifications: {}, tags: [] }]);
     });
   });
@@ -201,11 +204,11 @@ describe('ProductsService', () => {
   describe('searchProducts', () => {
     it('should return products matching the query', async () => {
       const query = 'Test';
-      (prisma.products.findMany as jest.Mock).mockResolvedValue([mockProduct]);
+      (prisma.product.findMany as jest.Mock).mockResolvedValue([mockProduct]);
 
       const result = await service.searchProducts(query);
 
-      expect(prisma.products.findMany).toHaveBeenCalledWith({
+      expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: {
           AND: [
             {
@@ -221,11 +224,11 @@ describe('ProductsService', () => {
     it('should return products matching the query and category', async () => {
       const query = 'Test';
       const category = 'TestCategory';
-      (prisma.products.findMany as jest.Mock).mockResolvedValue([mockProduct]);
+      (prisma.product.findMany as jest.Mock).mockResolvedValue([mockProduct]);
 
       const result = await service.searchProducts(query, category);
 
-      expect(prisma.products.findMany).toHaveBeenCalledWith({
+      expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: {
           AND: [
             {

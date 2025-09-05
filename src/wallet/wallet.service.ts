@@ -20,37 +20,38 @@ export class WalletService {
     
     console.log('✅ Service: User found:', user.email);
     
-    let wallet = await this.prisma.wallets.findUnique({
-      where: { userId },
-      include: {
-        transactions: {
-          orderBy: { createdAt: 'desc' },
-          take: 10
-        }
-      }
+    let wallet = await this.prisma.wallet.findUnique({
+      where: { userId }
+      // Removed include as 'transactions' field doesn't exist on Wallet model
     });
 
     if (!wallet) {
       console.log('🆕 Service: Creating new wallet for user:', userId);
-      wallet = await this.prisma.wallets.create({
+      // Generate a unique ID for the wallet
+      const walletId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      
+      wallet = await this.prisma.wallet.create({
         data: {
+          id: walletId,
           userId,
           balanceMXN: 0,
-          balanceAxo: 50 // Regalo inicial
-        },
-        include: {
-          transactions: true
+          balanceAxo: 50, // Regalo inicial
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
 
       // Crear transacción de regalo inicial
-      await this.prisma.wallet_transactions.create({
+      const transactionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      await this.prisma.walletTransaction.create({
         data: {
+          id: transactionId,
           walletId: wallet.id,
           type: 'REWARD',
           amountAxo: 50,
           description: '🎉 Regalo de bienvenida - 50 AXO Coins',
-          reference: 'WELCOME_BONUS'
+          reference: 'WELCOME_BONUS',
+          createdAt: new Date()
         }
       });
       
@@ -69,21 +70,26 @@ export class WalletService {
     description?: string,
     paymentMethod?: string
   ) {
-    let wallet = await this.prisma.wallets.findUnique({
+    let wallet = await this.prisma.wallet.findUnique({
       where: { userId }
     });
 
     if (!wallet) {
-      wallet = await this.prisma.wallets.create({
+      // Generate a unique ID for the wallet
+      const walletId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      wallet = await this.prisma.wallet.create({
         data: {
+          id: walletId,
           userId,
           balanceMXN: amountMXN,
-          balanceAxo: amountAxo
+          balanceAxo: amountAxo,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
     }
 
-    const updatedWallet = await this.prisma.wallets.update({
+    const updatedWallet = await this.prisma.wallet.update({
       where: { id: wallet.id },
       data: {
         balanceMXN: {
@@ -91,18 +97,23 @@ export class WalletService {
         },
         balanceAxo: {
           increment: amountAxo
-        }
+        },
+        updatedAt: new Date()
       }
     });
 
-    await this.prisma.wallet_transactions.create({
+    // Generate a unique ID for the transaction
+    const transactionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    await this.prisma.walletTransaction.create({
       data: {
+        id: transactionId,
         walletId: wallet.id,
         type: 'DEPOSIT',
         amountMXN: amountMXN > 0 ? amountMXN : null,
         amountAxo: amountAxo > 0 ? amountAxo : null,
         description: description || `Depósito de ${amountMXN > 0 ? `${amountMXN} MXN` : ''}${amountMXN > 0 && amountAxo > 0 ? ' y ' : ''}${amountAxo > 0 ? `${amountAxo} AXO` : ''}`,
-        reference: paymentMethod || 'MANUAL'
+        reference: paymentMethod || 'MANUAL',
+        createdAt: new Date()
       }
     });
 
@@ -118,8 +129,8 @@ export class WalletService {
   ) {
     // Buscar destinatario
     const recipient = await this.prisma.users.findUnique({
-      where: { email: recipientEmail },
-      include: { wallet: true }
+      where: { email: recipientEmail }
+      // Removed include as 'wallet' field doesn't exist on User model
     });
 
     if (!recipient) {
@@ -130,7 +141,7 @@ export class WalletService {
     }
 
     // Obtener wallet del remitente
-    const senderWallet = await this.prisma.wallets.findUnique({
+    const senderWallet = await this.prisma.wallet.findUnique({
       where: { userId }
     });
 
@@ -151,20 +162,28 @@ export class WalletService {
     }
 
     // Crear o obtener wallet del destinatario
-    let recipientWallet = recipient.wallet;
+    let recipientWallet = await this.prisma.wallet.findUnique({
+      where: { userId: recipient.id }
+    });
+    
     if (!recipientWallet) {
-      recipientWallet = await this.prisma.wallets.create({
+      // Generate a unique ID for the wallet
+      const walletId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      recipientWallet = await this.prisma.wallet.create({
         data: {
+          id: walletId,
           userId: recipient.id,
           balanceMXN: 0,
-          balanceAxo: 50
+          balanceAxo: 50,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
     }
 
     // Realizar transferencia en transacción
     const result = await this.prisma.$transaction(async (tx: any) => {
-      const updatedSenderWallet = await tx.wallets.update({
+      const updatedSenderWallet = await tx.wallet.update({
         where: { id: senderWallet.id },
         data: {
           balanceMXN: {
@@ -172,11 +191,12 @@ export class WalletService {
           },
           balanceAxo: {
             decrement: amountAxo
-          }
+          },
+          updatedAt: new Date()
         }
       });
 
-      await tx.wallets.update({
+      await tx.wallet.update({
         where: { id: recipientWallet!.id },
         data: {
           balanceMXN: {
@@ -184,30 +204,39 @@ export class WalletService {
           },
           balanceAxo: {
             increment: amountAxo
-          }
+          },
+          updatedAt: new Date()
         }
       });
 
       // Crear transacciones
-      await tx.wallet_transactions.create({
+      // Generate unique IDs for the transactions
+      const senderTransactionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const recipientTransactionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      
+      await tx.walletTransaction.create({
         data: {
+          id: senderTransactionId,
           walletId: senderWallet.id,
           type: 'TRANSFER_SENT',
           amountMXN: amountMXN > 0 ? -amountMXN : null,
           amountAxo: amountAxo > 0 ? -amountAxo : null,
           description: description || `Transferencia a ${recipient.email}`,
-          reference: recipient.id
+          reference: recipient.id,
+          createdAt: new Date()
         }
       });
 
-      await tx.wallet_transactions.create({
+      await tx.walletTransaction.create({
         data: {
+          id: recipientTransactionId,
           walletId: recipientWallet!.id,
           type: 'TRANSFER_RECEIVED',
           amountMXN: amountMXN > 0 ? amountMXN : null,
           amountAxo: amountAxo > 0 ? amountAxo : null,
           description: description || `Transferencia de ${userId}`,
-          reference: userId
+          reference: userId,
+          createdAt: new Date()
         }
       });
 
@@ -218,7 +247,7 @@ export class WalletService {
   }
 
   async getTransactions(userId: string, limit: number, offset: number) {
-    const wallet = await this.prisma.wallets.findUnique({
+    const wallet = await this.prisma.wallet.findUnique({
       where: { userId }
     });
 
@@ -229,14 +258,14 @@ export class WalletService {
       );
     }
 
-    const transactions = await this.prisma.wallet_transactions.findMany({
+    const transactions = await this.prisma.walletTransaction.findMany({
       where: { walletId: wallet.id },
       orderBy: { createdAt: 'desc' },
       take: limit,
       skip: offset
     });
 
-    const total = await this.prisma.wallet_transactions.count({
+    const total = await this.prisma.walletTransaction.count({
       where: { walletId: wallet.id }
     });
 
@@ -260,7 +289,7 @@ export class WalletService {
     const MXN_TO_AXO_RATE = 0.8; // 20% descuento
     const AXO_TO_MXN_RATE = 1.1;  // 10% premium
 
-    const wallet = await this.prisma.wallets.findUnique({
+    const wallet = await this.prisma.wallet.findUnique({
       where: { userId }
     });
 
@@ -302,7 +331,7 @@ export class WalletService {
       );
     }
 
-    const updatedWallet = await this.prisma.wallets.update({
+    const updatedWallet = await this.prisma.wallet.update({
       where: { id: wallet.id },
       data: {
         balanceMXN: {
@@ -310,18 +339,23 @@ export class WalletService {
         },
         balanceAxo: {
           increment: fromCurrency === 'AXO' ? fromAmount : toAmount
-        }
+        },
+        updatedAt: new Date()
       }
     });
 
-    await this.prisma.wallet_transactions.create({
+    // Generate a unique ID for the transaction
+    const transactionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    await this.prisma.walletTransaction.create({
       data: {
+        id: transactionId,
         walletId: wallet.id,
         type: 'DEPOSIT',
         amountMXN: fromCurrency === 'MXN' ? fromAmount : toAmount,
         amountAxo: fromCurrency === 'AXO' ? fromAmount : toAmount,
         description: `Conversión: ${amount} ${fromCurrency} → ${convertedAmount.toFixed(2)} ${toCurrency}`,
-        reference: 'CURRENCY_CONVERSION'
+        reference: 'CURRENCY_CONVERSION',
+        createdAt: new Date()
       }
     });
 

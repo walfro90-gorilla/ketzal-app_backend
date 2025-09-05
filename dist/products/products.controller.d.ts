@@ -18,7 +18,7 @@ export declare class ProductsController {
         stock: number;
         category: string | null;
         specifications: import("@prisma/client/runtime/library").JsonValue | null;
-    } | undefined>;
+    }>;
     findAll(): Promise<any[]>;
     findByCategory(category: string): Promise<any[]>;
     searchProducts(query: string, category?: string): Promise<any[]>;
