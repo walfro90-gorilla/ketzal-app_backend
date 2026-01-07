@@ -1,4 +1,4 @@
-import {
+﻿import {
   Injectable,
   NotFoundException,
   ConflictException,
@@ -14,7 +14,7 @@ export class ServicesService {
   // Inject PrismaService
   constructor(private prismaService: PrismaService) {}
 
-// 🔰 Create a new service
+// ðŸ”° Create a new service
   async create(createServiceDto: CreateServiceDto) {
     // Log the received DTO for debugging
     console.log(
@@ -91,7 +91,7 @@ export class ServicesService {
     );
 // Attempt to create the service in the database
     try {
-      const result = await this.prismaService.service.create({
+      const result = await this.prismaService\.service\.create({
         data: dataToCreate,
       });
       // Log the successful creation
@@ -107,19 +107,19 @@ export class ServicesService {
   }
 
   
-  // 🔰 Find all services without extra info (used for dropdowns, etc.)
+  // ðŸ”° Find all services without extra info (used for dropdowns, etc.)
   findAll() {
-    return this.prismaService.service.findMany();
+    return this.prismaService\.service\.findMany();
   }
 
-  // 🔰 Find all services with review stats
+  // ðŸ”° Find all services with review stats
   async findAllWithReviewStats() {
-    const services = await this.prismaService.service.findMany();
+    const services = await this.prismaService\.service\.findMany();
 
     // Get review stats for each service
     const servicesWithStats = await Promise.all(
       services.map(async (service: any) => {
-        const reviews = await this.prismaService.review.findMany({
+        const reviews = await this.prismaService\.review\.findMany({
           where: { serviceId: service.id },
           select: { rating: true },
         });
@@ -146,12 +146,12 @@ export class ServicesService {
 
   // Find all services with average rating
   async findAllWithAverageRating() {
-    const services = await this.prismaService.service.findMany();
+    const services = await this.prismaService\.service\.findMany();
 
     // Get average rating for each service
     const servicesWithAverageRating = await Promise.all(
       services.map(async (service: any) => {
-        const reviews = await this.prismaService.review.findMany({
+        const reviews = await this.prismaService\.review\.findMany({
           where: { serviceId: service.id },
           select: { rating: true },
         });
@@ -180,7 +180,7 @@ export class ServicesService {
     if (typeof id !== "number" || isNaN(id)) {
       throw new NotFoundException("A valid service id must be provided");
     }
-    const serviceFound = await this.prismaService.service.findUnique({
+    const serviceFound = await this.prismaService\.service\.findUnique({
       where: { id },
     });
     if (!serviceFound) {
@@ -191,7 +191,7 @@ export class ServicesService {
 
   // Update a service
   async update(id: number, updateServiceDto: UpdateServiceDto) {
-    const updatedService = await this.prismaService.service.update({
+    const updatedService = await this.prismaService\.service\.update({
       where: { id },
       data: updateServiceDto as any,
     });
@@ -203,7 +203,7 @@ export class ServicesService {
 
   // Get service with supplier
   async getServiceWithSupplier(id: number) {
-    const service = await this.prismaService.service.findUnique({
+    const service = await this.prismaService\.service\.findUnique({
       where: { id },
       include: {
         supplier: true,
@@ -232,7 +232,7 @@ export class ServicesService {
 
     // If we get here, it's safe to delete
     try {
-      const deletedService = await this.prismaService.service.delete({
+      const deletedService = await this.prismaService\.service\.delete({
         where: { id },
       });
       console.log(`Service ${id} deleted successfully`);
@@ -245,7 +245,7 @@ export class ServicesService {
 
   // Get services by supplier
   async getServicesBySupplier(supplierId: number) {
-    return this.prismaService.service.findMany({
+    return this.prismaService\.service\.findMany({
       where: {
         supplierId,
       },
@@ -254,7 +254,7 @@ export class ServicesService {
 
   // Check dependencies before service deletion
   private async checkServiceDependencies(serviceId: number) {
-    const reviews = await this.prismaService.review.findMany({
+    const reviews = await this.prismaService\.review\.findMany({
       where: { serviceId },
       select: { id: true },
     });
@@ -272,7 +272,7 @@ export class ServicesService {
 
   // Get reviews for a service
   async getReviews(serviceId: number) {
-    return this.prismaService.review.findMany({
+    return this.prismaService\.review\.findMany({
       where: { serviceId },
       include: {
         User: {
@@ -314,9 +314,9 @@ export class ServicesService {
     //   where.hasBusTransport = hasTransport;
     // }
 
-    // Obtener servicios con paginación
+    // Obtener servicios con paginaciÃ³n
     const [services, total] = await Promise.all([
-      this.prismaService.service.findMany({
+      this.prismaService\.service\.findMany({
         where,
         select: {
           id: true,
@@ -328,7 +328,7 @@ export class ServicesService {
         skip,
         take: limit,
       }),
-      this.prismaService.service.count({ where }),
+      this.prismaService\.service\.count({ where }),
     ]);
 
     // Temporary stats without transport functionality
@@ -384,12 +384,12 @@ export class ServicesService {
   
     // Get services with pagination
     const [services, total] = await Promise.all([
-      this.prismaService.service.findMany({
+      this.prismaService\.service\.findMany({
         where,
         skip,
         take: limit,
       }),
-      this.prismaService.service.count({ where }),
+      this.prismaService\.service\.count({ where }),
     ]);
   
     return {
@@ -405,7 +405,7 @@ export class ServicesService {
 
   // Temporary placeholder methods for transport functionality
   async getBusTransportConfig(id: number) {
-    const service = await this.prismaService.service.findUnique({
+    const service = await this.prismaService\.service\.findUnique({
       where: { id },
       select: {
         id: true,

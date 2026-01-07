@@ -6,11 +6,8 @@ export declare class PlannersService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     createPlanner(userId: string, createPlannerDto: CreatePlannerDto): Promise<{
-        name: string;
-        createdAt: Date;
         id: string;
-        userId: string;
-        updatedAt: Date;
+        name: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -19,13 +16,13 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
     }>;
     getPlannersByUser(userId: string): Promise<{
-        name: string;
-        createdAt: Date;
         id: string;
-        userId: string;
-        updatedAt: Date;
+        name: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -34,13 +31,13 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
     }[]>;
     getPlannerById(id: string, userId: string, includeItems?: boolean): Promise<{
-        name: string;
-        createdAt: Date;
         id: string;
-        userId: string;
-        updatedAt: Date;
+        name: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -49,13 +46,13 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
     }>;
     updatePlanner(id: string, userId: string, updatePlannerDto: UpdatePlannerDto): Promise<{
-        name: string;
-        createdAt: Date;
         id: string;
-        userId: string;
-        updatedAt: Date;
+        name: string;
         destination: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -64,20 +61,23 @@ export declare class PlannersService {
         totalAxo: number;
         isPublic: boolean;
         shareCode: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
     }>;
     deletePlanner(id: string, userId: string): Promise<{
         message: string;
     }>;
     addItemToPlanner(addItemDto: AddItemToPlannerDto, userId: string): Promise<{
-        createdAt: Date;
-        priceAxo: number | null;
         id: string;
-        serviceId: number | null;
+        createdAt: Date;
         quantity: number;
         priceMXN: number;
+        priceAxo: number | null;
         selectedDate: Date | null;
         notes: string | null;
         plannerId: string;
+        serviceId: number | null;
         productId: number | null;
     }>;
     removeItemFromPlanner(itemId: string, userId: string): Promise<{

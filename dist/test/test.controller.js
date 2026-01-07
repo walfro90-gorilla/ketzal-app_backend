@@ -21,7 +21,7 @@ let TestController = class TestController {
     }
     async createTestUser() {
         try {
-            const user = await this.prisma.users.upsert({
+            const user = await this.prisma.Users.upsert({
                 where: { email: 'test@ketzal.com' },
                 update: {},
                 create: {
@@ -36,7 +36,7 @@ let TestController = class TestController {
                     updatedAt: new Date(),
                 },
             });
-            const wallet = await this.prisma.wallet.upsert({
+            const wallet = await this.prisma.Wallet.upsert({
                 where: { userId: user.id },
                 update: {},
                 create: {
@@ -49,7 +49,7 @@ let TestController = class TestController {
                 },
             });
             const transactions = await Promise.all([
-                this.prisma.walletTransaction.create({
+                this.prisma.WalletTransaction.create({
                     data: {
                         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
@@ -60,7 +60,7 @@ let TestController = class TestController {
                         createdAt: new Date(),
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.WalletTransaction.create({
                     data: {
                         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
@@ -71,7 +71,7 @@ let TestController = class TestController {
                         createdAt: new Date(),
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.WalletTransaction.create({
                     data: {
                         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
@@ -83,7 +83,7 @@ let TestController = class TestController {
                         createdAt: new Date(),
                     },
                 }),
-                this.prisma.walletTransaction.create({
+                this.prisma.WalletTransaction.create({
                     data: {
                         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                         walletId: wallet.id,
@@ -113,7 +113,7 @@ let TestController = class TestController {
     }
     async getTestWallet(userId) {
         try {
-            const wallet = await this.prisma.wallet.findUnique({
+            const wallet = await this.prisma.Wallet.findUnique({
                 where: { userId },
                 include: {
                     WalletTransaction: {
@@ -144,7 +144,7 @@ let TestController = class TestController {
     }
     async addTestFunds(userId, { amount, currency }) {
         try {
-            const wallet = await this.prisma.wallet.findUnique({
+            const wallet = await this.prisma.Wallet.findUnique({
                 where: { userId },
             });
             if (!wallet) {
@@ -153,11 +153,11 @@ let TestController = class TestController {
             const updateData = currency === 'MXN'
                 ? { balanceMXN: { increment: amount } }
                 : { balanceAxo: { increment: amount } };
-            const updatedWallet = await this.prisma.wallet.update({
+            const updatedWallet = await this.prisma.Wallet.update({
                 where: { userId },
                 data: Object.assign(Object.assign({}, updateData), { updatedAt: new Date() }),
             });
-            await this.prisma.walletTransaction.create({
+            await this.prisma.WalletTransaction.create({
                 data: Object.assign(Object.assign({ id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), walletId: wallet.id, type: 'DEPOSIT', createdAt: new Date() }, (currency === 'MXN' ? { amountMXN: amount } : { amountAxo: amount })), { description: `Depósito de prueba de ${amount} ${currency}`, reference: `TEST-${Date.now()}` }),
             });
             return {

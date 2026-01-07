@@ -9,11 +9,8 @@ export declare class PlannersController {
         success: boolean;
         message: string;
         data: {
-            name: string;
-            createdAt: Date;
             id: string;
-            userId: string;
-            updatedAt: Date;
+            name: string;
             destination: string | null;
             startDate: Date | null;
             endDate: Date | null;
@@ -22,17 +19,17 @@ export declare class PlannersController {
             totalAxo: number;
             isPublic: boolean;
             shareCode: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
         };
     }>;
     getUserPlanners(req: any): Promise<{
         success: boolean;
         message: string;
         data: {
-            name: string;
-            createdAt: Date;
             id: string;
-            userId: string;
-            updatedAt: Date;
+            name: string;
             destination: string | null;
             startDate: Date | null;
             endDate: Date | null;
@@ -41,17 +38,17 @@ export declare class PlannersController {
             totalAxo: number;
             isPublic: boolean;
             shareCode: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
         }[];
     }>;
     getPlannerById(id: string, req: any): Promise<{
         success: boolean;
         message: string;
         data: {
-            name: string;
-            createdAt: Date;
             id: string;
-            userId: string;
-            updatedAt: Date;
+            name: string;
             destination: string | null;
             startDate: Date | null;
             endDate: Date | null;
@@ -60,17 +57,17 @@ export declare class PlannersController {
             totalAxo: number;
             isPublic: boolean;
             shareCode: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
         };
     }>;
     updatePlanner(id: string, updatePlannerDto: UpdatePlannerDto, req: any): Promise<{
         success: boolean;
         message: string;
         data: {
-            name: string;
-            createdAt: Date;
             id: string;
-            userId: string;
-            updatedAt: Date;
+            name: string;
             destination: string | null;
             startDate: Date | null;
             endDate: Date | null;
@@ -79,6 +76,9 @@ export declare class PlannersController {
             totalAxo: number;
             isPublic: boolean;
             shareCode: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
         };
     }>;
     deletePlanner(id: string, req: any): Promise<{
@@ -89,15 +89,15 @@ export declare class PlannersController {
         success: boolean;
         message: string;
         data: {
-            createdAt: Date;
-            priceAxo: number | null;
             id: string;
-            serviceId: number | null;
+            createdAt: Date;
             quantity: number;
             priceMXN: number;
+            priceAxo: number | null;
             selectedDate: Date | null;
             notes: string | null;
             plannerId: string;
+            serviceId: number | null;
             productId: number | null;
         };
     }>;
