@@ -6,42 +6,42 @@ export declare class CategoriesController {
     constructor(categoriesService: CategoriesService);
     create(createCategoryDto: CreateCategoryDto): import(".prisma/client").Prisma.Prisma__CategoriesClient<{
         name: string;
+        image: string | null;
         description: string | null;
         createdAt: Date;
-        id: number;
-        image: string | null;
         updatedAt: Date;
+        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
         name: string;
+        image: string | null;
         description: string | null;
         createdAt: Date;
-        id: number;
-        image: string | null;
         updatedAt: Date;
+        id: number;
     }[]>;
     findOne(id: string): Promise<{
         name: string;
+        image: string | null;
         description: string | null;
         createdAt: Date;
-        id: number;
-        image: string | null;
         updatedAt: Date;
+        id: number;
     }>;
     update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<{
         name: string;
+        image: string | null;
         description: string | null;
         createdAt: Date;
-        id: number;
-        image: string | null;
         updatedAt: Date;
+        id: number;
     }>;
     remove(id: string): Promise<{
         name: string;
+        image: string | null;
         description: string | null;
         createdAt: Date;
-        id: number;
-        image: string | null;
         updatedAt: Date;
+        id: number;
     }>;
 }

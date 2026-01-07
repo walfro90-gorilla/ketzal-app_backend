@@ -91,7 +91,7 @@ let UsersService = class UsersService {
             userFound.emailVerified) {
             const supplier = await this.prismaService.supplier.findFirst({
                 where: {
-                    users: { some: { id } },
+                    Users: { some: { id } },
                     OR: [
                         { extras: { equals: { isPending: true } } },
                     ]

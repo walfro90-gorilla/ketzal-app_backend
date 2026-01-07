@@ -92,7 +92,7 @@ export class UsersService {
       // Buscar si el usuario tiene supplier asociado pendiente
       const supplier = await this.prismaService.supplier.findFirst({
         where: {
-          users: { some: { id } },
+          Users: { some: { id } },
           // Solo si está pendiente
           OR: [
             { extras: { equals: { isPending: true } } },

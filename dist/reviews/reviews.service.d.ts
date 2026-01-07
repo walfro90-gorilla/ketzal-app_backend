@@ -6,67 +6,67 @@ export declare class ReviewsService {
     constructor(prismaService: PrismaService);
     create(createReviewDto: CreateReviewDto): import(".prisma/client").Prisma.Prisma__ReviewClient<{
         Service: {
-            name: string;
             id: number;
+            name: string;
         };
         User: {
-            name: string | null;
             id: string;
+            name: string | null;
             image: string | null;
         };
     } & {
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }[]>;
     findOne(id: number): Promise<{
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }>;
     update(id: number, updateReviewDto: UpdateReviewDto): Promise<{
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }>;
     remove(id: number): Promise<{
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }>;
     getReviewsByService(serviceId: number): import(".prisma/client").Prisma.PrismaPromise<({
         User: {
-            name: string | null;
             id: string;
+            name: string | null;
             image: string | null;
         };
     } & {
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     })[]>;
     getReviewStatsForService(serviceId: number): Promise<{
         totalReviews: number;
@@ -74,11 +74,11 @@ export declare class ReviewsService {
         serviceId: number;
     }>;
     createReview(serviceId: number, userId: string, rating: number, comment: string): import(".prisma/client").Prisma.Prisma__ReviewClient<{
+        rating: number;
+        comment: string;
         createdAt: Date;
         id: number;
         serviceId: number;
         userId: string;
-        rating: number;
-        comment: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
 }

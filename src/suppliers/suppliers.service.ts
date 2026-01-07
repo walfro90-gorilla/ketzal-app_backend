@@ -21,18 +21,18 @@ export class SuppliersService {
     // 1. Buscar supplier y user relacionado
     const supplier = await this.prismaService.supplier.findUnique({
       where: { id: supplierId },
-      include: { users: true },
+      include: { Users: true },
     });
     console.log('DEBUG supplier:', JSON.stringify(supplier, null, 2));
     if (!supplier) throw new Error('Supplier not found');
     // Log quirúrgico para ver el valor y tipo de dto.userId
     console.log('DEBUG dto.userId:', dto.userId, 'type:', typeof dto.userId);
     // Log quirúrgico para ver los ids de los usuarios asociados
-    console.log('DEBUG supplier.User ids:', supplier.users.map((u: any) => u.id));
+    console.log('DEBUG supplier.User ids:', supplier.Users.map((u: any) => u.id));
     // Asumimos que el primer usuario es el "dueño" (ajustar si hay lógica distinta)
-    const user = supplier.users.find((u: any) => String(u.id) === String(dto.userId));
+    const user = supplier.Users.find((u: any) => String(u.id) === String(dto.userId));
     if (!user) {
-      console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.users.map((u: any) => u.id));
+      console.log('DEBUG comparación fallida: buscando', dto.userId, 'en', supplier.Users.map((u: any) => u.id));
       throw new Error('User not found for this supplier');
     }
 

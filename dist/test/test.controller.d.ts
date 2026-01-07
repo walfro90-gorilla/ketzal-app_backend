@@ -4,65 +4,9 @@ export declare class TestController {
     constructor(prisma: PrismaService);
     createTestUser(): Promise<{
         success: boolean;
-        user: {
-            id: string;
-            email: string;
-            name: string | null;
-            password: string | null;
-            emailVerified: Date | null;
-            image: string | null;
-            role: import(".prisma/client").$Enums.Role;
-            supplierId: number | null;
-            createdAt: Date;
-            updatedAt: Date;
-            axoCoinsEarned: number | null;
-            referralCode: string | null;
-        };
-        wallet: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
-        transactions: [{
-            id: string;
-            createdAt: Date;
-            type: import(".prisma/client").$Enums.WalletTransactionType;
-            amountMXN: number | null;
-            amountAxo: number | null;
-            description: string;
-            reference: string | null;
-            walletId: string;
-        }, {
-            id: string;
-            createdAt: Date;
-            type: import(".prisma/client").$Enums.WalletTransactionType;
-            amountMXN: number | null;
-            amountAxo: number | null;
-            description: string;
-            reference: string | null;
-            walletId: string;
-        }, {
-            id: string;
-            createdAt: Date;
-            type: import(".prisma/client").$Enums.WalletTransactionType;
-            amountMXN: number | null;
-            amountAxo: number | null;
-            description: string;
-            reference: string | null;
-            walletId: string;
-        }, {
-            id: string;
-            createdAt: Date;
-            type: import(".prisma/client").$Enums.WalletTransactionType;
-            amountMXN: number | null;
-            amountAxo: number | null;
-            description: string;
-            reference: string | null;
-            walletId: string;
-        }];
+        user: any;
+        wallet: any;
+        transactions: any;
         message: string;
         error?: undefined;
     } | {
@@ -80,30 +24,7 @@ export declare class TestController {
         error?: undefined;
     } | {
         success: boolean;
-        wallet: {
-            Users: {
-                id: string;
-                email: string;
-                name: string | null;
-            };
-            WalletTransaction: {
-                id: string;
-                createdAt: Date;
-                type: import(".prisma/client").$Enums.WalletTransactionType;
-                amountMXN: number | null;
-                amountAxo: number | null;
-                description: string;
-                reference: string | null;
-                walletId: string;
-            }[];
-        } & {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
         message?: undefined;
         error?: undefined;
     } | {
@@ -122,14 +43,7 @@ export declare class TestController {
         error?: undefined;
     } | {
         success: boolean;
-        wallet: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            balanceMXN: number;
-            balanceAxo: number;
-        };
+        wallet: any;
         message: string;
         error?: undefined;
     } | {

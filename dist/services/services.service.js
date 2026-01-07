@@ -52,7 +52,8 @@ let ServicesService = class ServicesService {
         };
         console.log("Data being sent to Prisma:", JSON.stringify(dataToCreate, null, 2));
         try {
-            const result = await this.prismaService.service.create({
+            const result = await this.prismaService, service, create;
+            ({
                 data: dataToCreate,
             });
             console.log("Prisma create successful:", result);
@@ -64,12 +65,16 @@ let ServicesService = class ServicesService {
         }
     }
     findAll() {
-        return this.prismaService.service.findMany();
+        return this.prismaService;
+        service;
+        findMany();
     }
     async findAllWithReviewStats() {
-        const services = await this.prismaService.service.findMany();
+        const services = await this.prismaService, service, findMany;
+        ();
         const servicesWithStats = await Promise.all(services.map(async (service) => {
-            const reviews = await this.prismaService.review.findMany({
+            const reviews = await this.prismaService, review, findMany;
+            ({
                 where: { serviceId: service.id },
                 select: { rating: true },
             });
@@ -82,9 +87,11 @@ let ServicesService = class ServicesService {
         return servicesWithStats;
     }
     async findAllWithAverageRating() {
-        const services = await this.prismaService.service.findMany();
+        const services = await this.prismaService, service, findMany;
+        ();
         const servicesWithAverageRating = await Promise.all(services.map(async (service) => {
-            const reviews = await this.prismaService.review.findMany({
+            const reviews = await this.prismaService, review, findMany;
+            ({
                 where: { serviceId: service.id },
                 select: { rating: true },
             });
@@ -100,7 +107,8 @@ let ServicesService = class ServicesService {
         if (typeof id !== "number" || isNaN(id)) {
             throw new common_1.NotFoundException("A valid service id must be provided");
         }
-        const serviceFound = await this.prismaService.service.findUnique({
+        const serviceFound = await this.prismaService, service, findUnique;
+        ({
             where: { id },
         });
         if (!serviceFound) {
@@ -109,7 +117,8 @@ let ServicesService = class ServicesService {
         return serviceFound;
     }
     async update(id, updateServiceDto) {
-        const updatedService = await this.prismaService.service.update({
+        const updatedService = await this.prismaService, service, update;
+        ({
             where: { id },
             data: updateServiceDto,
         });
@@ -119,7 +128,8 @@ let ServicesService = class ServicesService {
         return updatedService;
     }
     async getServiceWithSupplier(id) {
-        const service = await this.prismaService.service.findUnique({
+        const service = await this.prismaService, service, findUnique;
+        ({
             where: { id },
             include: {
                 supplier: true,
@@ -137,7 +147,8 @@ let ServicesService = class ServicesService {
             throw new common_1.ConflictException(`Cannot delete service. It has ${dependencies.reviewsCount} review(s) associated. Please remove the reviews first.`);
         }
         try {
-            const deletedService = await this.prismaService.service.delete({
+            const deletedService = await this.prismaService, service;
+            delete ({
                 where: { id },
             });
             console.log(`Service ${id} deleted successfully`);
@@ -149,14 +160,17 @@ let ServicesService = class ServicesService {
         }
     }
     async getServicesBySupplier(supplierId) {
-        return this.prismaService.service.findMany({
+        return this.prismaService;
+        service;
+        findMany({
             where: {
                 supplierId,
             },
         });
     }
     async checkServiceDependencies(serviceId) {
-        const reviews = await this.prismaService.review.findMany({
+        const reviews = await this.prismaService, review, findMany;
+        ({
             where: { serviceId },
             select: { id: true },
         });
@@ -169,7 +183,9 @@ let ServicesService = class ServicesService {
         return this.checkServiceDependencies(serviceId);
     }
     async getReviews(serviceId) {
-        return this.prismaService.review.findMany({
+        return this.prismaService;
+        review;
+        findMany({
             where: { serviceId },
             include: {
                 User: {
@@ -196,7 +212,7 @@ let ServicesService = class ServicesService {
             ];
         }
         const [services, total] = await Promise.all([
-            this.prismaService.service.findMany({
+            this.prismaService, .service, .findMany({
                 where,
                 select: {
                     id: true,
@@ -208,7 +224,7 @@ let ServicesService = class ServicesService {
                 skip,
                 take: limit,
             }),
-            this.prismaService.service.count({ where }),
+            this.prismaService, .service, .count({ where }),
         ]);
         const statsFormatted = {
             total,
@@ -246,12 +262,12 @@ let ServicesService = class ServicesService {
             ];
         }
         const [services, total] = await Promise.all([
-            this.prismaService.service.findMany({
+            this.prismaService, .service, .findMany({
                 where,
                 skip,
                 take: limit,
             }),
-            this.prismaService.service.count({ where }),
+            this.prismaService, .service, .count({ where }),
         ]);
         return {
             data: services,
@@ -264,7 +280,8 @@ let ServicesService = class ServicesService {
         };
     }
     async getBusTransportConfig(id) {
-        const service = await this.prismaService.service.findUnique({
+        const service = await this.prismaService, service, findUnique;
+        ({
             where: { id },
             select: {
                 id: true,
