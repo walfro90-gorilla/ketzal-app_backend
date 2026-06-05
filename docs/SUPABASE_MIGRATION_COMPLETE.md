@@ -28,7 +28,7 @@ datasource db {
 
 ### 2. **Conexión a Supabase**
 ```env
-DATABASE_URL="postgresql://postgres.okeiopaqfqcubkfzkqzc:***REMOVED***@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:5432/<DB>"
 ```
 
 ### 3. **Solución de Serialización BigInt**
