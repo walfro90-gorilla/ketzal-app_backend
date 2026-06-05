@@ -20,11 +20,11 @@ El usuario reportó: *"al parecer el frontend sigue utilizando la bd local, actu
 ```env
 # ANTES (.env)
 DATABASE_URL="file:./dev.db"
-# DATABASE_URL="postgresql://postgres.okeiopaqfqcubkfzkqzc:***REMOVED***@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+# DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:5432/<DB>"
 
 # DESPUÉS (.env)
 # DATABASE_URL="file:./dev.db"
-DATABASE_URL="postgresql://postgres.okeiopaqfqcubkfzkqzc:***REMOVED***@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:5432/<DB>"
 ```
 
 ### **Paso 2: Actualización del Schema de Prisma**
