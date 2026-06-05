@@ -1,0 +1,29 @@
+# Gitleaks configuration for ketzal-app_backend
+# Extends the default gitleaks ruleset and adds project-specific allowlisting
+# so known-safe placeholders and test fixtures don't trip the scanner.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist for placeholders, examples and test fixtures"
+
+# Paths that legitimately contain non-secret credential-shaped strings.
+paths = [
+  '''\.env\.example$''',
+  '''.*\.test\.ts$''',
+  '''.*\.spec\.ts$''',
+  '''scripts/test-.*\.js$''',
+  '''src/test/test\.controller\.ts$''',
+]
+
+# Documentation placeholders and obvious test/dummy values.
+regexes = [
+  '''<USER>''',
+  '''<PASSWORD>''',
+  '''<HOST>''',
+  '''<DB>''',
+  '''\*\*\*REMOVED\*\*\*''',
+  '''(?i)hashedpassword123''',
+  '''(?i)password['"]?\s*[:=]\s*['"]?(test123|password)['"]?''',
+]

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Pre-commit hook: block commits that contain secrets.
+#
+# Layer 1: if `gitleaks` is installed locally, run it on the staged changes
+#          using the repo's .gitleaks.toml config (most accurate).
+# Layer 2: if gitleaks is not installed, fall back to a lightweight regex
+#          scan of the staged diff so there is still some protection.
+#
+# To bypass intentionally (rare): git commit --no-verify
+#
+set -euo pipefail
+
+RED='\033[0;31m'; YEL='\033[0;33m'; NC='\033[0m'
+
+# Nothing staged -> nothing to check.
+if git diff --cached --quiet; then
+  exit 0
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks protect --staged --redact --config .gitleaks.toml --no-banner; then
+    echo -e "${RED}✖ gitleaks found potential secrets in your staged changes. Commit aborted.${NC}"
+    echo -e "${YEL}  Review the findings above. If it's a false positive, allowlist it in .gitleaks.toml.${NC}"
+    echo -e "${YEL}  To bypass (only if you are sure): git commit --no-verify${NC}"
+    exit 1
+  fi
+  exit 0
+fi
+
+# ---- Fallback regex scan (gitleaks not installed) ----
+echo -e "${YEL}⚠ gitleaks not found; running basic fallback secret scan.${NC}"
+echo -e "${YEL}  Install gitleaks for stronger protection: https://github.com/gitleaks/gitleaks${NC}"
+
+# Common high-signal secret patterns. Kept deliberately conservative.
+PATTERNS='AIza[0-9A-Za-z_-]{30,}|sk_live_[0-9A-Za-z]{10,}|sk_test_[0-9A-Za-z]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(postgres(ql)?|mysql|mongodb(\+srv)?)://[^:@/\s]+:[^@/\s]+@'
+
+# Scan added lines only, skipping allowlisted placeholder values.
+hits=$(git diff --cached -U0 --no-color \
+  | grep '^+' \
+  | grep -vE '<USER>|<PASSWORD>|<HOST>|<DB>|\*\*\*REMOVED\*\*\*' \
+  | grep -EnC0 "$PATTERNS" || true)
+
+if [ -n "$hits" ]; then
+  echo -e "${RED}✖ Potential secret detected in staged changes. Commit aborted.${NC}"
+  echo "$hits" | sed -E 's/(.{8}).*/\1…[redacted]/'
+  echo -e "${YEL}  If this is a false positive, bypass with: git commit --no-verify${NC}"
+  exit 1
+fi
+
+exit 0

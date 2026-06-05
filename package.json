@@ -458,6 +458,8 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
+    "scan:secrets": "gitleaks detect --config .gitleaks.toml --redact --no-banner",
     "start:dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
